@@ -1,2 +1,2 @@
 # superloop
-A wide variety of tool-sets used for network automation.
+Insprired by a wide array of toolsets (unamed) used and developed from Facebook for network automation, I have attempted to create my own.
