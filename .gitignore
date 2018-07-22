@@ -1,3 +1,4 @@
 *.yaml
 *.jinja2
 *.pyc
+*.conf
