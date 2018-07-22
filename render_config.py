@@ -1,3 +1,19 @@
+### THIS MODULE RENDERS THE TEMPLATES FROM THE JINJA2 FILES
 
-def render_config(args):
-    print("rendering config to host: %s" % args.file)
+from jinja2 import Environment, FileSystemLoader
+
+def render_config(args,node_object):
+
+	env = Environment(loader=FileSystemLoader('.'))
+
+	baseline = env.get_template(args.file)
+
+	f = open('config.conf', 'w') 
+
+	config = baseline.render(nodes = node_object) 
+
+	f.write(config) 
+
+	f.close 
+
+	return config

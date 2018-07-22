@@ -11,7 +11,6 @@ def node_create(node_object):
 
 	for n in node_object:
 
-		if (node_object[index]['vendor'] == 'cisco'):
-			node = BaseNode(node_object[index]['ip'],node_object[index]['hostname'],node_object[index]['username'],node_object[index]['password'],node_object[index]['vendor'],node_object[index]['type'])
+		node = BaseNode(node_object[index]['ip'],node_object[index]['hostname'],node_object[index]['username'],node_object[index]['password'],node_object[index]['vendor'],node_object[index]['type'])
 
 		initialize.ntw_device.append(node)
