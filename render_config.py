@@ -2,11 +2,11 @@
 
 from jinja2 import Environment, FileSystemLoader
 
-def render_config(args,node_object):
+def render_config(template,node_object):
 
 	env = Environment(loader=FileSystemLoader('.'))
 
-	baseline = env.get_template(args.file)
+	baseline = env.get_template(template)
 
 	f = open('config.conf', 'w') 
 
