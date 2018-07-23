@@ -4,13 +4,15 @@
 from lib.objects.basenode import BaseNode 
 import initialize
 
-def node_create(node_object):
+def node_create(match_node,node_object):
 
 	node_list = []
-	index = 0
 
-	for n in node_object:
-
-		node = BaseNode(node_object[index]['ip'],node_object[index]['hostname'],node_object[index]['username'],node_object[index]['password'],node_object[index]['vendor'],node_object[index]['type'])
-
+	for index in initialize.element:
+	
+		node = BaseNode(node_object[index]['ip'],node_object[index]['hostname'],node_object[index]['username'],node_object[index]['password'],node_object[index]['platform'],node_object[index]['type'])
+	
 		initialize.ntw_device.append(node)
+
+
+	print("{}".format(initialize.ntw_device))

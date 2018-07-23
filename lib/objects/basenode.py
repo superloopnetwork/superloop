@@ -7,12 +7,12 @@ import re
 
 class BaseNode(object):
 
-	def __init__(self,ip,hostname,username,password,vendor,type):
+	def __init__(self,ip,hostname,username,password,platform,type):
 		self.ip = ip
    		self.hostname = hostname
    		self.username = username
    		self.password = password
-   		self.vendor = vendor
+   		self.platform = platform
    		self.type = type
 		self.password_decrypt= base64.b64decode(self.password)
 

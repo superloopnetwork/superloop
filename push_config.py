@@ -9,6 +9,8 @@ from processdb import process_templates
 from search import search_node
 from search import search_template
 from render_config import render_config
+from node_create import node_create
+import initialize
 
 def push_config(args):
 
@@ -24,7 +26,11 @@ def push_config(args):
 	### MATCH_NODE IS A LIST OF NODES THAT MATCHES THE ARGUEMENTS PASSED IN BY USER
 	match_node = search_node(args,node_object)
 
+	### MATCH_TEMPLATE IS A LIST OF 'MATCH' AND/OR 'NO MATCH' IT WILL USE THE MATCH_NODE
+	### RESULT, RUN IT AGAINST THE NODE_OBJECT AND COMPARES IT WITH NODE_TEMPLATE DATABASE
+	### TO SEE IF THERE IS A TEMPLATE FOR THE SPECIFIC PLATFORM AND TYPE.
 	match_template = search_template(template,match_node,node_template,node_object)
+
 	configs = render_config(template,node_object)
 
 	if(len(match_node) == 0):
@@ -34,19 +40,20 @@ def push_config(args):
 	elif('NO MATCH' in match_template):
 		print("+ [NO MATCHING TEMPLATE AGAINST DATABASE]")
 		print("")
-#		pass	
 
 	else:
+		node_create(match_node,node_object)
 		print("THE FOLLOWING CODE WILL BE PUSHED:")
 		print("{}".format(configs))
 		print("MATCHING NODES:")
 		print("{}".format(match_node))
+		print("{}".format(initialize.element))
 		print("")
-#		print("{}".format(match_template))
+		print("{}".format(match_template))
 		print("")
 		print("{}".format(node_object))
 		print("")
-#		print("{}".format(node_template))
+		print("{}".format(node_template))
 		print("")
 		proceed = raw_input("PROCEED? [Y/N]: ")
 	
