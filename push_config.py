@@ -9,13 +9,16 @@ from processdb import process_templates
 from search import search_node
 from search import search_template
 from render_config import render_config
+from parse_commands import parse_commands
 from node_create import node_create
+from multithread import multithread_engine
 import initialize
 
 def push_config(args):
 
 	ext = '.jinja2'
 	template = args.file + ext
+	controller = 'push_config'
 	
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
@@ -33,6 +36,9 @@ def push_config(args):
 
 	configs = render_config(template,node_object)
 
+	### THIS WILL PARSE OUT THE GENERATED CONFIGS FROM THE *.JINJA2 FILE TO A LIST
+	commands = parse_commands()
+
 	if(len(match_node) == 0):
 		print("+ [NO MATCHING NODES AGAINST DATABASE]")
 		print("")
@@ -44,9 +50,12 @@ def push_config(args):
 	else:
 		node_create(match_node,node_object)
 		print("THE FOLLOWING CODE WILL BE PUSHED:")
+		print("")
 		print("{}".format(configs))
+		print("")
 		print("MATCHING NODES:")
 		print("{}".format(match_node))
+		print("")
 		print("{}".format(initialize.element))
 		print("")
 		print("{}".format(match_template))
@@ -59,6 +68,7 @@ def push_config(args):
 	
 		if(proceed == 'y' or proceed == 'Y'):
 			print("PUSHING CODE...")
+			multithread_engine(initialize.ntw_device,controller,commands)
 	
 		elif(proceed == 'n' or proceed == 'N'):
 			print("ABORT...")

@@ -53,3 +53,12 @@ class BaseNode(object):
 
 		return device_attribute
 
+	def push_config(self,commands):
+
+		self.connect()
+		print('#' * 86)
+		output = self.net_connect.enable()
+		output = self.net_connect.send_config_set(commands)
+		print output
+		print('#' * 86)
+		self.net_connect.disconnect()

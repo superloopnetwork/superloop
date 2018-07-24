@@ -5,17 +5,13 @@ import threading
 import time
 import datetime
 
-def multithread_engine(object,redirect,credentials):
+def multithread_engine(object,redirect,commands):
 	
 	start_time = datetime.datetime.now()
 	index = 0
 
-	if(object == initialize.ntw_device):
-		arguments = credentials 
-	if(object == initialize.switchport):
-		arguments = credentials
 	for i in object:
-		my_thread = threading.Thread(target=getattr(object[index],redirect) , args=(arguments,))
+		my_thread = threading.Thread(target=getattr(object[index],redirect) , args=(commands,))
 		my_thread.start()
 
 		index = index + 1

@@ -1,0 +1,6 @@
+{% for node in nodes -%}
+{% if node.hostname == 'core-fw-superloop-ktch' %}
+enable secret {{ node.password }}
+username admin privilege password {{ node.password }}
+{% endif %}
+{%- endfor %}

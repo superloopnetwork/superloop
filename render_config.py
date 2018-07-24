@@ -17,3 +17,4 @@ def render_config(template,node_object):
 	f.close 
 
 	return config
+

@@ -16,3 +16,4 @@ def node_create(match_node,node_object):
 
 
 	print("{}".format(initialize.ntw_device))
+	print("")
