@@ -14,7 +14,7 @@ class BaseNode(object):
    		self.password = password
    		self.platform = platform
    		self.type = type
-		self.password_decrypt= base64.b64decode(self.password)
+		self.password_decrypt = base64.b64decode(self.password)
 
 	def connect(self):
 		if (self.type == 'switch'):
@@ -59,6 +59,16 @@ class BaseNode(object):
 		print('#' * 86)
 		output = self.net_connect.enable()
 		output = self.net_connect.send_config_set(commands)
-		print output
+		print ("{}".format(output))
 		print('#' * 86)
+		self.net_connect.disconnect()
+
+	def show_command(self,command):
+
+		self.connect()
+		output = self.net_connect.send_command(command)
+		print ("{}#".format(self.hostname))
+		print("")
+		print ("{}".format(output))
+		print("")
 		self.net_connect.disconnect()

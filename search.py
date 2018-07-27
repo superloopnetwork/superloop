@@ -60,3 +60,13 @@ def search_template(template,match_node,node_template,node_object):
 				continue	
 
 	return search_result 
+
+def node_element(match_node,node_object):
+
+	index = 0
+
+	for node in match_node:
+		for node_obj in node_object:
+			if(node in node_obj['hostname']):
+				index = node_object.index(node_obj)
+				initialize.element.append(index)

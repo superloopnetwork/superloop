@@ -2,6 +2,7 @@
 
 from push_config import push_config
 from render_config import render_config
+from show_command import show_command
 import argparse
 import os
 import initialize
@@ -25,6 +26,11 @@ def main():
 	render_cmd.add_argument('-n','--node', dest='node')
 	render_cmd.add_argument('-f','--file', dest='file')
 	
+	show_cmd = subparsers.add_parser('show')
+	show_cmd.set_defaults(func=show_command)
+	show_cmd.add_argument('-n','--node', dest='node')
+	show_cmd.add_argument('-c','--command', dest='command')
+
 	args = parser.parse_args()
 	args.func(args)
 

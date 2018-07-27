@@ -15,5 +15,5 @@ def node_create(match_node,node_object):
 		initialize.ntw_device.append(node)
 
 
-	print("{}".format(initialize.ntw_device))
+	print("{}".format(initialize.ntw_device) + "test")
 	print("")
