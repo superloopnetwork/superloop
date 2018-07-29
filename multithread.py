@@ -11,7 +11,7 @@ def multithread_engine(object,redirect,commands):
 	index = 0
 
 	for i in object:
-		my_thread = threading.Thread(target=getattr(object[index],redirect) , args=(commands,))
+		my_thread = threading.Thread(target=getattr(object[index],redirect) , args=(commands[index],))
 		my_thread.start()
 
 		index = index + 1
@@ -19,7 +19,7 @@ def multithread_engine(object,redirect,commands):
 	main_thread = threading.currentThread()
 	for some_thread in threading.enumerate():
 		if some_thread != main_thread:
-			print(some_thread)
+#			print(some_thread)
 			some_thread.join()
 
 	print("\n")

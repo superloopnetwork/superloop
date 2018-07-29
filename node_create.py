@@ -13,7 +13,3 @@ def node_create(match_node,node_object):
 		node = BaseNode(node_object[index]['ip'],node_object[index]['hostname'],node_object[index]['username'],node_object[index]['password'],node_object[index]['platform'],node_object[index]['type'])
 	
 		initialize.ntw_device.append(node)
-
-
-	print("{}".format(initialize.ntw_device) + "test")
-	print("")

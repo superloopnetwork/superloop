@@ -37,7 +37,7 @@ def push_config(args):
 	configs = render_config(template,node_object)
 
 	### THIS WILL PARSE OUT THE GENERATED CONFIGS FROM THE *.JINJA2 FILE TO A LIST
-	commands = parse_commands()
+	commands = initialize.configuration
 
 	if(len(match_node) == 0):
 		print("+ [NO MATCHING NODES AGAINST DATABASE]")
@@ -49,14 +49,13 @@ def push_config(args):
 
 	else:
 		node_create(match_node,node_object)
-		print("THE FOLLOWING CODE WILL BE PUSHED:")
-		print("")
-		print("{}".format(configs))
 		print("")
 		print("MATCHING NODES:")
 		print("{}".format(match_node))
 		print("")
 		print("{}".format(initialize.element))
+		print("")
+		print("{}".format(initialize.configuration))
 		print("")
 		print("{}".format(match_template))
 		print("")
