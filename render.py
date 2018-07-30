@@ -9,17 +9,17 @@ def render(template,node_object,flag):
 
 	env = Environment(loader=FileSystemLoader('.'))
 	baseline = env.get_template(template)
-	print("THE FOLLOWING CODE WILL BE PUSHED:")
+	print("! [THE FOLLOWING CODE WILL BE PUSHED:]")
 	print("")
 
 	for index in initialize.element:
 		f = open("config.conf", "w") 
 		config_list = []
 		config = baseline.render(nodes = node_object[index])
-		print ("[{}".format(node_object[index]['hostname']) + "#]")
+		print ("+ [{}".format(node_object[index]['hostname']) + "#]")
 		f.write(config) 
 		f.close 
-		print("+ {}".format(config))
+		print("{}".format(config))
 		print("")
 		if(flag):
 			f = open("config.conf", "r") 

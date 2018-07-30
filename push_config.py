@@ -19,6 +19,7 @@ def push_config(args):
 	template = args.file + ext
 	controller = 'push_config'
 	commands = initialize.configuration
+	flag = True
 	
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
@@ -45,7 +46,7 @@ def push_config(args):
 		print("")
 
 	else:
-		render(template,node_object)
+		render(template,node_object,flag)
 		node_create(match_node,node_object)
 		print("")
 		print("MATCHING NODES:")
