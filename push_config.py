@@ -9,7 +9,6 @@ from processdb import process_templates
 from search import search_node
 from search import search_template
 from render_config import render_config
-from parse_commands import parse_commands
 from node_create import node_create
 from multithread import multithread_engine
 import initialize
@@ -19,6 +18,8 @@ def push_config(args):
 	ext = '.jinja2'
 	template = args.file + ext
 	controller = 'push_config'
+	commands = initialize.configuration
+	flag = True
 	
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
@@ -34,10 +35,7 @@ def push_config(args):
 	### TO SEE IF THERE IS A TEMPLATE FOR THE SPECIFIC PLATFORM AND TYPE.
 	match_template = search_template(template,match_node,node_template,node_object)
 
-	configs = render_config(template,node_object)
-
 	### THIS WILL PARSE OUT THE GENERATED CONFIGS FROM THE *.JINJA2 FILE TO A LIST
-	commands = initialize.configuration
 
 	if(len(match_node) == 0):
 		print("+ [NO MATCHING NODES AGAINST DATABASE]")
@@ -48,6 +46,7 @@ def push_config(args):
 		print("")
 
 	else:
+		render_config(template,node_object,flag)
 		node_create(match_node,node_object)
 		print("")
 		print("MATCHING NODES:")
