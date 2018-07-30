@@ -1,33 +1,49 @@
-### THIS MODULE RENDERS THE TEMPLATES FROM THE JINJA2 FILES
-### AND PACKAGES THEM INTO A LIST OF LISTS. THIS IS STORED IN THE 
-### GLOBAL VARIABLE CALL INITIALIZE.CONFIGURATION.
+### THIS MODULE CONTROLS THE PUSHING OF THE TEMPLATES.
+### NODE_OBJECT IS A LIST OF DICTIONARY COMPILED BY THE 
+### PROCESSDB MODULE. IT PROCESSES THE INFORMATION FROM THE
+### NODES.YAML FILE AND STORES IT INTO A LIST OF DICTIONARY.
 
-from jinja2 import Environment, FileSystemLoader
+from lib.objects.basenode import BaseNode
+from processdb import process_nodes
+from processdb import process_templates
+from search import search_node
+from search import search_template
+from render import render
+from node_create import node_create
+from multithread import multithread_engine
 import initialize
 
-def render_config(template,node_object,flag):
+def render_config(args):
 
-	env = Environment(loader=FileSystemLoader('.'))
-	baseline = env.get_template(template)
-	print("THE FOLLOWING CODE WILL BE PUSHED:")
-
-	for index in initialize.element:
-		f = open("config.conf", "w") 
-		config_list = []
-		config = baseline.render(nodes = node_object[index])
-		print ("{}".format(node_object[index]['hostname']) + "#")
-		f.write(config) 
-		f.close 
-		print("{}".format(config))
-		if(flag):
-			f = open("config.conf", "r") 
-			init_config = f.readlines()
+	ext = '.jinja2'
+	template = args.file + ext
+	controller = 'push_config'
+	commands = initialize.configuration
+	flag = False 
 	
-			for config_line in init_config:
-				strip_config = config_line.strip('\n')
-				config_list.append(strip_config)		
-	
-			initialize.configuration.append(config_list)
+	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
+	node_object = process_nodes()
 
-	return None
+	### NODE_TEMPLATE IS A LIST OF ALL THE TEMPLATES BASED ON PLATFORMS AND DEVICE TYPE
+	node_template = process_templates()
 
+	### MATCH_NODE IS A LIST OF NODES THAT MATCHES THE ARGUEMENTS PASSED IN BY USER
+	match_node = search_node(args,node_object)
+
+	### MATCH_TEMPLATE IS A LIST OF 'MATCH' AND/OR 'NO MATCH' IT WILL USE THE MATCH_NODE
+	### RESULT, RUN IT AGAINST THE NODE_OBJECT AND COMPARES IT WITH NODE_TEMPLATE DATABASE
+	### TO SEE IF THERE IS A TEMPLATE FOR THE SPECIFIC PLATFORM AND TYPE.
+	match_template = search_template(template,match_node,node_template,node_object)
+
+	### THIS WILL PARSE OUT THE GENERATED CONFIGS FROM THE *.JINJA2 FILE TO A LIST
+
+	if(len(match_node) == 0):
+		print("+ [NO MATCHING NODES AGAINST DATABASE]")
+		print("")
+
+	elif('NO MATCH' in match_template):
+		print("+ [NO MATCHING TEMPLATE AGAINST DATABASE]")
+		print("")
+
+	else:
+		render(template,node_object,flag)

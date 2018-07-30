@@ -8,7 +8,7 @@ from processdb import process_nodes
 from processdb import process_templates
 from search import search_node
 from search import search_template
-from render_config import render_config
+from render import render
 from node_create import node_create
 from multithread import multithread_engine
 import initialize
@@ -19,7 +19,6 @@ def push_config(args):
 	template = args.file + ext
 	controller = 'push_config'
 	commands = initialize.configuration
-	flag = True
 	
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
@@ -46,7 +45,7 @@ def push_config(args):
 		print("")
 
 	else:
-		render_config(template,node_object,flag)
+		render(template,node_object)
 		node_create(match_node,node_object)
 		print("")
 		print("MATCHING NODES:")
