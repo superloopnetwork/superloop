@@ -10,8 +10,13 @@ def multithread_engine(object,redirect,commands):
 	start_time = datetime.datetime.now()
 	index = 0
 
+	if(redirect == 'push_config'):
+		arguments = commands[index]
+	if(redirect == 'show_command'):
+		arguments = commands
+
 	for i in object:
-		my_thread = threading.Thread(target=getattr(object[index],redirect) , args=(commands[index],))
+		my_thread = threading.Thread(target=getattr(object[index],redirect) , args=(arguments,))
 		my_thread.start()
 
 		index = index + 1
