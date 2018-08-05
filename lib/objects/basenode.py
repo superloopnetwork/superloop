@@ -55,6 +55,7 @@ class BaseNode(object):
 
 	def push_config(self,commands):
 
+		print("THESE ARE THE COMMANDS FED IN PUSH_CONFIG: {}".format(commands))
 		self.connect()
 		print('#' * 86)
 		output = self.net_connect.enable()
@@ -71,4 +72,14 @@ class BaseNode(object):
 		print("")
 		print ("{}".format(output))
 		print("")
+		self.net_connect.disconnect()
+
+	def get_config(self,command):
+
+		command = 'show running-config'
+		f = open("/backup-configs/{}".format(self.hostname) + ".conf", "w")
+		self.connect()
+		output = self.net_connect.send_command_expect("show running-config")
+		f.write(output)
+		f.close()
 		self.net_connect.disconnect()

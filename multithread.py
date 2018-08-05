@@ -10,12 +10,12 @@ def multithread_engine(object,redirect,commands):
 	start_time = datetime.datetime.now()
 	index = 0
 
-	if(redirect == 'push_config'):
-		arguments = commands[index]
-	if(redirect == 'show_command'):
-		arguments = commands
-
 	for i in object:
+#		print("THESE ARE THE COMMANDS FED FROM MULTITHREAD: {}".format(commands[index]))
+		if(redirect == 'push_config'):
+			arguments = commands[index]
+		elif(redirect == 'show_command' or redirect == 'get_config'):
+			arguments = commands
 		my_thread = threading.Thread(target=getattr(object[index],redirect) , args=(arguments,))
 		my_thread.start()
 

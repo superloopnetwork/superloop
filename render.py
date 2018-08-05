@@ -13,7 +13,7 @@ def render(template,node_object,flag):
 	print("")
 
 	for index in initialize.element:
-		f = open("config.conf", "w") 
+		f = open("/rendered-configs/config.conf", "w") 
 		config_list = []
 		config = baseline.render(nodes = node_object[index])
 		print ("+ [{}".format(node_object[index]['hostname']) + "#]")
@@ -22,7 +22,7 @@ def render(template,node_object,flag):
 		print("{}".format(config))
 		print("")
 		if(flag):
-			f = open("config.conf", "r") 
+			f = open("/rendered-configs/config.conf", "r") 
 			init_config = f.readlines()
 		
 			for config_line in init_config:

@@ -7,19 +7,16 @@ from lib.objects.basenode import BaseNode
 from processdb import process_nodes
 from processdb import process_templates
 from search import search_node
-from search import search_template 
-from render import render
+from search import search_template
+from render_audit import render_audit
 from node_create import node_create
 from multithread import multithread_engine
 import initialize
 
-def render_config(args):
+def audit_diff(args):
 
 	ext = '.jinja2'
 	template = args.file + ext
-	controller = 'push_config'
-	commands = initialize.configuration
-	flag = False 
 	
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
@@ -46,4 +43,29 @@ def render_config(args):
 		print("")
 
 	else:
-		render(template,node_object,flag)
+		node_create(match_node,node_object)
+		render_audit(template,node_object)
+		print("")
+		print("MATCHING NODES:")
+		print("{}".format(match_node))
+		print("")
+		print("{}".format(initialize.element))
+		print("")
+		print("{}".format(initialize.configuration))
+		print("")
+		print("{}".format(match_template))
+		print("")
+		print("{}".format(node_object))
+		print("")
+		print("{}".format(node_template))
+		print("")
+		proceed = raw_input("PROCEED? [Y/N]: ")
+	
+		if(proceed == 'y' or proceed == 'Y'):
+			print("PUSHING CODE...")
+			multithread_engine(initialize.ntw_device,controller,commands)
+	
+		elif(proceed == 'n' or proceed == 'N'):
+			print("ABORT...")
+	
+	#   print("pushing config to host: %s" % args.node)
