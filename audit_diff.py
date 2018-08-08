@@ -59,6 +59,8 @@ def audit_diff(args):
 		print("")
 		print("{}".format(node_template))
 		print("")
+#		print("{}".format(node_auditfilter))
+		print("")
 		proceed = raw_input("PROCEED? [Y/N]: ")
 	
 		if(proceed == 'y' or proceed == 'Y'):

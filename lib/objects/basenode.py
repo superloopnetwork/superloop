@@ -55,7 +55,6 @@ class BaseNode(object):
 
 	def push_config(self,commands):
 
-		print("THESE ARE THE COMMANDS FED IN PUSH_CONFIG: {}".format(commands))
 		self.connect()
 		print('#' * 86)
 		output = self.net_connect.enable()

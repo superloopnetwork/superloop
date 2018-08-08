@@ -28,11 +28,11 @@ def extract_nodes(node_object):
 
     for node in node_object:
 
-        hostname = node_object[index]['hostname']
+		hostname = node_object[index]['hostname']
 
-        node_list.append(hostname)
+		node_list.append(hostname)
 
-        index = index + 1
+		index = index + 1
 
     return node_list	
 
@@ -44,16 +44,30 @@ def search_template(template,match_node,node_template,node_object):
 	for node in match_node:
 		for node_obj in node_object:
 			if(node in node_obj['hostname']):
+
+				### INDEX GETS THE POSITION IN THE LIST AND APPENDS IT TO THE GLOBAL VARIABLE ELEMENT
 				index = node_object.index(node_obj)
 				initialize.element.append(index)
+
+				### TYPE GETS THE TYPE OF DEVICE AND APPENDS IT TO THE GLOBAL VARIABLE TYPE
+				type = node_object[index]['type']
+				initialize.type.append(type)
 				for node_temp in node_template:
 					if(node_obj['platform'] == node_temp['platform'] and node_obj['type'] == node_temp['type']):
-						if(template in node_temp['templates']):
+						if(node_temp['type'] == 'firewall'):
+							directory = '/templates/cisco/ios/firewall/'
+						elif(node_temp['type'] == 'router'):
+							directory = '/templates/cisco/ios/router/'
+						elif(node_temp['type'] == 'switch'):
+							directory = '/templates/cisco/ios/switch/'
+
+						file = directory + template
+						if(file in node_temp['templates']):
 							search_result.append("MATCH")	
 						else:
 							print("! [NO ASSOCIATING TEMPLATE {}".format(template) + " FOR NODE {}]".format(node))
 							search_result.append("NO MATCH")
-							
+								
 					else:
 						continue	
 			else:

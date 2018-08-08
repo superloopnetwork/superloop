@@ -56,16 +56,5 @@ def render_audit(template,node_object):
 
 		### COMPARING EACH ELEMENT IN RENDERED_CONFIG AGAINST BACKUP_CONFIG(RUNNING CONFIG OF DEVICE)
 		### KEEPING TRACK OF IT'S INDEX POINT IN BACKUP_CONFIG AND IT'S WHITESPACES
-#		for rendered in initialize.rendered_config:
-#			if(rendered in initialize.backup_config):        
-#				index = backup_config.index(rendered)
-#				whitespace = (len(backup_config[index])-len(backup_config[index].lstrip()))
-#						
-#			else:
-#				
-#
-#			expected_index = index + 1
-				
 
 	return None
-

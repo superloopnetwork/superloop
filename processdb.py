@@ -17,3 +17,4 @@ def process_templates():
 		template_object = yaml.load(yaml_file)
 
 	return template_object
+
