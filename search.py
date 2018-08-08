@@ -10,6 +10,7 @@
 
 import re
 import initialize
+from directory import get_directory
 
 def search_node(args,node_object):
 
@@ -54,13 +55,9 @@ def search_template(template,match_node,node_template,node_object):
 				initialize.type.append(type)
 				for node_temp in node_template:
 					if(node_obj['platform'] == node_temp['platform'] and node_obj['type'] == node_temp['type']):
-						if(node_temp['type'] == 'firewall'):
-							directory = '/templates/cisco/ios/firewall/'
-						elif(node_temp['type'] == 'router'):
-							directory = '/templates/cisco/ios/router/'
-						elif(node_temp['type'] == 'switch'):
-							directory = '/templates/cisco/ios/switch/'
 
+						### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE TYPE
+						directory = get_directory(node_temp['type'])
 						file = directory + template
 						if(file in node_temp['templates']):
 							search_result.append("MATCH")	

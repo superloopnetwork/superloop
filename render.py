@@ -3,6 +3,7 @@
 ### GLOBAL VARIABLE CALL INITIALIZE.CONFIGURATION.
 
 from jinja2 import Environment, FileSystemLoader
+from directory import get_directory
 import initialize
 import re
 
@@ -10,17 +11,7 @@ def render(template,node_object,flag):
 
 	for device_type in initialize.type:
 
-		if(device_type == 'firewall'):
-			directory = '/templates/cisco/ios/firewall/'
-
-		if(device_type == 'router'):
-			directory = '/templates/cisco/ios/router/'
-
-		if(device_type == 'switch'):
-			directory = '/templates/cisco/ios/switch/'
-
-		print initialize.type
-		print directory + template
+		directory = get_directory(device_type)
 		env = Environment(loader=FileSystemLoader("{}".format(directory)))
 		baseline = env.get_template(template)
 		print("! [THE FOLLOWING CODE WILL BE PUSHED:]")
