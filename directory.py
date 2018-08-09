@@ -1,12 +1,12 @@
 ### THIS MODULE WILL RETURN THE CORRESPONDING DIRECTORY FOR THE APPLICATION TO OPEN THE FILE
 
-def get_directory(device_type):
+def get_directory(platform,os,device_type):
 
-	if(device_type == 'firewall'):
+	if(platform == 'cisco' and os == 'ios' and device_type == 'firewall'):
 		directory = '/templates/cisco/ios/firewall/'
-	elif(device_type == 'router'):
+	elif(platform == 'cisco' and os == 'ios'and device_type == 'router'):
 		directory = '/templates/cisco/ios/router/'
-	elif(device_type == 'switch'):
+	elif(platform == 'cisco' and os == 'ios'and device_type == 'switch'):
 		directory = '/templates/cisco/ios/switch/'
 
 	return directory

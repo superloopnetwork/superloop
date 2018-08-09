@@ -9,15 +9,13 @@ import re
 
 def render(template,node_object,flag):
 
-	for device_type in initialize.type:
-
-		directory = get_directory(device_type)
-		env = Environment(loader=FileSystemLoader("{}".format(directory)))
-		baseline = env.get_template(template)
 		print("! [THE FOLLOWING CODE WILL BE PUSHED:]")
 		print("")
 	
 		for index in initialize.element:
+			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+			env = Environment(loader=FileSystemLoader("{}".format(directory)))
+			baseline = env.get_template(template)
 			f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "w") 
 			config_list = []
 			config = baseline.render(nodes = node_object[index])
