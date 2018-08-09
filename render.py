@@ -13,6 +13,8 @@ def render(template,node_object,flag):
 		print("")
 	
 		for index in initialize.element:
+
+			### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE PLATFORM, OS AND TYPE
 			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 			env = Environment(loader=FileSystemLoader("{}".format(directory)))
 			baseline = env.get_template(template)

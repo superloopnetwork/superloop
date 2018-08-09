@@ -54,9 +54,9 @@ def search_template(template,match_node,node_template,node_object):
 				type = node_object[index]['type']
 				initialize.type.append(type)
 				for node_temp in node_template:
-					if(node_obj['platform'] == node_temp['platform'] and node_obj['type'] == node_temp['type']):
+					if(node_obj['platform'] == node_temp['platform'] and node_obj['os'] == node_temp['os'] and node_obj['type'] == node_temp['type']):
 
-						### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE TYPE
+						### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE PLATFORM, OS AND TYPE
 						directory = get_directory(node_obj['platform'],node_obj['os'],node_obj['type'])
 						file = directory + template
 						if(file in node_temp['templates']):
