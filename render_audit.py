@@ -29,10 +29,14 @@ def render_audit(template,node_object):
 
 	### FILTERED_BACKUP_CONFIG IS THE FINAL LIST OF ALL THE AUDIT FILTERS THAT MATCHES THE LINES IN BACKUP_CONFIG. THESE ENTRIES INCLUDE DEPTHS/DEEP CONFIGS
 	filtered_backup_config = []
+
+	### NODE_CONFIG IS THE FINALIZED CONFIG TO PUSH TO THE NODE FOR REMEDIATION
+	node_configs = []
+
 	print("[+] [GATHERING RUNNING-CONFIG. STANDBY...]")
 	multithread_engine(initialize.ntw_device,controller,command)
 	print("[!] [DONE]")
-
+	print("")
 	for index in initialize.element:
 		directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 		env = Environment(loader=FileSystemLoader("{}".format(directory)))
@@ -46,7 +50,6 @@ def render_audit(template,node_object):
 		f.write(config) 
 		f.close 
 #		print("{}".format(config))
-#		print("")
 
 		### OPEN RENDERED CONFIG FILE AND STORE IN RENDERED_CONFIG AS A LIST
 		f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
@@ -94,7 +97,7 @@ def render_audit(template,node_object):
 			if(config in backup_config):
 				index_position = backup_config.index(config)
 				index_list.append(index_position)
-#			print("{}".format(index_list))
+#			print("THIS IS THE INDEX_LIST: {}".format(index_list))
 
 		### EXTRACTING ALL RELAVENT CONFIGS PERTAINING TO THE ONES THAT WERE PICKED UP THROUGH FILTERING
 		for index_pos in index_list:
@@ -114,8 +117,17 @@ def render_audit(template,node_object):
 #		print("THIS IS THE FILTERED BACKUP CONFIG: {}".format(filtered_backup_config))		
 				
 		### COMPARING EACH ELEMENT IN RENDERED_CONFIG AGAINST FILTERED_BACKUP_CONFIG(RUNNING CONFIG OF DEVICE)
-		minus_commands = list(set(filtered_backup_config) - set(rendered_config))
-		plus_commands = list(set(rendered_config) - set(filtered_backup_config))
+#		minus_commands = list(set(filtered_backup_config) - set(rendered_config))
+#		plus_commands = list(set(rendered_config) - set(filtered_backup_config))
+
+		filtered_set = set(filtered_backup_config)
+		rendered_set = set(rendered_config)
+
+		minus_commands = [x for x in filtered_backup_config if x not in rendered_set]
+		plus_commands = [x for x in rendered_config if x not in filtered_set]
+
+#		print("minus_commands: {}".format(minus_commands))
+#		print("plus_commands: {}".format(plus_commands))
 
 #		print("THIS IS MINUS_COMMANDS: {}".format(minus_commands))
 		print("")
@@ -124,19 +136,35 @@ def render_audit(template,node_object):
 
 		if(len(minus_commands) == 0 and len(plus_commands) == 0):
 			print("{}{} (none)".format(directory,template))
+			print("")
 		else:
 			for minus in minus_commands:
 				print("- {}".format(minus))
-				for anchor in index_list:
-					initialize.configuration.append("no {}".format(anchor))
-					
+
 			for plus in plus_commands:
 				print("+ {}".format(plus))
+
+			### IF ENVIRONMENT HAVE MULTI VENDORS, INSERT CONDITIONAL STATEMENTS TO ACCOMODATE:
+			### if(node_object[index]['platform'] == 'cisco' and node_object[index]['os'] == 'ios'):
+			### THIS STEP WILL NEGATE ALL ALL ANCHORED COMMANDS
+			if(node_object[index]['platform'] == 'cisco' and node_object[index]['os'] == 'ios'):
+				for anchor in index_list:
+					node_configs.append("no {}".format(anchor))
+
+				### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE
+				for config in rendered_config:
+					node_configs.append(config)
+
+				### INITIALIZE.COFIGURATION APPENDS ALL THE REMEDIATED CONFIGS AND PREPARES IT FOR PUSH
+				initialize.configuration.append(node_configs)
+
+#			print("FINAL REMEDIATION CONFIGS: {}".format(initialize.configuration))
 	
 		del rendered_config[:]		
 	 	del backup_config[:]
 		del index_list[:]
 		del filter_config[:]
 		del filtered_backup_config[:]
+		del node_configs[:]
 
 	return None
