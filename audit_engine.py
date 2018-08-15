@@ -10,7 +10,7 @@ from directory import get_directory
 import re
 import initialize
 
-def render_audit(template,node_object):
+def audit_engine(template,node_object):
 
 	controller = 'get_config'
 	command = ''

@@ -8,7 +8,7 @@ from processdb import process_nodes
 from processdb import process_templates
 from search import search_node
 from search import search_template
-from render_audit import render_audit
+from audit_engine import audit_engine
 from node_create import node_create
 from multithread import multithread_engine
 import initialize
@@ -44,21 +44,21 @@ def audit_diff(args):
 
 	else:
 		node_create(match_node,node_object)
-		render_audit(template,node_object)
-		print("")
-		print("MATCHING NODES:")
-		print("{}".format(match_node))
-		print("")
-		print("{}".format(initialize.element))
-		print("")
-		print("{}".format(initialize.configuration))
-		print("")
-		print("{}".format(match_template))
-		print("")
-		print("{}".format(node_object))
-		print("")
-		print("{}".format(node_template))
-		print("")
+		audit_engine(template,node_object)
+#		print("")
+#		print("MATCHING NODES:")
+#		print("{}".format(match_node))
+#		print("")
+#		print("{}".format(initialize.element))
+#		print("")
+#		print("{}".format(initialize.configuration))
+#		print("")
+#		print("{}".format(match_template))
+#		print("")
+#		print("{}".format(node_object))
+#		print("")
+#		print("{}".format(node_template))
+#		print("")
 #		print("{}".format(node_auditfilter))
 		print("")
 		proceed = raw_input("PROCEED? [Y/N]: ")
