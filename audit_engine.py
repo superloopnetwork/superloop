@@ -109,10 +109,10 @@ def audit_engine(template,node_object):
 
 			filtered_backup_config.append(backup_config[index_pos])
 			whitespace = (len(backup_config[next_element])-len(backup_config[next_element].lstrip()))
-#			print("{}".format(backup_config[index_pos]))
+			print("{}".format(backup_config[index_pos]))
 			while(whitespace != 0):
 				filtered_backup_config.append(backup_config[next_element])
-#				print("{}".format(backup_config[next_element]))
+				print("{}".format(backup_config[next_element]))
 				next_element = next_element + 1
 				whitespace = (len(backup_config[next_element])-len(backup_config[next_element].lstrip()))
 			

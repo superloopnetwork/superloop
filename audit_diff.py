@@ -17,6 +17,8 @@ def audit_diff(args):
 
 	ext = '.jinja2'
 	template = args.file + ext
+	controller = 'audit_diff'
+	commands = initialize.configuration	
 	
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
@@ -45,29 +47,20 @@ def audit_diff(args):
 	else:
 		node_create(match_node,node_object)
 		audit_engine(template,node_object)
-#		print("")
-#		print("MATCHING NODES:")
-#		print("{}".format(match_node))
-#		print("")
-#		print("{}".format(initialize.element))
-#		print("")
-#		print("{}".format(initialize.configuration))
-#		print("")
-#		print("{}".format(match_template))
-#		print("")
-#		print("{}".format(node_object))
-#		print("")
-#		print("{}".format(node_template))
-#		print("")
-#		print("{}".format(node_auditfilter))
-		print("")
-		proceed = raw_input("PROCEED? [Y/N]: ")
+#		print ("THESE ARE THE COMMANDS: {}".format(commands))
+
+		if(len(initialize.configuration) == 0):
+			pass	
+
+		else:
+			proceed = raw_input("PROCEED TO REMEDIATE? [Y/N]: ")
+
+
+			if(proceed == 'y' or proceed == 'Y'):
+				print("PUSHING CODE...")
+				multithread_engine(initialize.ntw_device,controller,commands)
+		
+			elif(proceed == 'n' or proceed == 'N'):
+				print("ABORT...")
 	
-		if(proceed == 'y' or proceed == 'Y'):
-			print("PUSHING CODE...")
-			multithread_engine(initialize.ntw_device,controller,commands)
-	
-		elif(proceed == 'n' or proceed == 'N'):
-			print("ABORT...")
-	
-	#   print("pushing config to host: %s" % args.node)
+#	   print("pushing config to host: %s" % args.node)
