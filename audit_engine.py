@@ -25,18 +25,21 @@ def audit_engine(template,node_object):
 	AUDIT_FILTER_RE = r"\[.*\]"
 
 	### FILTER_CONFIG IS A LIST OF COLLECTION OF ALL THE AUDIT FILTERS THAT MATCHED THE LINES IN BACKUP_CONFIG. THESE ENTRIES DO NOT CONTAIN DEPTHS/DEEP CONFIGS
-	filter_config = []
+	filtered_config = []
 
 	### FILTERED_BACKUP_CONFIG IS THE FINAL LIST OF ALL THE AUDIT FILTERS THAT MATCHES THE LINES IN BACKUP_CONFIG. THESE ENTRIES INCLUDE DEPTHS/DEEP CONFIGS
 	filtered_backup_config = []
 
-	### NODE_CONFIG IS THE FINALIZED CONFIG TO PUSH TO THE NODE FOR REMEDIATION
-	node_configs = []
+	### NODE_INDEX KEEPS TRACK OF THE INDEX IN INITIALIZE.NTW_DEVICE. IF REMEDIATION IS NOT REQUIRED (CONFIGS MATCHES TEMPLATE), THEN THE NODE IS POPPED OFF
+	### INITIALIZE.NTW_DEVICE AND NOTHING IS CHANGED ON THAT DEVICE
+	node_index = 0 
 
 	print("[+] [GATHERING RUNNING-CONFIG. STANDBY...]")
 	multithread_engine(initialize.ntw_device,controller,command)
 	print("[!] [DONE]")
 	print("")
+
+	### THIS FOR LOOP WILL LOOP THROUGH ALL THE MATCHED ELEMENTS FROM THE USER SEARCH AND AUDIT ON THE GIVEN TEMPLATE
 	for index in initialize.element:
 		directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 		env = Environment(loader=FileSystemLoader("{}".format(directory)))
@@ -88,12 +91,12 @@ def audit_engine(template,node_object):
 			filters = list(filter(query.match,backup_config))
 
 			for aud_filter in filters:
-				filter_config.append(aud_filter)
+				filtered_config.append(aud_filter)
 
-#		print("THIS IS THE FILTER_CONFIG: {}".format(filter_config))
+#		print("THIS IS THE FILTER_CONFIG: {}".format(filtered_config))
 
 		### GETTING THE INDEXES OF FILTER_CONFIG FROM BACKUP_CONFIG
-		for config in filter_config:
+		for config in filtered_config:
 			if(config in backup_config):
 				index_position = backup_config.index(config)
 				index_list.append(index_position)
@@ -123,8 +126,14 @@ def audit_engine(template,node_object):
 		filtered_set = set(filtered_backup_config)
 		rendered_set = set(rendered_config)
 
+		### MINUS_COMMANDS IS A LIST OF COMMANDS THAT EXIST ON THE NODE THAT SHOULDN'T BE WHEN COMPARED AGAINST THE TEMPLATE
 		minus_commands = [x for x in filtered_backup_config if x not in rendered_set]
+
+		### PLUS_COMMAND IS A LIST OF COMMAND THAT DOESN'T EXIST ON THE NODE THAT SHOULD BE WHEN COMPARED AGAINST THE TEMPLATE
 		plus_commands = [x for x in rendered_config if x not in filtered_set]
+
+		### NODE_CONFIG IS THE FINALIZED CONFIG TO PUSH TO THE NODE FOR REMEDIATION
+		node_configs = []
 
 #		print("minus_commands: {}".format(minus_commands))
 #		print("plus_commands: {}".format(plus_commands))
@@ -136,19 +145,19 @@ def audit_engine(template,node_object):
 
 		if(len(minus_commands) == 0 and len(plus_commands) == 0):
 			print("{}{} (none)".format(directory,template))
+			initialize.ntw_device.pop(node_index)
 			print("")
-		else:
+		elif(len(minus_commands) >= 1):
+
 			for minus in minus_commands:
 				print("- {}".format(minus))
-
-			for plus in plus_commands:
-				print("+ {}".format(plus))
 
 			### IF ENVIRONMENT HAVE MULTI VENDORS, INSERT CONDITIONAL STATEMENTS TO ACCOMODATE:
 			### if(node_object[index]['platform'] == 'cisco' and node_object[index]['os'] == 'ios'):
 			### THIS STEP WILL NEGATE ALL ALL ANCHORED COMMANDS
 			if(node_object[index]['platform'] == 'cisco' and node_object[index]['os'] == 'ios'):
-				for anchor in index_list:
+
+				for anchor in filtered_config:
 					node_configs.append("no {}".format(anchor))
 
 				### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE
@@ -157,14 +166,28 @@ def audit_engine(template,node_object):
 
 				### INITIALIZE.COFIGURATION APPENDS ALL THE REMEDIATED CONFIGS AND PREPARES IT FOR PUSH
 				initialize.configuration.append(node_configs)
+				node_index = node_index + 1
+		elif(len(plus_commands) >= 1):
+
+			for plus in plus_commands:
+				print("+ {}".format(plus))
+
+			if(node_object[index]['platform'] == 'cisco' and node_object[index]['os'] == 'ios'):
+		
+				### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE
+				for config in rendered_config:
+					node_configs.append(config)
+
+				### INITIALIZE.COFIGURATION APPENDS ALL THE REMEDIATED CONFIGS AND PREPARES IT FOR PUSH
+				initialize.configuration.append(node_configs)
+				node_index = node_index + 1
 
 #			print("FINAL REMEDIATION CONFIGS: {}".format(initialize.configuration))
-	
 		del rendered_config[:]		
 	 	del backup_config[:]
 		del index_list[:]
-		del filter_config[:]
+		del filtered_config[:]
 		del filtered_backup_config[:]
-		del node_configs[:]
+#		del node_configs[:]
 
 	return None
