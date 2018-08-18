@@ -12,7 +12,7 @@ def multithread_engine(object,redirect,commands):
 
 	for i in object:
 #		print("THESE ARE THE COMMANDS FED FROM MULTITHREAD: {}".format(commands[index]))
-		if(redirect == 'push_config'):
+		if(redirect == 'push_config' or redirect == 'audit_diff'):
 			arguments = commands[index]
 		elif(redirect == 'show_command' or redirect == 'get_config'):
 			arguments = commands

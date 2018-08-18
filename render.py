@@ -9,7 +9,7 @@ import re
 
 def render(template,node_object,flag):
 
-		print("! [THE FOLLOWING CODE WILL BE PUSHED:]")
+		print("[!] [THE FOLLOWING CODE WILL BE PUSHED:]")
 		print("")
 	
 		for index in initialize.element:
@@ -25,7 +25,6 @@ def render(template,node_object,flag):
 			f.write(config) 
 			f.close 
 			print("{}".format(config))
-			print("")
 			if(flag):
 				f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "r") 
 				init_config = f.readlines()
@@ -37,14 +36,3 @@ def render(template,node_object,flag):
 				initialize.configuration.append(config_list)
 	
 		return None
-
-def audit_filter(template):
-
-	AUDIT_FILTER_RE = r"\[.*\]"
-
-	f = open("/template/{}".format(template), "r")
-
-	auditfilter = f.read()
-	audit_list = eval(re.findall(AUDIT_FILTER_RE, auditfilter)[0])	
-
-	return audit_list
