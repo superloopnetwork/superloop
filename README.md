@@ -72,7 +72,7 @@ root@jumpbox:~/superloop# cat templates.yaml
   - /templates/cisco/ios/switch/hostname.jinja2
   - /templates/cisco/ios/switch/dhcp.jinja2
 ```
-I've structured the hierarchy based on vendor, os and the type. You should do the same in order to keep your templates orderly.
+I've structured the hierarchy based on vendor, os and the type. You should do the same in order to keep your templates orderly. Whatever hierarchy you choose, you will need to update/modify in the directory.py file to reflect.
 
 Let's look at a simple jinja2 template as an example.
 ```
