@@ -1,5 +1,5 @@
 # superloop
-Insprired by a wide array of toolsets used and developed by Facebook for network automation, I have attempted to create my own version.
+Insprired by a wide array of toolsets used and developed by Facebook from an army of network automation engineers (geniuses), I have attempted to create my own version.
 
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There consist of two YAML files that require management:
 
@@ -80,3 +80,23 @@ root@jumpbox:~/superloop# cat /templates/cisco/ios/switch/hostname.jinja2
 {# audit_filter = ['hostname.*'] #}
 hostname {{ nodes.hostname }}
 
+Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'hostname'
+
+You may also have a template that consist of one or several levels deep like so.
+
+root@jumpbox:~/superloop# cat /templates/cisco/ios/switch/dhcp.jinja2
+{# audit_filter = ['ip dhcp.*'] #}
+
+ip dhcp excluded-address 10.50.80.1
+ip dhcp ping packets 5
+!
+ip dhcp pool DATA
+ network 10.10.20.0 255.255.255.0
+ default-router 10.10.20.1 
+ dns-server 8.8.8.8 
+ 
+ Look at 'ip dhcp pool DATA'. The next line of config has an indentation. superloop is inteligent enough to render the remaining 3 lines of configs.
+ 
+ Now that I have explained the basic operations, onto the fun stuff!
+ 
+ First and foremost, I would like to introduce to you the 'auditdiff' function. This function was designed to compare against the jinja2 templates with your running-configurations to see if they are according to standards. You could imagine if you had hundreds, if not thousands of devices to maintain, standardization would be a nightmare without some form of auditing/automation tool. To paint you an example, say one day, little Amit decides to make a manual configuration change on a switch. No one knows about it or what he did. superloop would be able to dive into the device and see if there were any discrepencies againist the template as that is considered the trusted source. If superloop senses a difference, it will provide you the option of remediating. Whatever little Amit decided to configure would essentially be removed without hassel. This works the other way around as well. If a device does not have the standard rendered configs from the template, superloop will determine they are missing and you may proceed to push the rendered configs.
