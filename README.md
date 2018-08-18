@@ -95,7 +95,7 @@ ip dhcp pool DATA
  default-router 10.10.20.1 
  dns-server 8.8.8.8 
 ``` 
- Look at 'ip dhcp pool DATA'. The next line of config has an indentation. superloop is inteligent enough to render the remaining 3 lines of configs.
+ Look at 'ip dhcp pool DATA'. The next line of config has an indentation. superloop is inteligent enough to render the remaining 3 lines of configs without having to include it into the audit_filter.
  
  Now that I have explained the basic operations, onto the fun stuff!
  
