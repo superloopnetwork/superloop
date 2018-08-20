@@ -8,23 +8,22 @@ from processdb import process_nodes
 from processdb import process_templates
 from search import search_node
 from search import search_template
-from render import render
+from auditdiff_engine import auditdiff_engine
 from node_create import node_create
 from multithread import multithread_engine
 import initialize
 
-def push_config(args):
+def auditdiff(args):
 
 	ext = '.jinja2'
-	controller = 'push_config'
+	controller = 'audit_diff'
 	auditcreeper = False
-	commands = initialize.configuration
-	flag = True
+	commands = initialize.configuration	
 	template = args.file + ext
 	template_list = []
-	template_list.append(template)	
 	argument_node = args.node
-
+	
+	template_list.append(template)
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
 
@@ -50,29 +49,24 @@ def push_config(args):
 		print("")
 
 	else:
-		render(template,node_object,flag)
 		node_create(match_node,node_object)
-#		print("MATCHING NODES:")
-#		print("{}".format(match_node))
-#		print("")
-#		print("{}".format(initialize.element))
-#		print("")
-#		print("{}".format(initialize.configuration))
-#		print("")
-#		print("{}".format(match_template))
-#		print("")
-#		print("{}".format(node_object))
-#		print("")
-#		print("{}".format(node_template))
-		print("")
-		proceed = raw_input("PROCEED? [Y/N]: ")
-	
-		if(proceed == 'y' or proceed == 'Y'):
+		auditdiff_engine(template_list,node_object,auditcreeper)
+#		print ("THESE ARE THE COMMANDS: {}".format(commands))
+
+		if(len(initialize.configuration) == 0):
+			pass	
+
+		else:
 			print("")
-			print("PUSHING CODE...")
-			multithread_engine(initialize.ntw_device,controller,commands)
+			proceed = raw_input("PROCEED TO REMEDIATE? [Y/N]: ")
+
+			if(proceed == 'y' or proceed == 'Y'):
+				print("")
+				print("PUSHING CODE...")
+				multithread_engine(initialize.ntw_device,controller,commands)
+		
+			elif(proceed == 'n' or proceed == 'N'):
+				print("")
+				print("ABORT...")
 	
-		elif(proceed == 'n' or proceed == 'N'):
-			print("ABORT...")
-	
-#		print("pushing config to host: %s" % args.node)
+#	   print("pushing config to host: %s" % args.node)

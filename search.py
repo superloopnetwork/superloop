@@ -8,15 +8,17 @@
 ### NODE_OBJECT TO DETERMINE THE PLATFORM AND TYPE AND COMPARE WITH THE NODE_TEMPLATE
 ### DATABASE TO MATCH. ONCE MATCHED, IT WILL CHECK TO VERIFY AN EXISTING TEMPLATE IS AVAILABLE
 
+### NODE_ELEMENT APPENDS THE POSITION INDEX OF THE MATCH RESULTS (MATCH_NODE) AGAINST THE OVERALL NODE_OBJECTS
+
 import re
 import initialize
 from directory import get_directory
 
-def search_node(args,node_object):
+def search_node(argument_node,node_object):
 
 	node_list = extract_nodes(node_object)
 
-	query = re.compile(args.node)
+	query = re.compile(argument_node)
 
 	search_result = list(filter(query.match,node_list))
 
@@ -37,7 +39,7 @@ def extract_nodes(node_object):
 
     return node_list	
 
-def search_template(template,match_node,node_template,node_object):
+def search_template(template_list,match_node,node_template,node_object,auditcreeper):
 
 	search_result = []
 	index = 0
@@ -51,19 +53,29 @@ def search_template(template,match_node,node_template,node_object):
 				initialize.element.append(index)
 
 				### TYPE GETS THE TYPE OF DEVICE AND APPENDS IT TO THE GLOBAL VARIABLE TYPE
-				type = node_object[index]['type']
-				initialize.type.append(type)
+#				type = node_object[index]['type']
+#				initialize.type.append(type)
 				for node_temp in node_template:
 					if(node_obj['platform'] == node_temp['platform'] and node_obj['os'] == node_temp['os'] and node_obj['type'] == node_temp['type']):
 
-						### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE PLATFORM, OS AND TYPE
-						directory = get_directory(node_obj['platform'],node_obj['os'],node_obj['type'])
-						file = directory + template
-						if(file in node_temp['templates']):
-							search_result.append("MATCH")	
+#						print("NODE_TEMP: {}".format(node_temp['templates']))
+						if(auditcreeper):
+							template_node_list = []
+#							print("THIS IS NODE_TEMP['TEMPLATE'] for NODE {}".format(node) + ": {}".format(node_temp['templates'],))
+							for template_dir_name in node_temp['templates']:
+								template_name = template_dir_name.split('/')[-1]
+								template_node_list.append(template_name)
+							template_list.append(template_node_list)
+#							print("THIS IS THE TEMPLATE_LIST IN SEARCH.PY : {}".format(template_list))
 						else:
-							print("! [NO ASSOCIATING TEMPLATE {}".format(template) + " FOR NODE {}]".format(node))
-							search_result.append("NO MATCH")
+							### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE PLATFORM, OS AND TYPE
+							directory = get_directory(node_obj['platform'],node_obj['os'],node_obj['type'])
+							file = directory + template_list[0]
+							if(file in node_temp['templates']):
+								search_result.append("MATCH")	
+							else:
+								print("! [NO ASSOCIATING TEMPLATE {}".format(template_list[0]) + " FOR NODE {}]".format(node))
+								search_result.append("NO MATCH")
 								
 					else:
 						continue	

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from audit_diff import audit_diff
+from auditdiff import auditdiff
 from push_config import push_config
 from render_config import render_config
 from show_command import show_command
@@ -18,7 +18,7 @@ def main():
 	subparsers = parser.add_subparsers()
 	
 	push_cmd = subparsers.add_parser('auditdiff')
-	push_cmd.set_defaults(func=audit_diff)
+	push_cmd.set_defaults(func=auditdiff)
 	push_cmd.add_argument('-n','--node', dest='node')
 	push_cmd.add_argument('-f','--file', dest='file')
 

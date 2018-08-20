@@ -5,7 +5,7 @@ def variables():
 	global ntw_device
 
 	### TYPE IS A LIST OF THE MATCH NODE'S TYPE (FIREWALL, SWITCH OR ROUTER)
-	global type
+	global templates 
 
 	### ELEMENT IS A LIST OF THE INDEXES OF ALL THE MATCHED NODES
 	global element
@@ -20,7 +20,7 @@ def variables():
 	global backup_config
 
 	ntw_device = []
-	type = []
+	templates = []
 	element = []
 	configuration = []
 	rendered_config = []
