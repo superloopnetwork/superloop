@@ -15,12 +15,13 @@ def show_command(args):
 
 	controller = 'show_command'
 	command = args.command
+	argument_node = args.node
 
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
 
 	### MATCH_NODE IS A LIST OF NODES THAT MATCHES THE ARGUEMENTS PASSED IN BY USER
-	match_node = search_node(args,node_object)
+	match_node = search_node(argument_node,node_object)
 
 	if(len(match_node) == 0):
 		print("+ [NO MATCHING NODES AGAINST DATABASE]")
