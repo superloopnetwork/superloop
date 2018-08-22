@@ -23,13 +23,17 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 	### NODE_INDEX KEEPS TRACK OF THE INDEX IN INITIALIZE.NTW_DEVICE. IF REMEDIATION IS NOT REQUIRED (CONFIGS MATCHES TEMPLATE), THEN THE NODE IS POPPED OFF
 	### INITIALIZE.NTW_DEVICE AND NOTHING IS CHANGED ON THAT DEVICE
 	node_index = 0 
+	index_template = 0
 
 	### AUDIT_FILTER_RE IS THE REGULAR EXPRESSION TO FILTER OUT THE AUDIT FILTER IN EVERY TEMPLATE
 	AUDIT_FILTER_RE = r"\[.*\]"
 
+
+	template_list_copy = template_list
+
 	if(auditcreeper):
-		#template_list = template_list[0]
-		print("THIS IS THE TEMPLATE_LIST: {}".format(template_list))
+		template_list = template_list_copy[0]
+#		print("TEMPLATE_LIST : {} ; TEMPLATE_LIST_COPY : {}".format(template_list,template_list_copy))
 
 	print("[+] [GATHERING RUNNING-CONFIG. STANDBY...]")
 	multithread_engine(initialize.ntw_device,controller,command)
@@ -39,9 +43,13 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 	### THIS FOR LOOP WILL LOOP THROUGH ALL THE MATCHED ELEMENTS FROM THE USER SEARCH AND AUDIT ON THE GIVEN TEMPLATE
 	for index in initialize.element:
 
-		for template in template_list:	
+		node_configs = []
+		ntw_device_pop = True 
 
-			print("THIS IS THE TEMPLATE: {}".format(template))
+		for template in template_list:
+
+#			print("HOST: {} ; TEMPLATE: {}".format(node_object[index]['hostname'],template))
+#			print("THIS IS FOR TEMPLATE: {}".format(template))
 
 			### INDEX_LIST IS A LIST OF ALL THE POSITIONS COLLECTED FROM INDEX_POSITION VARIABLE
 			index_list = []
@@ -144,7 +152,6 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 			plus_commands = [x for x in rendered_config if x not in filtered_set]
 
 			### NODE_CONFIG IS THE FINALIZED CONFIG TO PUSH TO THE NODE FOR REMEDIATION
-			node_configs = []
 
 #			print("minus_commands: {}".format(minus_commands))
 #			print("plus_commands: {}".format(plus_commands))
@@ -153,11 +160,15 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 			print("")
 #			print("THIS IS PLUS_COMMANDS: {}".format(plus_commands))
 
-
-			if(len(minus_commands) == 0 and len(plus_commands) == 0):
+			if(len(minus_commands) == 0 and len(plus_commands) == 0 and auditcreeper == False):
 				print("{}{} (none)".format(directory,template))
 				initialize.ntw_device.pop(node_index)
 				print("")
+
+			if(len(minus_commands) == 0 and len(plus_commands) == 0 and auditcreeper == True):
+				print("{}{} (none)".format(directory,template))
+				print("")
+
 			elif(len(minus_commands) >= 1):
 
 				for minus in minus_commands:
@@ -174,9 +185,11 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE
 					for config in rendered_config:
 						node_configs.append(config)
+						ntw_device_pop = False
 
 					### INITIALIZE.COFIGURATION APPENDS ALL THE REMEDIATED CONFIGS AND PREPARES IT FOR PUSH
-					initialize.configuration.append(node_configs)
+					if(auditcreeper == False):
+						initialize.configuration.append(node_configs)
 					node_index = node_index + 1
 			elif(len(plus_commands) >= 1):
 
@@ -188,17 +201,33 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE
 					for config in rendered_config:
 						node_configs.append(config)
+						ntw_device_pop = False
 
 					### INITIALIZE.COFIGURATION APPENDS ALL THE REMEDIATED CONFIGS AND PREPARES IT FOR PUSH
-					initialize.configuration.append(node_configs)
+					if(auditcreeper == False):
+						initialize.configuration.append(node_configs)
 					node_index = node_index + 1
-			if(auditcreeper):
-				template_list.pop(0)
+
+
+		if(auditcreeper):
+#			print("LENGTH OF LIST IS : {}".format(len(template_list_copy)))
+			initialize.configuration.append(node_configs)
+			if(ntw_device_pop == True):
+				initialize.ntw_device.pop(node_index)
+				initialize.configuration.pop(node_index)
+			if(len(template_list_copy) != 1):
+				template_list_copy.pop(0)
+				template_list = template_list_copy[0]
+#			print("TEMPLATE_LIST : {} ; TEMPLATE_LIST_COPY : {}".format(template_list,template_list_copy))
 #				print("FINAL REMEDIATION CONFIGS: {}".format(initialize.configuration))
 #			del rendered_config[:]		
 #		 	del backup_config[:]
 #			del index_list[:]
 #			del filtered_config[:]
 #			del filtered_backup_config[:]
+
+
+	print("INITIALIZE.NTW_DEVICE: {}".format(initialize.ntw_device))
+	print("INITIALIZE.CONFIGURATION : {}".format(initialize.configuration))
 
 	return None
