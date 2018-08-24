@@ -12,9 +12,9 @@ def multithread_engine(object,redirect,commands):
 
 	for i in object:
 #		print("THESE ARE THE COMMANDS FED FROM MULTITHREAD: {}".format(commands[index]))
-		if(redirect == 'push_config' or redirect == 'audit_diff'):
+		if(redirect == 'push_config'):
 			arguments = commands[index]
-		elif(redirect == 'show_command' or redirect == 'get_config'):
+		elif(redirect == 'onscreen' or redirect == 'get_config'):
 			arguments = commands
 		my_thread = threading.Thread(target=getattr(object[index],redirect) , args=(arguments,))
 		my_thread.start()
@@ -27,6 +27,5 @@ def multithread_engine(object,redirect,commands):
 #			print(some_thread)
 			some_thread.join()
 
-	print("\n")
-	print("TIME ELAPSED: {}\n".format(datetime.datetime.now() - start_time))
+	print('TIME ELAPSED: {}\n'.format(datetime.datetime.now() - start_time))
 

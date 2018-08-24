@@ -16,7 +16,7 @@ import initialize
 def auditdiff(args):
 
 	ext = '.jinja2'
-	controller = 'audit_diff'
+	controller = 'push_config'
 	auditcreeper = False
 	commands = initialize.configuration	
 	template = args.file + ext

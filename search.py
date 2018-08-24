@@ -66,6 +66,7 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 								template_name = template_dir_name.split('/')[-1]
 								template_node_list.append(template_name)
 							template_list.append(template_node_list)
+#							print("THIS IS THE TEMPLATE_NODE_LIST FOR HOST {} : {}".format(node,template_node_list))
 #							print("THIS IS THE TEMPLATE_LIST IN SEARCH.PY : {}".format(template_list))
 						else:
 							### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE PLATFORM, OS AND TYPE
@@ -82,6 +83,7 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 			else:
 				continue	
 
+#	print("TEMPLATE_LIST IN SEARCH.PY: {}".format(template_list))
 	return search_result 
 
 def node_element(match_node,node_object):

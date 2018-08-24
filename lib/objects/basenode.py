@@ -73,7 +73,7 @@ class BaseNode(object):
 		print('#' * 86)
 		self.net_connect.disconnect()
 
-	def show_command(self,command):
+	def onscreen(self,command):
 
 		self.connect()
 		output = self.net_connect.send_command(command)
