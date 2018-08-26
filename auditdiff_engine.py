@@ -171,7 +171,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 			elif(len(minus_commands) >= 1):
 			
 				if(diff):	
-					print("{}{} (none)".format(directory,template))
+					print("{}{}".format(directory,template))
 					diff = False
 
 				for minus in minus_commands:
@@ -197,7 +197,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 			elif(len(plus_commands) >= 1):
 
 				if(diff):	
-					print("{}{} (none)".format(directory,template))
+					print("{}{}".format(directory,template))
 					diff = False
 
 				for plus in plus_commands:

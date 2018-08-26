@@ -5,18 +5,17 @@ import threading
 import time
 import datetime
 
-def multithread_engine(object,redirect,commands):
+def multithread_engine(ntw_object,redirect,commands):
 	
 	start_time = datetime.datetime.now()
 	index = 0
 
-	for i in object:
-#		print("THESE ARE THE COMMANDS FED FROM MULTITHREAD: {}".format(commands[index]))
+	for i in ntw_object:
 		if(redirect == 'push_config'):
 			arguments = commands[index]
 		elif(redirect == 'onscreen' or redirect == 'get_config'):
 			arguments = commands
-		my_thread = threading.Thread(target=getattr(object[index],redirect) , args=(arguments,))
+		my_thread = threading.Thread(target=getattr(ntw_object[index],redirect) , args=(arguments,))
 		my_thread.start()
 
 		index = index + 1

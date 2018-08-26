@@ -53,16 +53,6 @@ class BaseNode(object):
 
 		return device_attribute
 
-	def audit_diff(self,commands):
-
-		self.connect()
-		print('#' * 86)
-		output = self.net_connect.enable()
-		output = self.net_connect.send_config_set(commands)
-		print ("{}".format(output))
-		print('#' * 86)
-		self.net_connect.disconnect()
-
 	def push_config(self,commands):
 
 		self.connect()

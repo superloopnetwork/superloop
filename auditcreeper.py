@@ -14,12 +14,13 @@ def auditcreeper():
 	initialize.variables()
 	controller = 'push_config'
 	commands = initialize.configuration
-	auditcreeper = True
+	auditcreeper_flag = True
 	argument_node = '.+'
 	template_list = []
 	
 
 	os.system('clear')
+
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
 	
@@ -32,13 +33,12 @@ def auditcreeper():
 	### MATCH_TEMPLATE IS A LIST OF 'MATCH' AND/OR 'NO MATCH' IT WILL USE THE MATCH_NODE
 	### RESULT, RUN IT AGAINST THE NODE_OBJECT AND COMPARES IT WITH NODE_TEMPLATE DATABASE
 	### TO SEE IF THERE IS A TEMPLATE FOR THE SPECIFIC PLATFORM AND TYPE.
-	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper)
+	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper_flag)
 	node_create(match_node,node_object)
-	auditdiff_engine(template_list,node_object,auditcreeper)
+	auditdiff_engine(template_list,node_object,auditcreeper_flag)
 	multithread_engine(initialize.ntw_device,controller,commands)
+	threading.Timer(5.0, auditcreeper).start()
 
-#	threading.Timer(60.0, audit_creeper).start()
-#	print "Hello, World!"
 
 if __name__ == "__main__":
 	auditcreeper()
