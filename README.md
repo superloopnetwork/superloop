@@ -2,7 +2,7 @@
 Insprired by a wide array of toolsets (unamed) used and developed by a leading tech company for network automation, I have attempted to create my own version.
 
 Prerequisite:
-  1. netmiko - A huge thanks to Kirk Byers for developing the library netmiko!
+  1. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
 
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There consist of two YAML files that require management:
 
@@ -114,10 +114,10 @@ For the sake of this example, I've narrowed down to 5 second to speed things up 
 
 ![superloop auditcreeper demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_auditcreeper.gif)
 
-In this demo, only one device gets remediated. If there are multiple devices that require remediation, superloop handles remediation concurrently - meaning, superloop connects to all devices in parallel via multithreading.
+In this demo, only one device gets remediated. A config was removed and a random config was added. superloop detected the two discrepancy and proceeded to remediate. If there are multiple devices that require remediation, superloop handles remediation concurrently - meaning, superloop connects to all devices in parallel via multithreading.
 
 The next features I developed was 'push' and 'onscreen'. 'push' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. The 'onscreen' features allow you to execute a command on the device(s) without requiring you to log in.
 
-In the example below, the screen on the right is using 'push' and the screen on the right is using 'onscreen' to check the changes after.
+In the example below, the screen on the right is using 'push' and the screen on the left is using 'onscreen' to check the changes after.
 
 ![superloop push and onscreen demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_push_onscreen_demo.gif)
