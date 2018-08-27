@@ -114,7 +114,14 @@ For the sake of this example, I've narrowed down to 5 second to speed things up 
 
 ![superloop auditcreeper demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_auditcreeper.gif)
 
-In this demo, only one device gets remediated. A config was removed and a random config was added. superloop detected the two discrepancy and proceeded to remediate. If there are multiple devices that require remediation, superloop handles remediation concurrently - meaning, superloop connects to all devices in parallel via multithreading.
+In this demo, only one device gets remediated. A config was removed and a random config was added. superloop detected the discrepancies and proceeded to remediate:
+
+```
+- ip dhcp excluded-address 10.50.40.4
++ ip dhcp excluded-address 10.10.10.10
+```
+
+If there are multiple devices that require remediation, superloop handles remediation concurrently - meaning, superloop connects to all devices in parallel via multithreading.
 
 The next features I developed was 'push' and 'onscreen'. 'push' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. The 'onscreen' features allow you to execute a command on the device(s) without requiring you to log in.
 
