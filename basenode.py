@@ -7,14 +7,14 @@ import re
 
 class BaseNode(object):
 
-	def __init__(self,ip,hostname,username,password,vendor,type):
+	def __init__(self,ip,hostname,username,password,platform,type):
 		self.ip = ip
    		self.hostname = hostname
    		self.username = username
    		self.password = password
-   		self.vendor = vendor
+   		self.platform = platform
    		self.type = type
-		self.password_decrypt= base64.b64decode(self.password)
+		self.password_decrypt = base64.b64decode(self.password)
 
 	def connect(self):
 		if (self.type == 'switch'):
@@ -53,3 +53,32 @@ class BaseNode(object):
 
 		return device_attribute
 
+	def push_config(self,commands):
+
+		self.connect()
+		print('#' * 86)
+		output = self.net_connect.enable()
+		output = self.net_connect.send_config_set(commands)
+		print ("{}".format(output))
+		print('#' * 86)
+		self.net_connect.disconnect()
+
+	def onscreen(self,command):
+
+		self.connect()
+		output = self.net_connect.send_command(command)
+		print("[{}]#".format(self.hostname))
+		print("")
+		print ("{}".format(output))
+		print("")
+		self.net_connect.disconnect()
+
+	def get_config(self,command):
+
+		command = 'show running-config'
+		f = open("/backup-configs/{}".format(self.hostname) + ".conf", "w")
+		self.connect()
+		output = self.net_connect.send_command_expect("show running-config")
+		f.write(output)
+		f.close()
+		self.net_connect.disconnect()
