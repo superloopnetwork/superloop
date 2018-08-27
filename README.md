@@ -109,4 +109,6 @@ By leveraging the power of the auditdiff engine, I'm able to extend it's functio
 
 * 14400 seconds = 4 hours
 
-For this example, I've narrowed down to 5 second to speed things up so you'll have an idea of how it works.
+For the sake of this example, I've narrowed down to 5 second to speed things up so you'll have an idea of how it works.
+
+
