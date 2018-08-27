@@ -1,8 +1,6 @@
 # superloop
 Insprired by a wide array of toolsets (unamed) used and developed by a leading tech company for network automation, I have attempted to create my own version.
 
-Instructions will be provided on how to use the tools.
-=======
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There consist of two YAML files that require management:
 
   1. nodes.yaml
