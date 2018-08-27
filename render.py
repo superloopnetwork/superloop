@@ -19,7 +19,7 @@ def render(template,node_object,flag):
 			env = Environment(loader=FileSystemLoader("{}".format(directory)))
 			baseline = env.get_template(template)
 			f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "w") 
-			config_list = []
+			config_list_whitespace = []
 			config = baseline.render(nodes = node_object[index])
 			print ("+ [{}".format(node_object[index]['hostname']) + "#]")
 			f.write(config) 
@@ -31,7 +31,10 @@ def render(template,node_object,flag):
 			
 				for config_line in init_config:
 					strip_config = config_line.strip('\n')
-					config_list.append(strip_config)		
+					config_list_whitespace.append(strip_config)		
+
+				### CONFIG_LIST REMOVES THE WHITESPACES
+				config_list = list(filter(None, config_list_whitespace))
 			
 				initialize.configuration.append(config_list)
 	
