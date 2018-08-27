@@ -111,4 +111,6 @@ By leveraging the power of the auditdiff engine, I'm able to extend it's functio
 
 For the sake of this example, I've narrowed down to 5 second to speed things up so you'll have an idea of how it works.
 
+![superloop auditcreeper demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_auditcreeper.gif)
 
+In this demo, only one device gets remediated. If there are multi devices that require remediation, superloop handles remediation concurrently - meaning, superloop connects to all devices in parallel via multithreading.
