@@ -120,6 +120,18 @@ In this demo, only one device gets remediated. A config was removed and a random
 - ip dhcp excluded-address 10.50.40.4
 + ip dhcp excluded-address 10.10.10.10
 ```
+* - indicating a config(s) was removed
+  + indicating a config(s) was added
+  
+If there are no discrepancies for a specific template, you should see something like this:
+
+```
+/templates/cisco/ios/switch/service.jinja2 (none)
+/templates/cisco/ios/switch/hostname.jinja2 (none)
+/templates/cisco/ios/switch/dhcp.jinja2 (none)
+/templates/cisco/ios/switch/snmp.jinja2 (none)
+```
+* (none) indicating no discrepancies.
 
 If there are multiple devices that require remediation, superloop handles remediation concurrently - meaning, superloop connects to all devices in parallel via multithreading.
 
