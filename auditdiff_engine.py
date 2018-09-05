@@ -5,6 +5,7 @@
 ### INITIALIZE.CONFIGURATION.
 
 from jinja2 import Environment, FileSystemLoader
+from collections import Counter
 from multithread import multithread_engine
 from directory import get_directory
 import re
@@ -128,6 +129,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 				next_element = index_pos + 1
 
 				filtered_backup_config.append(backup_config[index_pos])
+				### CHECKS THE NEXT LINE OF CODE FOR THE WHITESPACE COUNT
 				whitespace = (len(backup_config[next_element])-len(backup_config[next_element].lstrip()))
 #				print("{}".format(backup_config[index_pos]))
 				while(whitespace != 0):
@@ -143,15 +145,24 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 #			minus_commands = list(set(filtered_backup_config) - set(rendered_config))
 #			plus_commands = list(set(rendered_config) - set(filtered_backup_config))
 
-			filtered_set = set(filtered_backup_config)
-			rendered_set = set(rendered_config)
+#			filtered_set = set(filtered_backup_config)
+#			rendered_set = set(rendered_config)
 
 			### MINUS_COMMANDS IS A LIST OF COMMANDS THAT EXIST ON THE NODE THAT SHOULDN'T BE WHEN COMPARED AGAINST THE TEMPLATE
-			minus_commands = [x for x in filtered_backup_config if x not in rendered_set]
+#			minus_commands = [x for x in filtered_backup_config if x not in rendered_set]
 
 			### PLUS_COMMAND IS A LIST OF COMMAND THAT DOESN'T EXIST ON THE NODE THAT SHOULD BE WHEN COMPARED AGAINST THE TEMPLATE
-			plus_commands = [x for x in rendered_config if x not in filtered_set]
+#			plus_commands = [x for x in rendered_config if x not in filtered_set]
+			filtered_set = Counter(filtered_backup_config)
+			rendered_set = Counter(rendered_config)
 
+			minus_commands_counter = filtered_set - rendered_set
+			plus_commands_counter = rendered_set - filtered_set
+
+			minus_commands = list(minus_commands_counter.elements())
+			plus_commands = list(plus_commands_counter.elements())
+
+			
 			### NODE_CONFIG IS THE FINALIZED CONFIG TO PUSH TO THE NODE FOR REMEDIATION
 
 #			print("minus_commands: {}".format(minus_commands))
@@ -177,7 +188,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 
 				if(len(minus_commands) >= 1):
 					for minus in minus_commands:
-						print("- {}".format(minus))
+ 						print("- {}".format(minus))
 
 				if(len(plus_commands) >= 1):
 					for plus in plus_commands:
