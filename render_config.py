@@ -17,7 +17,6 @@ def render_config(args):
 
 	ext = '.jinja2'
 	template = args.file + ext
-	controller = 'push_config'
 	auditcreeper = False
 	commands = initialize.configuration
 	flag = False 
