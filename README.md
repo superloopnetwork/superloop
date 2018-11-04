@@ -120,8 +120,8 @@ In this demo, only one device gets remediated. A config was removed and a random
 - ip dhcp excluded-address 10.50.40.4
 + ip dhcp excluded-address 10.10.10.10
 ```
-* - indicating a config(s) was removed
-  + indicating a config(s) was added
+'-' indicating a config(s) was removed
+'+' indicating a config(s) was added
   
 If there are no discrepancies for a specific template, you should see something like this:
 
