@@ -21,6 +21,7 @@ def search_node(argument_node,node_object):
 	query = re.compile(argument_node)
 
 	search_result = list(filter(query.match,node_list))
+	print search_result
 
 	return search_result
 
@@ -43,6 +44,7 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 
 	search_result = []
 	index = 0
+	element = 0
 
 	for node in match_node:
 		for node_obj in node_object:
@@ -71,11 +73,11 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 						else:
 							### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE PLATFORM, OS AND TYPE
 							directory = get_directory(node_obj['platform'],node_obj['os'],node_obj['type'])
-							file = directory + template_list[0]
+							file = directory + template_list[element]
 							if(file in node_temp['templates']):
 								search_result.append("MATCH")	
 							else:
-								print("! [NO ASSOCIATING TEMPLATE {}".format(template_list[0]) + " FOR NODE {}]".format(node))
+								print("! [NO ASSOCIATING TEMPLATE {}".format(template_list[element]) + " FOR NODE {}]".format(node))
 								search_result.append("NO MATCH")
 								
 					else:
