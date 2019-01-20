@@ -21,7 +21,6 @@ def search_node(argument_node,node_object):
 	query = re.compile(argument_node)
 
 	search_result = list(filter(query.match,node_list))
-	print search_result
 
 	return search_result
 
