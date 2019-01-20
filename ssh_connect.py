@@ -23,7 +23,6 @@ def ssh_connect(args):
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
 
-
 	### MATCH_NODE IS A LIST OF NODES THAT MATCHES THE ARGUEMENTS PASSED IN BY USER
 	match_node = search_node(argument_node,node_object)
 

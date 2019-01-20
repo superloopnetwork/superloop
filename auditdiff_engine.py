@@ -29,7 +29,6 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 	### AUDIT_FILTER_RE IS THE REGULAR EXPRESSION TO FILTER OUT THE AUDIT FILTER IN EVERY TEMPLATE
 	AUDIT_FILTER_RE = r"\[.*\]"
 
-
 	template_list_copy = template_list
 
 	if(auditcreeper):
@@ -82,6 +81,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 
 			for config_line in init_config:
 				strip_config = config_line.strip('\n')
+				### THIS WILL REMOVE ANY LINES THAT ARE EMPTY OR HAS A '!' MARK
 				if(strip_config == '' or strip_config == "!"):
 					continue	
 				else:
@@ -114,6 +114,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 				for aud_filter in filters:
 					filtered_config.append(aud_filter)
 
+			### UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #			print("THIS IS THE FILTERED_CONFIG: {}".format(filtered_config))
 
 			### GETTING THE INDEXES OF FILTER_CONFIG FROM BACKUP_CONFIG
@@ -174,17 +175,20 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 
 			if(len(minus_commands) == 0 and len(plus_commands) == 0 and auditcreeper == False):
 				print("{}{} (none)".format(directory,template))
+				print
 				initialize.ntw_device.pop(node_index)
 
 			if(len(minus_commands) == 0 and len(plus_commands) == 0 and auditcreeper == True):
 				print("{}{} (none)".format(directory,template))
+				print
 
 			elif(len(minus_commands) >= 1 or len(plus_commands) >= 1):
 
 				### THIS WILL JUST PRINT THE HEADING OF THE TEMPLATE NAME SO YOU KNOW WHAT IS BEING CHANGED UNDER WHICH TEMPLATE
-#				if(diff):	
-#					print("{}{}".format(directory,template))
-#					diff = False
+				if(diff):	
+					print("{}{}".format(directory,template))
+					print
+					diff = False
 
 				if(len(minus_commands) >= 1):
 					for minus in minus_commands:

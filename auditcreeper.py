@@ -15,6 +15,7 @@ def auditcreeper():
 	controller = 'push_config'
 	commands = initialize.configuration
 	auditcreeper_flag = True
+	### AUGUMENT_NODE WILL MATCH EVERY NODES IN THE LIST OF NODE_OBJECT
 	argument_node = '.+'
 	template_list = []
 	
