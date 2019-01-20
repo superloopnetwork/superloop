@@ -17,26 +17,32 @@ def auditdiff(args):
 
 	ext = '.jinja2'
 	controller = 'push_config'
-	auditcreeper = False
+	auditcreeper_flag = False
 	commands = initialize.configuration	
-	template = args.file + ext
-	template_list = []
 	argument_node = args.node
-	
-	template_list.append(template)
+	if(args.file is None):
+#		print("ARGS.FILE IS NONE")
+		template_list = []
+		auditcreeper_flag = True
+	else:
+#		print("ARGS.FILE IS VALID")
+		template = args.file + ext
+		template_list = []
+		template_list.append(template)
+
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
 
 	### NODE_TEMPLATE IS A LIST OF ALL THE TEMPLATES BASED ON PLATFORMS AND DEVICE TYPE
 	node_template = process_templates()
-
+#	print node_template
 	### MATCH_NODE IS A LIST OF NODES THAT MATCHES THE ARGUEMENTS PASSED IN BY USER
 	match_node = search_node(argument_node,node_object)
 
 	### MATCH_TEMPLATE IS A LIST OF 'MATCH' AND/OR 'NO MATCH' IT WILL USE THE MATCH_NODE
 	### RESULT, RUN IT AGAINST THE NODE_OBJECT AND COMPARES IT WITH NODE_TEMPLATE DATABASE
 	### TO SEE IF THERE IS A TEMPLATE FOR THE SPECIFIC PLATFORM AND TYPE.
-	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper)
+	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper_flag)
 
 	### THIS WILL PARSE OUT THE GENERATED CONFIGS FROM THE *.JINJA2 FILE TO A LIST
 
@@ -45,12 +51,12 @@ def auditdiff(args):
 		print("")
 
 	elif('NO MATCH' in match_template):
-		print("+ [NO MATCHING TEMPLATE AGAINST DATABASE]")
+#		print("+ [NO MATCHING TEMPLATE AGAINST DATABASE]")
 		print("")
 
 	else:
 		node_create(match_node,node_object)
-		auditdiff_engine(template_list,node_object,auditcreeper)
+		auditdiff_engine(template_list,node_object,auditcreeper_flag)
 #		print ("THESE ARE THE COMMANDS: {}".format(commands))
 
 		if(len(initialize.configuration) == 0):
