@@ -46,7 +46,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 		ntw_device_pop = True 
 		diff = True
 		print("")
-		print ("[{}".format(node_object[index]['hostname']) + "#]")
+		print ("[+] [{}".format(node_object[index]['hostname']) + "#]")
 
 		for template in template_list:
 
@@ -98,6 +98,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 				strip_config = config_line.strip('\n')
 				backup_config.append(strip_config)	
 
+			###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #			print ("BACKUP CONFIG: {}".format(backup_config))
 			
 			### THIS WILL OPEN THE JINJA2 TEMPLATE AND PARSE OUT THE AUDIT_FILTER SECTION VIA REGULAR EXPRESSION
@@ -107,6 +108,8 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 			audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
 
 			### FILTER OUT THE BACKUP_CONFIGS WITH THE AUDIT_FILTER
+			### THIS WILL TAKE EACH ELEMENT FROM THE AUDIT_FILTER LIST AND SEARCH FOR THE MATCHED LINES IN BACKUP_CONFIG
+			### MATCHED ENTRIES ARE THEN APPENDED TO FILTER_CONFIG VARIABLE AS A LIST
 			for audit in audit_filter:
 				query = re.compile(audit)
 				filters = list(filter(query.match,backup_config))
@@ -117,7 +120,8 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 			### UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #			print("THIS IS THE FILTERED_CONFIG: {}".format(filtered_config))
 
-			### GETTING THE INDEXES OF FILTER_CONFIG FROM BACKUP_CONFIG
+			### GETTING THE INDEXES OF FILTER_CONFIG FROM BACKUP_CONFIG IN ORDER TO KNOW THE REFERENCE POINT IS
+			### THIS WILL ALLOW A STARTING POINT AND AN ENDING POINT
 			for config in filtered_config:
 				if(config in backup_config):
 					index_position = backup_config.index(config)

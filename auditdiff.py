@@ -47,7 +47,7 @@ def auditdiff(args):
 	### THIS WILL PARSE OUT THE GENERATED CONFIGS FROM THE *.JINJA2 FILE TO A LIST
 
 	if(len(match_node) == 0):
-		print("+ [NO MATCHING NODES AGAINST DATABASE]")
+		print("[+] [NO MATCHING NODES AGAINST DATABASE]")
 		print("")
 
 	elif('NO MATCH' in match_template):
