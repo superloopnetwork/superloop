@@ -12,7 +12,9 @@ from search import search_template
 from render import render
 from node_create import node_create
 from multithread import multithread_engine
+from port import get_port
 import initialize
+import subprocess
 
 def ssh_connect(args):
 
@@ -27,19 +29,31 @@ def ssh_connect(args):
 	match_node = search_node(argument_node,node_object)
 
 	if(len(match_node) == 0):
-		print("+ [NO MATCHING NODES AGAINST DATABASE]")
+		print("[+] [NO MATCHING NODES AGAINST DATABASE]")
 		print("")
 
 	else:
 		node_element(match_node,node_object)
 		id = 1
-
+		ssh_id = 0
 		print("ID\tname\t\t\taddress\t\tplatform")
 
 		for index in initialize.element:
 
 			print("{}\t{}\t{}\t{}".format(id,node_object[index]['hostname'],node_object[index]['ip'],node_object[index]['platform']))
-
 			id = id + 1
 
-		print("")
+		port = get_port(node_object,initialize.element,ssh_id)
+
+		if(len(initialize.element) == 1):
+			print ("{}".format(node_object[initialize.element[ssh_id]]))
+			subprocess.call("ssh admin@{} -p {}".format(node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
+
+		else:
+			ssh_id = int(raw_input("Enter ID to SSH to: "))
+
+			### NODE_ID WILL MAP TO THE CORRECT NODE_OBJECT HOST TO CONNECT TO.
+			ssh_id = ssh_id - 1
+
+			port = get_port(node_object,initialize.element,ssh_id)
+			subprocess.call("ssh admin@{} -p {}".format(node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
