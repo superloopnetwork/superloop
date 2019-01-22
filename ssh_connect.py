@@ -46,7 +46,6 @@ def ssh_connect(args):
 		port = get_port(node_object,initialize.element,ssh_id)
 
 		if(len(initialize.element) == 1):
-			print ("{}".format(node_object[initialize.element[ssh_id]]))
 			subprocess.call("ssh admin@{} -p {}".format(node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
 
 		else:
