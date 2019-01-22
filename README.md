@@ -59,12 +59,12 @@ root@jumpbox:~/superloop# cat templates.yaml
   os: ios
   templates:
   - /templates/cisco/ios/firewall/snmp.jinja2
-  - /templates/cisco/ios/firewall/hostname.jinja2
+  - /templates/cisco/ios/firewall/base.jinja2
 - platform: cisco
   type: router 
   os: ios
   templates:
-  - /templates/cisco/ios/router/hostname.jinja2
+  - /templates/cisco/ios/router/base.jinja2
 - platform: cisco
   type: switch 
   os: ios
@@ -79,11 +79,14 @@ I've structured the hierarchy based on vendor, os and the type. You should do th
 
 Let's look at a simple jinja2 template as an example.
 ```
-root@jumpbox:~/superloop# cat /templates/cisco/ios/switch/hostname.jinja2 
+root@jumpbox:~/superloop# cat /templates/cisco/ios/switch/base.jinja2 
 {# audit_filter = ['hostname.*'] #}
 hostname {{ nodes.hostname }}
 ```
-Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'hostname'
+Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'hostname'. If you have additional lines that you want superloop to look at, simple append strings seperated by a comma like so... 
+```
+['hostname.*','service.*','username.*']
+```
 
 You may also have a template that consist of one or several levels deep like so.
 ```
@@ -135,8 +138,27 @@ If there are no discrepancies for a specific template, you should see something 
 
 If there are multiple devices that require remediation, superloop handles remediation concurrently - meaning, superloop connects to all devices in parallel via multithreading.
 
-The next features I developed was 'push' and 'onscreen'. 'push' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. The 'onscreen' features allow you to execute a command on the device(s) without requiring you to log in.
+The next set of features I developed was 'push' and 'onscreen'. 'push' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. The 'onscreen' features allow you to execute a command on the device(s) without requiring you to log in.
 
 In the example below, the screen on the right is using 'push' and the screen on the left is using 'onscreen' to check the changes after.
 
 ![superloop push and onscreen demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_push_onscreen_demo.gif)
+
+Users are now able to take advantage of the 'ssh' menu screen. This feature allows users to quickly search up a device via hostname (doesn't have to be a complete string) and establish a SSH session. It's a very powerful tool in the sense that it support regular expression to filter out certain desired hosts from a lare scale network.
+
+Here is an example of how you would use it:
+
+root@jumpbox:~/superloop# python superloop ssh -n core.*
+ID      name                    address         platform
+1       core-fw-superloop-toron 10.10.10.10     cisco
+2       core.sw.superloop.sfran 20.20.20.20     cisco
+3       core.rt.superloop.sjose 30.30.30.30     cisco
+Enter ID to SSH to: 
+
+* Notice the option '-n' to specify your search string.
+
+root@jumpbox:~/superloop# superloop ssh -n .*sfran
+ID      name                    address         platform
+1       core.sw.superloop.sfran 20.20.20.20     cisco
+
+If the search result returns one host, superloop automatically establishes a SSH session.
