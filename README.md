@@ -155,6 +155,12 @@ ID      name                    address         platform
 3       core.rt.superloop.sjose 30.30.30.30     cisco
 Enter ID to SSH to: 
 ```
+root@jumpbox:~/superloop# python superloop ssh -n core.*(fw|rt)
+ID      name                    address         platform
+1       core-fw-superloop-toron 10.10.10.10     cisco
+2       core.rt.superloop.sjose 30.30.30.30     cisco
+Enter ID to SSH to: 
+```
 * Notice the option '-n' to specify your search string.
 ```
 root@jumpbox:~/superloop# superloop ssh -n .*sfran
