@@ -4,7 +4,7 @@ Insprired by a wide array of toolsets (unamed) used and developed by a leading t
 Prerequisite:
   1. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
 
-Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There consist of two YAML files that require management:
+Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of two YAML files that require management:
 
   1. nodes.yaml
   2. templates.yaml
