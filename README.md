@@ -178,4 +178,5 @@ ID      name                    address         platform
 1       core.sw.superloop.sfran 20.20.20.20     cisco
 ```
 * Notice the option '-n' to specify your search string.
+
 If the search result returns one host, superloop automatically establishes a SSH session.
