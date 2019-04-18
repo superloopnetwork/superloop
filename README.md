@@ -172,10 +172,10 @@ ID      name                    address         platform
 2       core.rt.superloop.sjose 30.30.30.30     cisco
 Enter ID to SSH to: 
 ```
-* Notice the option '-n' to specify your search string.
 ```
 root@jumpbox:~/superloop# superloop ssh -n .*sfran
 ID      name                    address         platform
 1       core.sw.superloop.sfran 20.20.20.20     cisco
 ```
+* Notice the option '-n' to specify your search string.
 If the search result returns one host, superloop automatically establishes a SSH session.
