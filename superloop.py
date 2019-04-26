@@ -45,9 +45,9 @@ def main():
 	ssh_cmd.set_defaults(func=ssh_connect)
 	ssh_cmd.add_argument('-n','--node', dest='node')
 
-	hostadd_cmd = subparsers.add_parser('hostadd')
-	hostadd_cmd.set_defaults(func=hostadd)
-	hostadd.add_argument('-ip','--ip', dest='ip')
+#	hostadd_cmd = subparsers.add_parser('hostadd')
+#	hostadd_cmd.set_defaults(func=hostadd)
+#	hostadd.add_argument('-ip','--ip', dest='ip')
 
 	args = parser.parse_args()
 	args.func(args)
