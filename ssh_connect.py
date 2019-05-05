@@ -20,7 +20,7 @@ def ssh_connect(args):
 
 	auditcreeper = False
 	commands = initialize.configuration
-	argument_node = args.node
+	argument_node = args.hostname
 	
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
@@ -36,6 +36,7 @@ def ssh_connect(args):
 		node_element(match_node,node_object)
 		id = 1
 		ssh_id = 0
+
 		print("ID\tname\t\t\taddress\t\tplatform")
 
 		for index in initialize.element:

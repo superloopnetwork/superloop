@@ -36,6 +36,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 #		print("TEMPLATE_LIST : {} ; TEMPLATE_LIST_COPY : {}".format(template_list,template_list_copy))
 
 	print("[+] [GATHERING RUNNING-CONFIG. STANDBY...]")
+	print("")
 	multithread_engine(initialize.ntw_device,controller,command)
 	print("[!] [DONE]")
 

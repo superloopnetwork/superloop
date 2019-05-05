@@ -49,7 +49,7 @@ def main():
 
 	ssh_cmd = subparsers.add_parser('ssh')
 	ssh_cmd.set_defaults(func=ssh_connect)
-	ssh_cmd.add_argument('-n','--node', dest='node')
+	ssh_cmd.add_argument('hostname')
 
 	host_cmd= subparsers.add_parser('host')
 	host_subparsers = host_cmd.add_subparsers(dest='parser_host')
