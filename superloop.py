@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+# VARIABLES LIKE "--node" OR "--file" ARE HOW IT'S BEING READ WHEN PASSED IN.
+# args.node OR args.file IS HOW YOU REFER TO THE USER INPUT
 
 #from ssh import ssh
 from auditdiff import auditdiff
@@ -18,13 +19,18 @@ def main():
 	os.system('clear')
 	initialize.variables()
 
-	parser = argparse.ArgumentParser('superloop')
+	parser = argparse.ArgumentParser()
 	subparsers = parser.add_subparsers()
+
+	audit_cmd = subparsers.add_parser('audit')
+	audit_subparser = audit_cmd.add_subparsers(dest='parser_host')
+	audit_diff_cmd = audit_subparser.add_parser('diff')
+	audit_diff_cmd.set_defaults(func=auditdiff)
+	audit_diff_cmd.add_argument('-n','--node', dest='node')
+	audit_diff_cmd.add_argument('-f','--file', dest='file')
 
 	push_cmd = subparsers.add_parser('auditdiff')
 	push_cmd.set_defaults(func=auditdiff)
-	push_cmd.add_argument('-n','--node', dest='node')
-	push_cmd.add_argument('-f','--file', dest='file')
 
 	push_cmd = subparsers.add_parser('push')
 	push_cmd.set_defaults(func=push_config)
@@ -45,9 +51,12 @@ def main():
 	ssh_cmd.set_defaults(func=ssh_connect)
 	ssh_cmd.add_argument('-n','--node', dest='node')
 
-#	hostadd_cmd = subparsers.add_parser('hostadd')
-#	hostadd_cmd.set_defaults(func=hostadd)
-#	hostadd.add_argument('-ip','--ip', dest='ip')
+	host_cmd= subparsers.add_parser('host')
+	host_subparsers = host_cmd.add_subparsers(dest='parser_host')
+	host_add_cmd = host_subparsers.add_parser('add')
+	host_add_cmd.add_argument('ip')
+	host_remove_cmd = host_subparsers.add_parser('remove')
+	host_remove_cmd.add_argument('ip')
 
 	args = parser.parse_args()
 	args.func(args)
