@@ -8,7 +8,8 @@ from push_config import push_config
 from render_config import render_config
 from onscreen import onscreen 
 from ssh_connect import ssh_connect
-from hostadd import hostadd
+from modifydb import append
+from modifydb import remove 
 import argparse
 import os
 import initialize
@@ -54,9 +55,11 @@ def main():
 	host_cmd= subparsers.add_parser('host')
 	host_subparsers = host_cmd.add_subparsers(dest='parser_host')
 	host_add_cmd = host_subparsers.add_parser('add')
+	host_add_cmd.set_defaults(func=append)
 	host_add_cmd.add_argument('ip')
 	host_remove_cmd = host_subparsers.add_parser('remove')
-	host_remove_cmd.add_argument('ip')
+	host_remove_cmd.set_defaults(func=remove)
+	host_remove_cmd.add_argument('argument')
 
 	args = parser.parse_args()
 	args.func(args)
