@@ -190,4 +190,4 @@ root@jumpbox:~/staging/superloop#  cat encrypted.yaml
   password: cGFzc3dvcmQ= 
   snmp: cGFzc3dvcmQ=
 ```
-'username' and 'password' are the credentials for the node(s). 'snmp' is the community string to poll device infomation. The default snmp port it uses is UDP 161. This can be modified in the 'snmp.py' file under the varilable' SNMP_PORT = 161'
+'username' and 'password' are the credentials for the node(s). 'snmp' is the community string used to poll device infomation. The default snmp port it uses is UDP 161. This can be modified in the 'snmp.py' file under the varilable' SNMP_PORT = 161'
