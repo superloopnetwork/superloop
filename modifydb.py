@@ -36,6 +36,6 @@ def remove(args):
 	updated_database = yaml.dump(database,default_flow_style = False)
 	with open('nodes.yaml','w') as f:
 		f.write(updated_database)
-		print("[+] NEW NODE SUCCESSFULLY REMOVED FROM DATABASE")
+		print("[+] NODE SUCCESSFULLY REMOVED FROM DATABASE")
 	
 
