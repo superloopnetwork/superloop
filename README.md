@@ -107,7 +107,7 @@ Now that I have explained the basic operations, onto the fun stuff!
 
 ## superloop audit diff
 
-First and foremost, I would like to introduce to you the 'audit diff' function. This function was designed to compare against the jinja2 templates with your running-configurations to see if they are according to standards. You could imagine if you had hundreds, if not thousands of devices to maintain, standardization would be a nightmare without some form of auditing/automation tool. To paint you an example, say one day, little Amit decides to make an unauthorized manual configuration change on a switch. No one knows about it or what he did. superloop would be able to dive into the device and see if there were any discrepencies againist the template as that is considered the trusted source. If superloop senses a difference, it will provide you the option of remediating. Whatever little Amit decided to configure would essentially be removed without hassel. This works the other way around as well. If configuration(s) on a device(s) does not have the standard rendered configs from the template (configs removed), superloop will determine they are missing and you may proceed to remediate by pushing the rendered configs. 'auditdiff' will audit againist ONE or ALL templates belonging to the matched device(s) from the query. If you want to audit against ONE template, simply include the option '-f <template_name>' (exclude extension .jinja2). If you want to audit against ALL templates belonging to the matched device(s) query, do not include the '-f' option. 
+First and foremost, I would like to introduce to you the 'audit diff' function. This function was designed to compare against the jinja2 templates with your running-configurations to see if they are according to standards. You could imagine if you had hundreds, if not thousands of devices to maintain, standardization would be a nightmare without some form of auditing/automation tool. To paint you an example, say one day, little Amit decides to make an unauthorized manual configuration change on a switch. No one knows about it or what he did. superloop would be able to dive into the device and see if there were any discrepencies againist the template as that is considered the trusted source. If superloop senses a difference, it will provide you the option of remediating. Whatever little Amit decided to configure would essentially be removed without hassel. This works the other way around as well. If configuration(s) on a device(s) does not have the standard rendered configs from the template (configs removed), superloop will determine they are missing and you may proceed to remediate by pushing the rendered configs. 'audit diff' will audit againist ONE or ALL templates belonging to the matched device(s) from the query. If you want to audit against ONE template, simply include the option '-f <template_name>' (exclude extension .jinja2). If you want to audit against ALL templates belonging to the matched device(s) query, do not include the '-f' option. 
 
 ## superloop auditcreeper
 
@@ -158,7 +158,7 @@ Users are now able to take advantage of the 'ssh' menu screen. This feature allo
 
 Here is an example of how you would use it:
 ```
-root@jumpbox:~/superloop# python superloop ssh -n core.*
+root@jumpbox:~/superloop# python superloop ssh core.*
 ID      name                    address         platform
 1       core-fw-superloop-toron 10.10.10.10     cisco
 2       core.sw.superloop.sfran 20.20.20.20     cisco
@@ -166,17 +166,21 @@ ID      name                    address         platform
 Enter ID to SSH to: 
 ```
 ```
-root@jumpbox:~/superloop# python superloop ssh -n core.*(fw|rt)
+root@jumpbox:~/superloop# python superloop ssh core.*(fw|rt)
 ID      name                    address         platform
 1       core-fw-superloop-toron 10.10.10.10     cisco
 2       core.rt.superloop.sjose 30.30.30.30     cisco
 Enter ID to SSH to: 
 ```
 ```
-root@jumpbox:~/superloop# superloop ssh -n .*sfran
+root@jumpbox:~/superloop# superloop ssh .*sfran
 ID      name                    address         platform
 1       core.sw.superloop.sfran 20.20.20.20     cisco
 ```
-* Notice the option '-n' to specify your search string.
+* Notice after 'ssh' it expects a positional argument(hostname).
 
 If the search result returns one host, superloop automatically establishes a SSH session.
+
+## superloop host add
+
+When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is executed, superloop will connect to the device via snmp. It will pull the neccessary information such as it's hostname to populate it into nodes.yaml. Since there are sentitive information that are required such as the username and password of the device, I have decided to create a 'encrypted.yaml' file. This file will store all sensitive information in encrypted format.
