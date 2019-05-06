@@ -18,3 +18,9 @@ def process_templates():
 
 	return template_object
 
+def process_encrypted():
+
+	with open("encrypted.yaml") as yaml_file:
+		passwords = yaml.load(yaml_file)
+
+	return passwords
