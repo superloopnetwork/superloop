@@ -241,4 +241,4 @@ root@jumpbox:~/superloop# cat nodes.yaml
   type: router
   username: admin
 ```
-Noticed how the node 'core.sw.superloop.sfran' has been removed from the database.
+*Noticed how the node 'core.sw.superloop.sfran' has been removed from the database.
