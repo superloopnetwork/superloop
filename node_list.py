@@ -31,9 +31,9 @@ def node_list(args):
 
 			print("[")
 			print("    {")
-			print("\thostname: {}\n" \
-				  "\tos: {}\n" \
-				  "\tplatform: {}\n" \
-				  "\ttype: {}".format(node_object[index]['hostname'],node_object[index]['os'],node_object[index]['platform'],node_object[index]['type'])) 
+			print("\t\"hostname\": \"{}\"\n" \
+				  "\t\"os\": \"{}\"\n" \
+				  "\t\"platform\": \"{}\"\n" \
+				  "\t\"type\": \"{}\"".format(node_object[index]['hostname'],node_object[index]['os'],node_object[index]['platform'],node_object[index]['type'])) 
 			print("    }")
 			print("]")
