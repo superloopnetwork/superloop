@@ -242,3 +242,46 @@ root@jumpbox:~/superloop# cat nodes.yaml
   username: admin
 ```
 * Noticed how the node 'core.sw.superloop.sfran' has been removed from the database.
+
+## superloop node list
+
+We can now leverage the power of 'superloop host add' by having snmp poll more attributes on the node(s) such as the software version, location, serial number etc. Once we have these details in our database file, we are then able list them in cli. This will give us all the details about a particular node. To use this, simply type 'superloop node list <hostname>'. Regular expressions is supported for this feature so if you have multiple hosts you would like to view, you can match it via regex.
+```  
+root@jumpbox:~/superloop# superloop node list core.*
+[
+    {
+        "hostname": "core-fw-superloop-toron"
+        "os": "ios"
+        "platform": "cisco"
+        "type": "firewall"
+    }
+]
+[
+    {
+        "hostname": "core.sw.superloop.sfran"
+        "os": "ios"
+        "platform": "cisco"
+        "type": "switch"
+    }
+]
+[
+    {
+        "hostname": "core.rt.superloop.sjose"
+        "os": "ios"
+        "platform": "cisco"
+        "type": "router"
+    }
+]
+```
+Or a particular host...
+```
+root@jumpbox:~/superloop# superloop node list .*sw  
+[
+    {
+        "hostname": "core.sw.superloop.sfran"
+        "os": "ios"
+        "platform": "cisco"
+        "type": "switch"
+    }
+]
+```
