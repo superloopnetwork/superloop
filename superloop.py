@@ -10,6 +10,7 @@ from onscreen import onscreen
 from ssh_connect import ssh_connect
 from modifydb import append
 from modifydb import remove 
+from node_list import node_list
 import argparse
 import os
 import initialize
@@ -60,6 +61,12 @@ def main():
 	host_remove_cmd = host_subparsers.add_parser('remove')
 	host_remove_cmd.set_defaults(func=remove)
 	host_remove_cmd.add_argument('argument')
+
+	node_cmd= subparsers.add_parser('node')
+	node_subparsers = node_cmd.add_subparsers(dest='parser_node')
+	node_list_cmd = node_subparsers.add_parser('list')
+	node_list_cmd.set_defaults(func=node_list)
+	node_list_cmd.add_argument('hostname')
 
 	args = parser.parse_args()
 	args.func(args)
