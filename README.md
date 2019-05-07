@@ -218,7 +218,7 @@ root@jumpbox:~/superloop# cat nodes.yaml
   os: ios
   type: router
   ```
-Say we wanted to blow out the node 'core.sw.superloop.sfran'. Simply use the following command 'superloop host remove core.sw.superloop.sfran' or 'superloop host remove 20.20.20.20'. It supports both hostname or IP address.
+Say we wanted to blow out the node 'core.sw.superloop.sfran'. Simply use the following command 'superloop host remove core.sw.superloop.sfran' or 'superloop host remove 20.20.20.20'. It supports both hostname and IP address.
 ```
 root@jumpbox:~/superloop# superloop host remove core.sw.superloop.sfran
 [+] NODE SUCCESSFULLY REMOVED FROM DATABASE
