@@ -273,9 +273,9 @@ root@jumpbox:~/superloop# superloop node list core.*
     }
 ]
 ```
-Or a particular host...
+Or a particular node...
 ```
-root@jumpbox:~/superloop# superloop node list .*sw  
+root@jumpbox:~/superloop# superloop node list .*sfran  
 [
     {
         "hostname": "core.sw.superloop.sfran"
