@@ -222,6 +222,8 @@ Say we wanted to blow out the node 'core.sw.superloop.sfran'. Simply use the fol
 ```
 root@jumpbox:~/superloop# superloop host remove core.sw.superloop.sfran
 [+] NODE SUCCESSFULLY REMOVED FROM DATABASE
+```
+```
 root@jumpbox:~/superloop# cat nodes.yaml
 ---
 - hostname: core-fw-superloop-toron
