@@ -3,11 +3,13 @@ Insprired by a wide array of toolsets (unamed) used and developed by a leading t
 
 Prerequisite:
   1. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
+  2. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
 
-Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of two YAML files that require management:
+Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management:
 
   1. nodes.yaml
   2. templates.yaml
+  3. encrypted.yaml
 
 nodes.yaml acts as the inventory for all network devices. It must follow the format defined below as the application reads it in a specific method.
 ```
