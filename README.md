@@ -1,5 +1,5 @@
 # superloop
-Insprired by a wide array of toolsets (unamed) used and developed by a leading tech company for network automation, I have attempted to create my own version.
+Inspired by a wide array of toolsets (unamed) used and developed by a leading tech company for network automation, I have attempted to create my own version.
 
 Prerequisite:
   1. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
