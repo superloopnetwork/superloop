@@ -39,7 +39,7 @@ root@jumpbox:~/superloop# cat nodes.yaml
 ```  
   Most fields are self explainatory except the password. The password is encrypted in base64 format so it's not visible in clear text. The easiest way to generate this hash is via the python interpreter. Assume your password is 'password':
 ```  
-  root@jumpbox:~/superloop# python
+root@jumpbox:~/superloop# python
 Python 2.7.6 (default, Nov 23 2017, 15:49:48) 
 [GCC 4.8.4] on linux2
 Type "help", "copyright", "credits" or "license" for more information.
