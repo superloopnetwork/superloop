@@ -146,11 +146,11 @@ If there are multiple devices that require remediation, superloop handles remedi
 
 ## superloop push
 
-The next set of features I developed was 'push' and 'onscreen'. 'push' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. The 'onscreen' features allow you to execute a command on the device(s) without requiring you to log in.
+The next set of features I developed was 'push'. 'push' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. 
 
 ## superloop onscreen
 
-In the example below, the screen on the right is using 'push' and the screen on the left is using 'onscreen' to check the changes after.
+The 'onscreen' features allow you to execute a command on the device(s) without requiring you to log in. In the example below, the screen on the right is using 'push' and the screen on the left is using 'onscreen' to check the changes after.
 
 ![superloop push and onscreen demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_push_onscreen_demo.gif)
 
