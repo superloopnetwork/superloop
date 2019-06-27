@@ -1,13 +1,15 @@
 # superloop
-Insprired by a wide array of toolsets (unamed) used and developed by a leading tech company for network automation, I have attempted to create my own version.
+Inspired by a wide array of toolsets (unamed) used and developed by a leading tech company for network automation, I have attempted to create my own version.
 
 Prerequisite:
   1. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
+  2. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
 
-Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of two YAML files that require management:
+Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management:
 
   1. nodes.yaml
   2. templates.yaml
+  3. encrypted.yaml
 
 nodes.yaml acts as the inventory for all network devices. It must follow the format defined below as the application reads it in a specific method.
 ```
@@ -37,7 +39,7 @@ root@jumpbox:~/superloop# cat nodes.yaml
 ```  
   Most fields are self explainatory except the password. The password is encrypted in base64 format so it's not visible in clear text. The easiest way to generate this hash is via the python interpreter. Assume your password is 'password':
 ```  
-  root@jumpbox:~/superloop# python
+root@jumpbox:~/superloop# python
 Python 2.7.6 (default, Nov 23 2017, 15:49:48) 
 [GCC 4.8.4] on linux2
 Type "help", "copyright", "credits" or "license" for more information.
@@ -83,7 +85,7 @@ root@jumpbox:~/superloop# cat /templates/cisco/ios/switch/base.jinja2
 {# audit_filter = ['hostname.*'] #}
 hostname {{ nodes.hostname }}
 ```
-Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'hostname'. If you have additional lines that you want superloop to look at, simple append strings seperated by a comma like so... 
+Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'hostname'. If you have additional lines that you want superloop to look at, simply append strings seperated by a comma like so... 
 ```
 ['hostname.*','service.*','username.*']
 ```
@@ -144,11 +146,11 @@ If there are multiple devices that require remediation, superloop handles remedi
 
 ## superloop push
 
-The next set of features I developed was 'push' and 'onscreen'. 'push' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. The 'onscreen' features allow you to execute a command on the device(s) without requiring you to log in.
+The next set of features I developed was 'push'. 'push' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. 
 
 ## superloop onscreen
 
-In the example below, the screen on the right is using 'push' and the screen on the left is using 'onscreen' to check the changes after.
+The 'onscreen' features allow you to execute a command on the device(s) without requiring you to log in. In the example below, the screen on the right is using 'push' and the screen on the left is using 'onscreen' to check the changes after.
 
 ![superloop push and onscreen demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_push_onscreen_demo.gif)
 
@@ -183,7 +185,7 @@ If the search result returns one host, superloop automatically establishes a SSH
 
 ## superloop host add/remove
 
-When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is executed, superloop will connect to the device via snmp. It will pull the neccessary information such as it's hostname to populate it into nodes.yaml. Since there are sentitive information that are required such as the username and password of the device, I have decided to create an 'encrypted.yaml' file. This file will store all sensitive information in encrypted format. Let's take a closer look:
+When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is executed, superloop will connect to the device via snmp. It will pull the neccessary information such as it's hostname to populate it into nodes.yaml. Since there are sentitive information that are required like the username and password of the device, I have decided to create an 'encrypted.yaml' file. This file will store all sensitive information in encrypted format. Let's take a closer look:
 ```
 root@jumpbox:~/staging/superloop#  cat encrypted.yaml 
 - username: YWRtaW4= 
