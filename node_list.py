@@ -12,6 +12,7 @@ import initialize
 
 def node_list(args):
 
+	element_position = 1
 	argument_node = args.hostname
 	
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
@@ -26,14 +27,19 @@ def node_list(args):
 
 	else:
 		node_element(match_node,node_object)
+		print("[")
 
 		for index in initialize.element:
 
-			print("[")
 			print("    {")
 			print("\t\"hostname\": \"{}\"\n" \
 				  "\t\"os\": \"{}\"\n" \
 				  "\t\"platform\": \"{}\"\n" \
 				  "\t\"type\": \"{}\"".format(node_object[index]['hostname'],node_object[index]['os'],node_object[index]['platform'],node_object[index]['type'])) 
-			print("    }")
-			print("]")
+			if(element_position == len(initialize.element)):
+				print("    }")
+			else:
+				print("    },")
+
+			element_position = element_position + 1
+		print("]")
