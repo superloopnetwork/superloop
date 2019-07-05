@@ -256,7 +256,7 @@ root@jumpbox:~/superloop# superloop node list core.*
         "os": "ios"
         "platform": "cisco"
         "type": "firewall"
-    }
+    },
 ]
 [
     {
