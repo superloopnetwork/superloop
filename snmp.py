@@ -4,6 +4,7 @@ from snmp_helper import snmp_get_oid
 from snmp_helper import snmp_extract 
 from processdb import process_encrypted
 import base64
+import subprocess
 
 def snmp(argument_node):
 

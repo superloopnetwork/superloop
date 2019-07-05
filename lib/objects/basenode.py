@@ -69,7 +69,7 @@ class BaseNode(object):
 		output = self.net_connect.send_command(command)
 		output = output.replace('\n','\n{}: '.format(self.hostname))
 		print("")
-		print ("{}".format(output))
+#		print ("{}".format(output))
 		print("")
 		self.net_connect.disconnect()
 
