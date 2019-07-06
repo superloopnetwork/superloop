@@ -31,9 +31,6 @@ def main():
 	audit_diff_cmd.add_argument('-n','--node', dest='node')
 	audit_diff_cmd.add_argument('-f','--file', dest='file')
 
-	push_cmd = subparsers.add_parser('auditdiff')
-	push_cmd.set_defaults(func=auditdiff)
-
 	push_cmd = subparsers.add_parser('push')
 	push_cmd.set_defaults(func=push_config)
 	push_cmd.add_argument('-n','--node', dest='node')
