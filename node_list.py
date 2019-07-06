@@ -53,7 +53,7 @@ def node_list(args):
 				  "\t    \"managed_configs\": {" \
 
 			for template in template_list:
-				print ("\t\t   {}".format(template))
+				print ("\t\t   \"{}\"".format(template))
 			print("\t     }")
 			print("\t }")
 
