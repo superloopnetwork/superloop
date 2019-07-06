@@ -45,7 +45,6 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 	search_result = []
 	index = 0
 	element = 0
-
 	for node in match_node:
 		for node_obj in node_object:
 			if(node in node_obj['hostname']):

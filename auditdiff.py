@@ -43,7 +43,6 @@ def auditdiff(args):
 	### RESULT, RUN IT AGAINST THE NODE_OBJECT AND COMPARES IT WITH NODE_TEMPLATE DATABASE
 	### TO SEE IF THERE IS A TEMPLATE FOR THE SPECIFIC PLATFORM AND TYPE.
 	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper_flag)
-
 	### THIS WILL PARSE OUT THE GENERATED CONFIGS FROM THE *.JINJA2 FILE TO A LIST
 
 	if(len(match_node) == 0):
