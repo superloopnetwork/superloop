@@ -256,22 +256,37 @@ root@jumpbox:~/superloop# superloop node list core.*
         "os": "ios"
         "platform": "cisco"
         "type": "firewall"
+        "data": {
+            "managed_configs": {
+                   base.jinja2
+                   snmp.jinja2
+             }
+         }
     },
-]
-[
     {
         "hostname": "core.sw.superloop.sfran"
         "os": "ios"
         "platform": "cisco"
         "type": "switch"
+        "data": {
+            "managed_configs": {
+                   base.jinja2
+                   service.jinja2
+                   dhcp.jinja2
+                   snmp.jinja2
+             }
+         }
     },
-]
-[
     {
         "hostname": "core.rt.superloop.sjose"
         "os": "ios"
         "platform": "cisco"
         "type": "router"
+        "data": {
+            "managed_configs": {
+                   base.jinja2
+             }
+         }
     }
 ]
 ```
@@ -284,6 +299,14 @@ root@jumpbox:~/superloop# superloop node list .*sfran
         "os": "ios"
         "platform": "cisco"
         "type": "switch"
+        "data": {
+            "managed_configs": {
+                   base.jinja2
+                   service.jinja2
+                   dhcp.jinja2
+                   snmp.jinja2
+             }
+         }
     }
 ]
 ```
