@@ -7,7 +7,8 @@
 from jinja2 import Environment, FileSystemLoader
 from collections import Counter
 from multithread import multithread_engine
-from directory import get_directory
+from get_property import get_directory
+from get_property import get_template
 import re
 import initialize
 
@@ -282,9 +283,10 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 			if(ntw_device_pop == True):
 				initialize.ntw_device.pop(node_index)
 				initialize.configuration.pop(node_index)
-			if(len(template_list_copy) != 1):
-				template_list_copy.pop(0)
-				template_list = template_list_copy[0]
+			template_list = get_template(template_list_copy)
+#			if(len(template_list_copy) != 1):
+#				template_list_copy.pop(0)
+#				template_list = template_list_copy[0]
 #			print("TEMPLATE_LIST : {} ; TEMPLATE_LIST_COPY : {}".format(template_list,template_list_copy))
 #				print("FINAL REMEDIATION CONFIGS: {}".format(initialize.configuration))
 #			del rendered_config[:]		

@@ -3,7 +3,7 @@
 ### GLOBAL VARIABLE CALL INITIALIZE.CONFIGURATION.
 
 from jinja2 import Environment, FileSystemLoader
-from directory import get_directory
+from get_property import get_directory
 import initialize
 import re
 

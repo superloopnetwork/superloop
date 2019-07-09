@@ -13,7 +13,7 @@
 
 import re
 import initialize
-from directory import get_directory
+from get_property import get_directory
 
 def search_node(argument_node,node_object):
 

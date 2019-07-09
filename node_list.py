@@ -9,6 +9,7 @@ from search import node_element
 from search import search_node
 from search import search_template
 from node_create import node_create
+from get_property import get_template
 import initialize
 
 def node_list(args):
@@ -57,9 +58,11 @@ def node_list(args):
 			print("\t     }")
 			print("\t }")
 
-			if(len(template_list_copy) != 1):
-				template_list_copy.pop(0)
-				template_list = template_list_copy[0]
+			template_list = get_template(template_list_copy)
+
+#			if(len(template_list_copy) != 1):
+#				template_list_copy.pop(0)
+#				template_list = template_list_copy[0]
 
 			if(element_position == len(initialize.element)):
 				print("    }")
