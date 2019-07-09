@@ -53,9 +53,7 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 				index = node_object.index(node_obj)
 				initialize.element.append(index)
 
-				### TYPE GETS THE TYPE OF DEVICE AND APPENDS IT TO THE GLOBAL VARIABLE TYPE
-#				type = node_object[index]['type']
-#				initialize.type.append(type)
+				### THIS SECTION WILL PULL OUT ALL THE TEMPLATES BELONGING TO THE SPECIFIC PLATFORM, OS AND TYPE OF DEVICE FROM THE TEMPLATE DATABASE
 				for node_temp in node_template:
 					if(node_obj['platform'] == node_temp['platform'] and node_obj['os'] == node_temp['os'] and node_obj['type'] == node_temp['type']):
 

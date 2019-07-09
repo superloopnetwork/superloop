@@ -25,11 +25,11 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 	### NODE_INDEX KEEPS TRACK OF THE INDEX IN INITIALIZE.NTW_DEVICE. IF REMEDIATION IS NOT REQUIRED (CONFIGS MATCHES TEMPLATE), THEN THE NODE IS POPPED OFF
 	### INITIALIZE.NTW_DEVICE AND NOTHING IS CHANGED ON THAT DEVICE
 	node_index = 0 
-	index_template = 0
 
 	### AUDIT_FILTER_RE IS THE REGULAR EXPRESSION TO FILTER OUT THE AUDIT FILTER IN EVERY TEMPLATE
 	AUDIT_FILTER_RE = r"\[.*\]"
 
+	### TEMPLATE_LIST_COPY TAKE A COPY OF THE CURRENT TEMPLATE_LIST
 	template_list_copy = template_list
 
 	if(auditcreeper):
@@ -37,11 +37,10 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 #		print("TEMPLATE_LIST : {} ; TEMPLATE_LIST_COPY : {}".format(template_list,template_list_copy))
 
 	print("[+] [GATHERING RUNNING-CONFIG. STANDBY...]")
-	print("")
 	multithread_engine(initialize.ntw_device,controller,command)
-	print("[!] [DONE]")
+	print("[!] [AUDIT]")
 
-	### THIS FOR LOOP WILL LOOP THROUGH ALL THE MATCHED ELEMENTS FROM THE USER SEARCH AND AUDIT ON THE GIVEN TEMPLATE
+	### THIS FOR LOOP WILL LOOP THROUGH ALL THE MATCHED ELEMENTS FROM THE USER SEARCH AND AUDIT ON SPECIFIC TEMPLATE OR IF NO ARGUMENT IS GIVEN, ALL TEMPLATES
 	for index in initialize.element:
 
 		node_configs = []
