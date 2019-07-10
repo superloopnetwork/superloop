@@ -17,8 +17,6 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 	controller = 'get_config'
 	command = ''
 
-	template_index = 0
-
 	### INDEX_POSITION IS THE INDEX OF ALL THE MATCHED FILTER_CONFIG AGAINST THE BACKUP_CONFIGS. THE INDEX IS COMING FROM THE BACKUP_CONFIG
 	index_position = 0
 
