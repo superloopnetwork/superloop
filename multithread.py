@@ -9,7 +9,6 @@ def multithread_engine(ntw_object,redirect,commands):
 	
 	start_time = datetime.datetime.now()
 	index = 0
-
 	for i in ntw_object:
 		if(redirect == 'push_config'):
 			arguments = commands[index]
@@ -26,5 +25,5 @@ def multithread_engine(ntw_object,redirect,commands):
 #			print(some_thread)
 			some_thread.join()
 
-	print('TIME ELAPSED: {}\n'.format(datetime.datetime.now() - start_time))
+	print('DONE [{}]\n'.format(datetime.datetime.now() - start_time))
 
