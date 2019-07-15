@@ -17,9 +17,11 @@ import initialize
 def auditdiff_engine(template_list,node_object,auditcreeper):
 
 	controller = 'get_config'
-	command = ''
-	push_configs = []
 
+	command = ''
+
+	### PUSH_CONFIGS IS A LIST OF THE FINAL CONFIGS TO BE PUSHED
+	push_configs = []
 
 	### INDEX_POSITION IS THE INDEX OF ALL THE MATCHED FILTER_CONFIG AGAINST THE BACKUP_CONFIGS. THE INDEX IS COMING FROM THE BACKUP_CONFIG
 	index_position = 0
@@ -161,7 +163,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 
 				### THIS SECTION OF CODE WILL PRINT THE DIFF OF WHAT CONFIG(S) WILL BE CHANGING
 				for line in difflib.unified_diff(filtered_backup_config, rendered_config,n=10):
-					if(line.startswith("---") or line.startswith("+++") or line.startswith("@") or line.startswith("  ")):
+					if(line.startswith("---") or line.startswith("+++") or line.startswith("@")):
 						continue
 					else:
 						print line
@@ -182,21 +184,6 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 							push_configs.append(config_line)
 				print("")	
 				print("PUSH_COMMANDS: {}".format(push_configs))
-#				if(len(minus_commands) >= 1):
-#					for minus in plus_commands:
-#						print("+ {}".format(minus))
-#				if(len(plus_commands) >= 1):
-#					for plus in plus_commands:
-#						print("+ {}".format(plus))
-					
-				### IF ENVIRONMENT HAVE MULTI VENDORS, INSERT CONDITIONAL STATEMENTS TO ACCOMODATE:
-				### if(node_object[index]['platform'] == 'cisco' and node_object[index]['os'] == 'ios'):
-				### THIS STEP WILL NEGATE ALL ALL ANCHORED COMMANDS
-#				if(node_object[index]['platform'] == 'cisco' and node_object[index]['os'] == 'ios'):
-#
-#					### THIS WILL NEGATE ALL THE ANCHORED CONFIGS
-#					for anchor in filtered_config:
-#						node_configs.append("no {}".format(anchor))
 
 					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE
 				for config in push_configs:
@@ -208,80 +195,11 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 					initialize.configuration.append(node_configs)
 				node_index = node_index + 1
 
-				
-
-#			elif(len(minus_commands) >= 1):
-#			
-#				### THIS WILL JUST PRINT THE HEADING OF THE TEMPLATE NAME SO YOU KNOW WHAT IS BEING CHANGED UNDER WHICH TEMPLATE
-#				if(diff):	
-#					print("{}{}".format(directory,template))
-#					diff = False
-#
-#				for minus in minus_commands:
-#					print("- {}".format(minus))
-#
-#				### IF ENVIRONMENT HAVE MULTI VENDORS, INSERT CONDITIONAL STATEMENTS TO ACCOMODATE:
-#				### if(node_object[index]['platform'] == 'cisco' and node_object[index]['os'] == 'ios'):
-#				### THIS STEP WILL NEGATE ALL ALL ANCHORED COMMANDS
-#				if(node_object[index]['platform'] == 'cisco' and node_object[index]['os'] == 'ios'):
-#
-#					### THIS WILL NEGATE ALL THE ANCHORED CONFIGS
-#					for anchor in filtered_config:
-#						node_configs.append("no {}".format(anchor))
-#
-#					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE
-#					for config in rendered_config:
-#						node_configs.append(config)
-#						ntw_device_pop = False
-#
-#					### INITIALIZE.COFIGURATION APPENDS ALL THE REMEDIATED CONFIGS AND PREPARES IT FOR PUSH
-#					if(auditcreeper == False):
-#						initialize.configuration.append(node_configs)
-#					node_index = node_index + 1
-#
-#			elif(len(plus_commands) >= 1):
-#
-#				### THIS WILL JUST PRINT THE HEADING OF THE TEMPLATE NAME SO YOU KNOW WHAT IS BEING CHANGED UNDER WHICH TEMPLATE
-#				if(diff):	
-#					print("{}{}".format(directory,template))
-#					diff = False
-#
-#				for plus in plus_commands:
-#					print("+ {}".format(plus))
-#
-#				if(node_object[index]['platform'] == 'cisco' and node_object[index]['os'] == 'ios'):
-#			
-#					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE
-#					for config in rendered_config:
-#						node_configs.append(config)
-#						ntw_device_pop = False
-#
-#					### INITIALIZE.COFIGURATION APPENDS ALL THE REMEDIATED CONFIGS AND PREPARES IT FOR PUSH
-#					if(auditcreeper == False):
-#						initialize.configuration.append(node_configs)
-#					node_index = node_index + 1
-
-
 		if(auditcreeper):
-#			print("LENGTH OF LIST IS : {}".format(len(template_list_copy)))
 			initialize.configuration.append(node_configs)
 			if(ntw_device_pop == True):
 				initialize.ntw_device.pop(node_index)
 				initialize.configuration.pop(node_index)
 			template_list = get_template(template_list_copy)
-#			if(len(template_list_copy) != 1):
-#				template_list_copy.pop(0)
-#				template_list = template_list_copy[0]
-#			print("TEMPLATE_LIST : {} ; TEMPLATE_LIST_COPY : {}".format(template_list,template_list_copy))
-#				print("FINAL REMEDIATION CONFIGS: {}".format(initialize.configuration))
-#			del rendered_config[:]		
-#		 	del backup_config[:]
-#			del index_list[:]
-#			del filtered_config[:]
-#			del filtered_backup_config[:]
-
-
-#	print("INITIALIZE.NTW_DEVICE: {}".format(initialize.ntw_device))
-#	print("INITIALIZE.CONFIGURATION : {}".format(initialize.configuration))
 
 	return None
