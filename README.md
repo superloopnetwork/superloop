@@ -4,6 +4,7 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading te
 Prerequisite:
   1. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
   2. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
+  3. ciscoconfparse - A library to help parse out Cisco (or similiar) CLI configs (https://pypi.org/project/ciscoconfparse/).
 
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management:
 
@@ -113,7 +114,7 @@ First and foremost, I would like to introduce to you the 'audit diff' function. 
 
 ![superloop auditcreeper demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_audit_diff_demo.gif)
 
-In this demo, only one device gets remediated. A parent config was removed. superloop detected the missing configs and prompted the user if they would like to remediate:
+In this demo, only one device gets remediated. A parent config was removed from the device. superloop detected the missing configs and prompted the user if they would like to remediate:
 
 ```
 [+] [GATHERING RUNNING-CONFIG. STANDBY...]
@@ -154,6 +155,9 @@ PROCEED TO REMEDIATE? [Y/N]: y
 PUSHING CODE...
 [!] [DONE] [0:00:23.397795]
 ```
+'-' indicating a config(s) should be removed
+'+' indicating a config(s) should be added
+* (none) indicating NO discrepancies.
 
 ## superloop auditcreeper
 
