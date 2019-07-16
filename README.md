@@ -4,6 +4,7 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading te
 Prerequisite:
   1. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
   2. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
+  3. ciscoconfparse - A library to help parse out Cisco (or similiar) CLI configs (https://pypi.org/project/ciscoconfparse/).
 
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management:
 
@@ -37,7 +38,7 @@ root@jumpbox:~/superloop# cat nodes.yaml
   os: ios
   type: router
 ```  
-  Most fields are self explainatory except the password. The password is encrypted in base64 format so it's not visible in clear text. The easiest way to generate this hash is via the python interpreter. Assume your password is 'password':
+Most fields are self explainatory except the password. The password is encrypted in base64 format so it's not visible in clear text. The easiest way to generate this hash is via the python interpreter. Assume your password is 'password':
 ```  
 root@jumpbox:~/superloop# python
 Python 2.7.6 (default, Nov 23 2017, 15:49:48) 
@@ -50,7 +51,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 'cGFzc3dvcmQ='
 >>> 
 ```
-The password is only decrypted during the time the application connects to your device(s). For now, I've only built support for Cisco IOS as those are the only equipment I have for testing. I'll integrate more vendors over time.
+The password is only decrypted during the time the application connects to your device(s). For now, I've only tested this application on Cisco IOS as those are the only equipment I have powering my home network. However, technically it should also be compatible with anything that has a Cisco IOS style of configuration. This includes Juniper Networks Junos, F5 Networks configurations etc.
 
 templates.yaml is a database file that consist of all the jinja2 templates. You will need to include the full path. Here is a sample of how it should look like below. Do not change the format as the application reads it in a specific method. Only change the properties.
 ```
@@ -113,7 +114,7 @@ First and foremost, I would like to introduce to you the 'audit diff' function. 
 
 ![superloop auditcreeper demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_audit_diff_demo.gif)
 
-In this demo, only one device gets remediated. A parent config was removed. superloop detected the missing configs and prompted the user if they would like to remediate:
+In this demo, only one device gets remediated. A parent config was removed from the device. superloop detected the missing configs and prompted the user if they would like to remediate:
 
 ```
 [+] [GATHERING RUNNING-CONFIG. STANDBY...]
@@ -154,6 +155,9 @@ PROCEED TO REMEDIATE? [Y/N]: y
 PUSHING CODE...
 [!] [DONE] [0:00:23.397795]
 ```
+'-' indicating a config(s) should be removed
+'+' indicating a config(s) should be added
+* (none) indicating NO discrepancies.
 
 ## superloop auditcreeper
 
