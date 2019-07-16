@@ -113,6 +113,48 @@ First and foremost, I would like to introduce to you the 'audit diff' function. 
 
 ![superloop auditcreeper demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_audit_diff_demo.gif)
 
+In this demo, only one device gets remediated. A parent config was removed. superloop detected the missing configs and prompted the user if they would like to remediate:
+
+```
+[+] [GATHERING RUNNING-CONFIG. STANDBY...]
+[!] [DONE] [0:00:09.419225]
+
+
+core.sw.superloop.ktch
+/templates/cisco/ios/switch/base.jinja2 (none)
+
+/templates/cisco/ios/switch/service.jinja2
+-no service pad
+ service tcp-keepalives-out
+ service timestamps debug uptime
+ service timestamps log datetime localtime
+ service password-encryption
+
+/templates/cisco/ios/switch/dhcp.jinja2
+ ip dhcp ping packets 5
+ ip dhcp pool DATA
+  network 10.50.50.0 255.255.255.0
+  default-router 10.50.50.1 
+  dns-server 8.8.8.8 
++ip dhcp pool SERVERS
++ network 10.50.30.0 255.255.255.0
++ default-router 10.50.30.1 
++ dns-server 8.8.8.8 
+ ip dhcp pool MANAGEMENT
+  network 10.50.80.0 255.255.255.0
+  default-router 10.50.80.1 
+  dns-server 8.8.8.8 
+ ip dhcp pool WIRELESS
+
+/templates/cisco/ios/switch/crypto.jinja2 (none)
+
+
+PROCEED TO REMEDIATE? [Y/N]: y
+
+PUSHING CODE...
+[!] [DONE] [0:00:23.397795]
+```
+
 ## superloop auditcreeper
 
 By leveraging the power of the auditdiff engine, I'm able to extend it's functionality by creating a creeper. The 'auditcreeper' would essentially audit ALL devices in the nodes.yaml file against ALL templates specified in templates.yaml file at a set interval. For example, I may set the 'auditcreeper' to check every 4 hours to ensure standardization. You may modify the timining in second in the auditcreeper.py file. Look for:
