@@ -38,7 +38,7 @@ root@jumpbox:~/superloop# cat nodes.yaml
   os: ios
   type: router
 ```  
-  Most fields are self explainatory except the password. The password is encrypted in base64 format so it's not visible in clear text. The easiest way to generate this hash is via the python interpreter. Assume your password is 'password':
+Most fields are self explainatory except the password. The password is encrypted in base64 format so it's not visible in clear text. The easiest way to generate this hash is via the python interpreter. Assume your password is 'password':
 ```  
 root@jumpbox:~/superloop# python
 Python 2.7.6 (default, Nov 23 2017, 15:49:48) 
@@ -51,7 +51,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 'cGFzc3dvcmQ='
 >>> 
 ```
-The password is only decrypted during the time the application connects to your device(s). For now, I've only built support for Cisco IOS as those are the only equipment I have for testing. I'll integrate more vendors over time.
+The password is only decrypted during the time the application connects to your device(s). For now, I've only tested this application on Cisco IOS as those are the only equipment I have powering my home network. However, technically it should also be compatible with anything that has a Cisco IOS style of configuration. This includes Juniper Networks Junos, F5 Networks configurations etc.
 
 templates.yaml is a database file that consist of all the jinja2 templates. You will need to include the full path. Here is a sample of how it should look like below. Do not change the format as the application reads it in a specific method. Only change the properties.
 ```
