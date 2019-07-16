@@ -162,28 +162,41 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 				print("{}{}".format(directory,template))
 
 				### THIS SECTION OF CODE WILL PRINT THE DIFF OF WHAT CONFIG(S) WILL BE CHANGING
-				for line in difflib.unified_diff(filtered_backup_config, rendered_config,n=10):
+				for line in difflib.unified_diff(filtered_backup_config, rendered_config,n=5):
 					if(line.startswith("---") or line.startswith("+++") or line.startswith("@")):
 						continue
 					else:
 						print line
 						if(line.startswith("-")):
 							config_line = line.strip()
-							if(re.match("-",config_line)):
-								config_line = line.replace("-","no ")
+							if(re.match("-\w.+\-",config_line)):
+								config_line = re.sub("^\-","no ",config_line)
+								push_configs.append(config_line)
+							elif(re.match("-",config_line)):
+								config_line = re.sub("-","no ",config_line)
 								push_configs.append(config_line)
 							elif(re.match("-\s\w",line)):
-								config_line = line.replace("-","no")
+								config_line = re.sub("-","no",config_line)
 								push_configs.append(config_line)
 						elif(line.startswith("+")):
 							config_line = line.strip()
 							config_line = line.strip("+")
 							push_configs.append(config_line)
 						else:
-							config_line = line.strip()
+							config_line = line.strip("\n")
 							push_configs.append(config_line)
 				print("")	
-				print("PUSH_COMMANDS: {}".format(push_configs))
+
+				### THIS SECTION OF CODE WILL CHECK FOR THE WHITE SPACES FROM THE BEGINNING OF THE LIST
+				### IF THE ELEMENT HAS 1 WHITE SPACE, IT THEN KNOWS IT'S A PARENT CONFIG
+				### ANYTHING GREATER THAN 1 WHITE SPACE IS A PARENT/CHILD
+				config_index = 0
+				whitespace = len(push_configs[config_index]) - len(push_configs[config_index].lstrip())
+				while(whitespace != 1):
+					push_configs.pop(config_index)
+					whitespace = len(push_configs[config_index]) - len(push_configs[config_index].lstrip())
+					
+				print("PUSH_CONFIGS: {}".format(push_configs))
 
 					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE
 				for config in push_configs:
