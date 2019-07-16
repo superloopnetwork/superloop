@@ -196,7 +196,8 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 					push_configs.pop(config_index)
 					whitespace = len(push_configs[config_index]) - len(push_configs[config_index].lstrip())
 					
-				print("PUSH_CONFIGS: {}".format(push_configs))
+				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#				print("PUSH_CONFIGS: {}".format(push_configs))
 
 					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE
 				for config in push_configs:
