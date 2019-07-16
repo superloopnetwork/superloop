@@ -21,9 +21,10 @@ def render(template,node_object,flag):
 			f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "w") 
 			config_list = []
 			config = baseline.render(nodes = node_object[index])
-			print ("[+] [{}".format(node_object[index]['hostname']) + "#]")
+			print ("{}".format(node_object[index]['hostname']))
 			f.write(config) 
 			f.close 
+			print("{}{}".format(directory,template))
 			print("{}".format(config))
 			if(flag):
 				f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "r") 
