@@ -54,7 +54,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 		previous_parent = ''
 
 		print("")
-		print ("[+] [{}".format(node_object[index]['hostname']) + "#]")
+		print ("{}".format(node_object[index]['hostname']))
 
 		for template in template_list:
 
@@ -123,7 +123,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 			for audit in audit_filter:
 
 				parse_backup_configs = CiscoConfParse("/backup-configs/{}".format(node_object[index]['hostname']) + ".conf")
-				current_template = parse_backup_configs.find_objects(r"{}".format(audit))
+				current_template = parse_backup_configs.find_objects(r"^{}".format(audit))
 				for audit_string in current_template:       
 					filtered_backup_config.append(audit_string.text)
 					if(audit_string.is_parent):
