@@ -17,13 +17,19 @@ def push_config(args):
 
 	ext = '.jinja2'
 	controller = 'push_config'
-	auditcreeper = False
 	commands = initialize.configuration
-	flag = True
-	template = args.file + ext
-	template_list = []
-	template_list.append(template)	
+	auditcreeper_flag = False
 	argument_node = args.node
+
+	if(args.file is None):
+#		print("ARGS.FILE IS NONE")
+		template_list = []
+		auditcreeper_flag = True
+	else:
+#		print("ARGS.FILE IS VALID")
+		template = args.file + ext
+		template_list = []
+		template_list.append(template)
 
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
@@ -37,7 +43,7 @@ def push_config(args):
 	### MATCH_TEMPLATE IS A LIST OF 'MATCH' AND/OR 'NO MATCH' IT WILL USE THE MATCH_NODE
 	### RESULT, RUN IT AGAINST THE NODE_OBJECT AND COMPARES IT WITH NODE_TEMPLATE DATABASE
 	### TO SEE IF THERE IS A TEMPLATE FOR THE SPECIFIC PLATFORM AND TYPE.
-	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper)
+	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper_flag)
 
 	### THIS WILL PARSE OUT THE GENERATED CONFIGS FROM THE *.JINJA2 FILE TO A LIST
 
@@ -50,20 +56,8 @@ def push_config(args):
 		print("")
 
 	else:
-		render(template,node_object,flag)
+		render(template_list,node_object,auditcreeper_flag)
 		node_create(match_node,node_object)
-#		print("MATCHING NODES:")
-#		print("{}".format(match_node))
-#		print("")
-#		print("{}".format(initialize.element))
-#		print("")
-#		print("{}".format(initialize.configuration))
-#		print("")
-#		print("{}".format(match_template))
-#		print("")
-#		print("{}".format(node_object))
-#		print("")
-#		print("{}".format(node_template))
 		print("")
 		proceed = raw_input("PROCEED? [Y/N]: ")
 	
