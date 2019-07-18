@@ -53,7 +53,8 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 		first_parent = True
 		previous_parent = ''
 
-		print("")
+		print("Only in the device: -")
+		print("Only in the generated config: +")
 		print ("{}".format(node_object[index]['hostname']))
 
 		for template in template_list:
