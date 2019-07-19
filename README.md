@@ -120,8 +120,9 @@ In this demo, only one device gets remediated. A parent config was removed from 
 [+] [GATHERING RUNNING-CONFIG. STANDBY...]
 [!] [DONE] [0:00:09.419225]
 
-
-core.sw.superloop.ktch
+Only in the device: -
+Only in the generated config: +
+core.sw.superloop.sfran
 /templates/cisco/ios/switch/base.jinja2 (none)
 
 /templates/cisco/ios/switch/service.jinja2
