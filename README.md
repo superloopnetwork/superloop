@@ -114,14 +114,15 @@ First and foremost, I would like to introduce to you the 'audit diff' function. 
 
 ![superloop auditcreeper demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_audit_diff_demo.gif)
 
-In this demo, only one device gets remediated. A parent config was removed from the device. superloop detected the missing configs and prompted the user if they would like to remediate:
+In this demo, only one device gets remediated. A parent config was removed from the device. superloop detected the missing configs and prompted the user if they would like to proceed to remediate:
 
 ```
 [+] [GATHERING RUNNING-CONFIG. STANDBY...]
 [!] [DONE] [0:00:09.419225]
 
-
-core.sw.superloop.ktch
+Only in the device: -
+Only in the generated config: +
+core.sw.superloop.sfran
 /templates/cisco/ios/switch/base.jinja2 (none)
 
 /templates/cisco/ios/switch/service.jinja2
@@ -158,6 +159,8 @@ PUSHING CODE...
 '-' indicating a config(s) should be removed
 '+' indicating a config(s) should be added
 * (none) indicating NO discrepancies.
+
+The demo shows the remediation was successful. 'ip dhcp pool SERVERS' along with it's children configs was reinstated.
 
 ## superloop auditcreeper
 
