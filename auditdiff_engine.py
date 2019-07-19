@@ -170,6 +170,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 						print line
 						if(line.startswith("-")):
 							config_line = line.strip()
+							### THIS IF CONDITION IS TO SATISFY SOME CASES WHERE IT HAS A HYPEN IN BETWEEN A CONFIG. EX SNMP-SERVER
 							if(re.match("-\w.+\-",config_line)):
 								config_line = re.sub("^\-","no ",config_line)
 								push_configs.append(config_line)
@@ -187,7 +188,6 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 							config_line = line.strip("\n")
 							push_configs.append(config_line)
 				print("")	
-
 				### THIS SECTION OF CODE WILL CHECK FOR THE WHITE SPACES FROM THE BEGINNING OF THE LIST
 				### IF THE ELEMENT HAS 1 WHITE SPACE, IT THEN KNOWS IT'S A PARENT CONFIG
 				### ANYTHING GREATER THAN 1 WHITE SPACE IS A PARENT/CHILD
