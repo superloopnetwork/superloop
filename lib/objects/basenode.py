@@ -60,13 +60,12 @@ class BaseNode(object):
 		output = self.net_connect.send_config_set(commands)
 		self.net_connect.disconnect()
 
-	def onscreen(self,command):
+	def exec_command(self,command):
 
 		self.connect()
 		output = self.net_connect.send_command(command)
 		output = output.replace('\n','\n{}: '.format(self.hostname))
-		print("")
-#		print ("{}".format(output))
+		print ("{}".format(output))
 		print("")
 		self.net_connect.disconnect()
 

@@ -12,7 +12,7 @@ def multithread_engine(ntw_object,redirect,commands):
 	for i in ntw_object:
 		if(redirect == 'push_config'):
 			arguments = commands[index]
-		elif(redirect == 'onscreen' or redirect == 'get_config'):
+		elif(redirect == 'exec_command' or redirect == 'get_config'):
 			arguments = commands
 		my_thread = threading.Thread(target=getattr(ntw_object[index],redirect) , args=(arguments,))
 		my_thread.start()

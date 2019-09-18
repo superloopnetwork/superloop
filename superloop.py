@@ -6,7 +6,7 @@
 from auditdiff import auditdiff
 from push_config import push_config
 from render_config import render_config
-from onscreen import onscreen 
+from exec_command import exec_command 
 from ssh_connect import ssh_connect
 from modifydb import append
 from modifydb import remove 
@@ -42,11 +42,6 @@ def main():
 	push_cfgs_cmd.add_argument('-n','--node', dest='node')
 	push_cfgs_cmd.add_argument('-f','--file', dest='file')
 	
-	onscreen_cmd = subparsers.add_parser('onscreen')
-	onscreen_cmd.set_defaults(func=onscreen)
-	onscreen_cmd.add_argument('-n','--node', dest='node')
-	onscreen_cmd.add_argument('-c','--command', dest='command')
-
 	ssh_cmd = subparsers.add_parser('ssh')
 	ssh_cmd.set_defaults(func=ssh_connect)
 	ssh_cmd.add_argument('hostname')
@@ -59,6 +54,10 @@ def main():
 	host_remove_cmd = host_subparsers.add_parser('remove')
 	host_remove_cmd.set_defaults(func=remove)
 	host_remove_cmd.add_argument('argument')
+	host_exec_cmd = host_subparsers.add_parser('exec')
+	host_exec_cmd.set_defaults(func=exec_command)
+	host_exec_cmd.add_argument('argument')
+	host_exec_cmd.add_argument('-n','--node', dest='node')
 
 	node_cmd= subparsers.add_parser('node')
 	node_subparsers = node_cmd.add_subparsers(dest='parser_node')
