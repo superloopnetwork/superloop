@@ -199,9 +199,20 @@ If there are multiple devices that require remediation, superloop handles remedi
 
 The next set of features I developed was 'push'. 'push' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. 
 
-## superloop onscreen
+## superloop host exec
 
-The 'onscreen' features allow you to execute a command on the device(s) without requiring you to log in. In the example below, the screen on the right is using 'push' and the screen on the left is using 'onscreen' to check the changes after.
+The 'host exec' (formerly known as 'onscreen') features allow you to execute a command on the device(s) without requiring you to log in. In the example below, the screen on the right is using 'push' and the screen on the left is using 'host exec' to check the changes after.
+
+Here is an example of how you would use it:
+```
+root@jumpbox:~/superloop# superloop.py host exec "show ip int br" -n core.*sw                
+core.sw.superloop.sfran: Interface              IP-Address      OK? Method Status                Protocol
+core.sw.superloop.sfran: Vlan1                  unassigned      YES NVRAM  administratively down down    
+core.sw.superloop.sfran: Vlan120                 10.120.20.1      YES NVRAM  up                    up      
+core.sw.superloop.sfran: Vlan130                 10.130.30.1      YES NVRAM  up                    up      
+core.sw.superloop.sfran: Vlan140                 10.140.40.1      YES NVRAM  up                    up      
+core.sw.superloop.sfran: Vlan150                 10.150.50.1      YES NVRAM  up                    up      
+```
 
 ![superloop push and onscreen demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_push_onscreen_demo.gif)
 
