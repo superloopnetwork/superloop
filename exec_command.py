@@ -28,8 +28,6 @@ def exec_command(args):
 		print("")
 
 	else:
-		print("{}".format(match_node))
-		print("{}".format(command))
 		node_element(match_node,node_object)
 		node_create(match_node,node_object)
 		multithread_engine(initialize.ntw_device,controller,command)
