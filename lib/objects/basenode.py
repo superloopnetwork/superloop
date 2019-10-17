@@ -67,7 +67,6 @@ class BaseNode(object):
 		output = output.replace('\n','\n{}: '.format(self.hostname))
 		output = re.sub(r'^','{}: '.format(self.hostname),output)
 		print ("{}".format(output))
-		print("")
 		self.net_connect.disconnect()
 
 	def get_config(self,command):

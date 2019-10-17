@@ -25,5 +25,5 @@ def multithread_engine(ntw_object,redirect,commands):
 #			print(some_thread)
 			some_thread.join()
 
-	print('[!] [DONE] [{}]\n'.format(datetime.datetime.now() - start_time))
+	print('[!] [SUCCESS] [{}]\n'.format(datetime.datetime.now() - start_time))
 

@@ -57,7 +57,7 @@ def auditdiff(args):
 		node_create(match_node,node_object)
 		auditdiff_engine(template_list,node_object,auditcreeper_flag)
 #		print ("THESE ARE THE COMMANDS: {}".format(commands))
-
+		
 		if(len(initialize.configuration) == 0):
 			pass	
 
