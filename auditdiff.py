@@ -18,6 +18,8 @@ def auditdiff(args):
 	ext = '.jinja2'
 	controller = 'push_config'
 	auditcreeper_flag = False
+	output = True
+	remediation = False 
 	commands = initialize.configuration	
 	argument_node = args.node
 	if(args.file is None):
@@ -55,23 +57,21 @@ def auditdiff(args):
 
 	else:
 		node_create(match_node,node_object)
-		auditdiff_engine(template_list,node_object,auditcreeper_flag)
+		auditdiff_engine(template_list,node_object,auditcreeper_flag,output,remediation)
 #		print ("THESE ARE THE COMMANDS: {}".format(commands))
-		
 		if(len(initialize.configuration) == 0):
 			pass	
 
 		else:
 			print("")
-			proceed = raw_input("PROCEED TO REMEDIATE? [Y/N]: ")
-
-			if(proceed == 'y' or proceed == 'Y'):
-				print("")
-				print("PUSHING CODE...")
-				multithread_engine(initialize.ntw_device,controller,commands)
-		
-			elif(proceed == 'n' or proceed == 'N'):
-				print("")
-				print("ABORT...")
+#			proceed = raw_input("PROCEED TO REMEDIATE? [Y/N]: ")
+#
+#			if(proceed == 'y' or proceed == 'Y'):
+#				print("")
+#				print("PUSHING CODE...")
+#				multithread_engine(initialize.ntw_device,controller,commands)
+#		
+#			elif(proceed == 'n' or proceed == 'N'):
+#				print("")
+#				print("ABORT...")
 	
-#	   print("pushing config to host: %s" % args.node)
