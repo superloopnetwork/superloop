@@ -5,10 +5,11 @@
 from jinja2 import Environment, FileSystemLoader
 from get_property import get_directory
 from get_property import get_template
+from parse_commands import parse_commands
 import initialize
 import re
 
-def render(template_list,node_object,auditcreeper):
+def render(template_list,node_object,auditcreeper,output):
 
 ### TEMPLATE_LIST_COPY TAKE A COPY OF THE CURRENT TEMPLATE_LIST
 	template_list_copy = template_list
@@ -16,8 +17,7 @@ def render(template_list,node_object,auditcreeper):
 	if(auditcreeper):
 	    template_list = template_list_copy[0]
 
-	print("[!] [THE FOLLOWING TEMPLATE(S) IS/ARE RENDERED:]")
-	print("")
+#	print("[!] [THE FOLLOWING TEMPLATE(S) IS/ARE RENDERED:]")
 	for index in initialize.element:
 
 		print ("{}".format(node_object[index]['hostname']))
@@ -32,8 +32,20 @@ def render(template_list,node_object,auditcreeper):
 			f.write(config) 
 			f.close 
 			print("{}{}".format(directory,template))
-			print("{}".format(config))
+			if(output):
+				print("{}".format(config))
+
+			f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
+			init_config = f.readlines()
+
+			for config_line in init_config:
+				strip_config = config_line.strip('\n')
+				config_list.append(strip_config)
+
+			initialize.configuration.append(config_list)
+
 		if(auditcreeper):
 			template_list = get_template(template_list_copy)
+		print
 
 	return None

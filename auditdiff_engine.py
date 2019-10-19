@@ -14,10 +14,9 @@ import re
 import difflib
 import initialize
 
-def auditdiff_engine(template_list,node_object,auditcreeper):
+def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 	controller = 'get_config'
-
 	command = ''
 
 	### PUSH_CONFIGS IS A LIST OF THE FINAL CONFIGS TO BE PUSHED
@@ -39,10 +38,11 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 	if(auditcreeper):
 		template_list = template_list_copy[0]
 
-	print("[+] [GATHERING RUNNING-CONFIG. STANDBY...]")
+	print("[+] [COMPUTING DIFF. STANDBY...]")
 	multithread_engine(initialize.ntw_device,controller,command)
 
 	### THIS FOR LOOP WILL LOOP THROUGH ALL THE MATCHED ELEMENTS FROM THE USER SEARCH AND AUDIT ON SPECIFIC TEMPLATE OR IF NO ARGUMENT IS GIVEN, ALL TEMPLATES
+	
 	for index in initialize.element:
 
 		### NODE_CONFIG IS THE FINALIZED CONFIG TO PUSH TO THE NODE FOR REMEDIATION
@@ -50,14 +50,14 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 		ntw_device_pop = True 
 		### TEMPLATE_NAME IS SET TO TRUE IN ORDER TO PRINT OUT THE TEMPLATE HEADING WHEN RECURSING
 		template_name = True
-		first_parent = True
-		previous_parent = ''
-		history = []
 
-		print("Only in the device: -")
-		print("Only in the generated config: +")
+		if(output):
+			print("Only in the device: -")
+			print("Only in the generated config: +")
+
 		print ("{}".format(node_object[index]['hostname']))
 
+		### THIS WILL LOOP THROUGH ALL THE TEMPLATES SPECIFIED FOR THE PARTICULAR HOST IN NODES.YAML
 		for template in template_list:
 
 			### INDEX_LIST IS A LIST OF ALL THE POSITIONS COLLECTED FROM INDEX_POSITION VARIABLE
@@ -138,8 +138,9 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 			parse = CiscoConfParse(filtered_backup_config)
 			push_configs = parse.sync_diff(rendered_config, "",ignore_order=True, remove_lines=True, debug=False)
 			if(len(push_configs) == 0):
-				print("{}{} (none)".format(directory,template))
-				print
+				if(output):
+					print("{}{} (none)".format(directory,template))
+					print
 			else:
 			
 			### FILTERED_SET/RENDERED_SET RETURNS A DICTIONARY OF THE NUMBER OF TIMES A CONFIG IS REPEATED IN THE LIST
@@ -172,19 +173,24 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 #				print("PLUS_COMMANDS: {}".format(plus_commands))
 #
 				### THIS WILL JUST PRINT THE HEADING OF THE TEMPLATE NAME SO YOU KNOW WHAT IS BEING CHANGED UNDER WHICH TEMPLATE
-				print("{}{}".format(directory,template))
+				if(output):
+					print("{}{}".format(directory,template))
 
 				for line in push_configs:
 					search = parse_backup_configs.find_objects(r"^{}".format(line))
 					if('no' in line):
 						line = re.sub("no","",line)
-						print("- {}".format(line))
+						if(output):
+							print("- {}".format(line))
 					elif(len(search) == 0):
-						print("+ {}".format(line))
+						if(output):
+							print("+ {}".format(line))
 					elif(len(search) > 1):
-						print("+ {}".format(line))
+						if(output):
+							print("+ {}".format(line))
 					else:
-						print("  {}".format(line))
+						if(output):
+							print("  {}".format(line))
 				### THIS SECTION OF CODE WILL PRINT THE DIFF OF WHAT CONFIG(S) WILL BE CHANGING
 #				for line in difflib.unified_diff(filtered_backup_config, rendered_config,n=10):
 #					if(line.startswith("---") or line.startswith("+++") or line.startswith("@")):
@@ -231,16 +237,17 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 					
 				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #				print("PUSH_CONFIGS: {}".format(push_configs))
+				if(remediation):
 
-				### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE
-				for config in push_configs:
-					node_configs.append(config)
-					ntw_device_pop = False
-
-				### INITIALIZE.COFIGURATION APPENDS ALL THE REMEDIATED CONFIGS AND PREPARES IT FOR PUSH
-				if(auditcreeper == False):
-					initialize.configuration.append(node_configs)
-				node_index = node_index + 1
+					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE (EXPECTED RESULTS)
+					for config in push_configs:
+						node_configs.append(config)
+						ntw_device_pop = False
+	
+					### INITIALIZE.COFIGURATION APPENDS ALL THE REMEDIATED CONFIGS AND PREPARES IT FOR PUSH
+					if(auditcreeper == False):
+						initialize.configuration.append(node_configs)
+					node_index = node_index + 1
 
 		if(auditcreeper):
 			initialize.configuration.append(node_configs)
@@ -249,4 +256,9 @@ def auditdiff_engine(template_list,node_object,auditcreeper):
 				initialize.configuration.pop(node_index)
 			template_list = get_template(template_list_copy)
 
+#	if(remediation):
+#		print("[+]: PUSH ENABLED")
+#		print("[!]: PUSH DISABLED")
+		
+			
 	return None

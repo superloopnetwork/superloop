@@ -17,8 +17,9 @@ def push_config(args):
 
 	ext = '.jinja2'
 	controller = 'push_config'
-	commands = initialize.configuration
+#	commands = initialize.configuration
 	auditcreeper_flag = False
+	output = False
 	argument_node = args.node
 
 	if(args.file is None):
@@ -56,17 +57,21 @@ def push_config(args):
 		print("")
 
 	else:
-		render(template_list,node_object,auditcreeper_flag)
+		render(template_list,node_object,auditcreeper_flag,output)
 		node_create(match_node,node_object)
+		confirm_push(controller)
 		print("")
-		proceed = raw_input("PROCEED? [Y/N]: ")
-	
-		if(proceed == 'y' or proceed == 'Y'):
-			print("")
-			print("PUSHING CODE...")
-			multithread_engine(initialize.ntw_device,controller,commands)
-	
-		elif(proceed == 'n' or proceed == 'N'):
-			print("ABORT...")
-	
-#		print("pushing config to host: %s" % args.node)
+
+def confirm_push(controller):
+	check = str(raw_input("Push configs? [y/N]: ")).strip()
+	try:
+		if check[0] == 'y':
+			multithread_engine(initialize.ntw_device,controller,initialize.configuration)
+		elif check[0] == 'N':
+			return False
+		else:
+			print("RuntimeError: aborted at user request")
+
+	except Exception as error:
+		print("ExceptionError: an exception occured")
+		print(error)	
