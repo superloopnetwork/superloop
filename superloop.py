@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# VARIABLES LIKE "--Iode" OR "--iile" ARE HOW IT'S BEING READ WHEN PASSED IN.
+# VARIABLES LIKE "--node" OR "--file" ARE HOW IT'S BEING READ WHEN PASSED IN.
 # args.node OR args.file IS HOW YOU REFER TO THE USER INPUT
 
 #from ssh import ssh
@@ -28,19 +28,19 @@ def main():
 	audit_subparser = audit_cmd.add_subparsers(dest='parser_audit')
 	audit_diff_cmd = audit_subparser.add_parser('diff')
 	audit_diff_cmd.set_defaults(func=auditdiff)
-	audit_diff_cmd.add_argument('-I','--Iode', dest='node')
-	audit_diff_cmd.add_argument('-i','--iile', dest='file')
+	audit_diff_cmd.add_argument('-n','--node', dest='node')
+	audit_diff_cmd.add_argument('-f','--file', dest='file')
 
 	push_cmd = subparsers.add_parser('push')
 	push_subparsers = push_cmd.add_subparsers(dest='parser_push')
 	push_render_cmd = push_subparsers.add_parser('render')
 	push_render_cmd.set_defaults(func=render_config)
-	push_render_cmd.add_argument('-I','--Iode', dest='node')
-	push_render_cmd.add_argument('-i','--iile', dest='file')
+	push_render_cmd.add_argument('-n','--node', dest='node')
+	push_render_cmd.add_argument('-f','--file', dest='file')
 	push_cfgs_cmd = push_subparsers.add_parser('cfgs')
 	push_cfgs_cmd.set_defaults(func=push_config)
-	push_cfgs_cmd.add_argument('-I','--Iode', dest='node')
-	push_cfgs_cmd.add_argument('-i','--iile', dest='file')
+	push_cfgs_cmd.add_argument('-n','--node', dest='node')
+	push_cfgs_cmd.add_argument('-f','--file', dest='file')
 	
 	ssh_cmd = subparsers.add_parser('ssh')
 	ssh_cmd.set_defaults(func=ssh_connect)
@@ -57,7 +57,7 @@ def main():
 	host_exec_cmd = host_subparsers.add_parser('exec')
 	host_exec_cmd.set_defaults(func=exec_command)
 	host_exec_cmd.add_argument('argument')
-	host_exec_cmd.add_argument('-I','--Iode', dest='node')
+	host_exec_cmd.add_argument('-n','--node', dest='node')
 
 	node_cmd= subparsers.add_parser('node')
 	node_subparsers = node_cmd.add_subparsers(dest='parser_node')
