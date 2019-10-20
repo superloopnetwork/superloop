@@ -1,4 +1,4 @@
-### THIS MODULE CONTROLS THE RENDERING OF THE TEMPLATES.
+### THIS MODULE CONTROLS THE PUSHING OF THE TEMPLATES.
 ### NODE_OBJECT IS A LIST OF DICTIONARY COMPILED BY THE 
 ### PROCESSDB MODULE. IT PROCESSES THE INFORMATION FROM THE
 ### NODES.YAML FILE AND STORES IT INTO A LIST OF DICTIONARY.
@@ -7,19 +7,19 @@ from lib.objects.basenode import BaseNode
 from processdb import process_nodes
 from processdb import process_templates
 from search import search_node
-from search import search_template 
+from search import search_template
 from render import render
 from node_create import node_create
-from multithread import multithread_engine
+from confirm_push import confirm_push
 import initialize
 
-def render_config(args):
+def push_cfgs(args):
 
 	ext = '.jinja2'
-	auditcreeper = False
+	controller = 'push_cfgs'
 	commands = initialize.configuration
-	auditcreeper_flag = False 
-	output = True
+	auditcreeper_flag = False
+	output = False
 	argument_node = args.node
 
 	if(args.file is None):
@@ -58,3 +58,20 @@ def render_config(args):
 
 	else:
 		render(template_list,node_object,auditcreeper_flag,output)
+		node_create(match_node,node_object)
+		confirm_push(controller,commands)
+		print("")
+
+#def confirm_push(controller,commands):
+#	check = str(raw_input("Push configs? [y/N]: ")).strip()
+#	try:
+#		if check[0] == 'y':
+#			multithread_engine(initialize.ntw_device,controller,commands)
+#		elif check[0] == 'N':
+#			return False
+#		else:
+#			print("RuntimeError: aborted at user request")
+#
+#	except Exception as error:
+#		print("ExceptionError: an exception occured")
+#		print(error)	

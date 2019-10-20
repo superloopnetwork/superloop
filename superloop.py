@@ -4,7 +4,8 @@
 
 #from ssh import ssh
 from auditdiff import auditdiff
-from push_config import push_config
+from push_cfgs import push_cfgs
+from push_local import push_local
 from render_config import render_config
 from exec_command import exec_command 
 from ssh_connect import ssh_connect
@@ -38,9 +39,13 @@ def main():
 	push_render_cmd.add_argument('-n','--node', dest='node')
 	push_render_cmd.add_argument('-f','--file', dest='file')
 	push_cfgs_cmd = push_subparsers.add_parser('cfgs')
-	push_cfgs_cmd.set_defaults(func=push_config)
+	push_cfgs_cmd.set_defaults(func=push_cfgs)
 	push_cfgs_cmd.add_argument('-n','--node', dest='node')
 	push_cfgs_cmd.add_argument('-f','--file', dest='file')
+	push_local_cmd = push_subparsers.add_parser('local')
+	push_local_cmd.set_defaults(func=push_local)
+	push_local_cmd.add_argument('filename')
+	push_local_cmd.add_argument('-n','--node', dest='node')
 	
 	ssh_cmd = subparsers.add_parser('ssh')
 	ssh_cmd.set_defaults(func=ssh_connect)
