@@ -11,6 +11,7 @@ from node_create import node_create
 from confirm_push import confirm_push
 from parse_commands import parse_commands
 import initialize
+import os
 
 def push_local(args):
 
@@ -32,12 +33,13 @@ def push_local(args):
 	else:
 		node_element(match_node,node_object)
 		node_create(match_node,node_object)
+		home_directory = os.path.expanduser('~')
 
 		for index in initialize.element:
 
 			config_list = []
 
-			f = open("/push-local/{}".format(filename), "r")
+			f = open("{}/{}".format(home_directory,filename), "r")
 
 			init_config = f.readlines()
 			parse_commands(init_config)
