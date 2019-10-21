@@ -9,6 +9,7 @@ from search import search_node
 from search import node_element 
 from node_create import node_create
 from confirm_push import confirm_push
+from parse_commands import parse_commands
 import initialize
 
 def push_local(args):
@@ -37,12 +38,8 @@ def push_local(args):
 			config_list = []
 
 			f = open("/push-local/{}".format(filename), "r")
+
 			init_config = f.readlines()
-
-			for config_line in init_config:
-				strip_config = config_line.strip('\n')
-				config_list.append(strip_config)
-
-			commands.append(config_list)
+			parse_commands(init_config)
 
 		confirm_push(controller,commands)

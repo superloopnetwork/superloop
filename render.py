@@ -37,12 +37,10 @@ def render(template_list,node_object,auditcreeper,output):
 
 			f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
 			init_config = f.readlines()
-
-			for config_line in init_config:
-				strip_config = config_line.strip('\n')
-				config_list.append(strip_config)
-
-			initialize.configuration.append(config_list)
+			### THE BELOW PARSE_COMMANDS FUNCTION WILL ONLY GET EXECUTED IF NEEDS TO STORE COMMANDS IN THE GLOBAL VARILABLE INITIALIZE.CONFIGURATION FOR PUSH
+			### PUSH_CFGS(OUTPUT = TRUE) VS RENDER_CONFIG(OUTPUT = FALSE) FUNCTIONS.
+			if(output!=True):
+				parse_commands(init_config)
 
 		if(auditcreeper):
 			template_list = get_template(template_list_copy)
