@@ -155,7 +155,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 					if('no' in line):
 						line = re.sub("no","",line)
 						if(output):
-							print("- {}".format(line))
+							print("-{}".format(line))
 					elif(len(search) == 0):
 						if(output):
 							print("+ {}".format(line))
