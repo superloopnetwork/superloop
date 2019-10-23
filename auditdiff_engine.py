@@ -137,42 +137,16 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 			parse = CiscoConfParse(filtered_backup_config)
 			push_configs = parse.sync_diff(rendered_config, "",ignore_order=True, remove_lines=True, debug=False)
+
+			###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#			print("PUSH_CONFIGS: {}".format(push_configs))
+
 			if(len(push_configs) == 0):
 				if(output):
 					print("{}{} (none)".format(directory,template))
 					print
 			else:
 			
-			### FILTERED_SET/RENDERED_SET RETURNS A DICTIONARY OF THE NUMBER OF TIMES A CONFIG IS REPEATED IN THE LIST
-#			filtered_backup_set = Counter(filtered_backup_config)
-#			rendered_set = Counter(rendered_config)
-#			minus_commands_counter = filtered_backup_set - rendered_set
-#			plus_commands_counter = rendered_set - filtered_backup_set
-#
-#			### MINUS_COMMANDS IS A LIST OF COMMANDS THAT EXIST ON THE NODE THAT SHOULDN'T BE WHEN COMPARED AGAINST THE TEMPLATE
-#			### PLUS_COMMAND IS A LIST OF COMMAND THAT DOESN'T EXIST ON THE NODE THAT SHOULD BE WHEN COMPARED AGAINST THE TEMPLATE
-#			minus_commands = list(minus_commands_counter.elements())
-#			plus_commands = list(plus_commands_counter.elements())
-
-#			print("MINUS_COMMANDS: {}".format(minus_commands))
-#			print("PLUS_COMMANDS:: {}".format(plus_commands))
-
-			### THIS SECTION OF CODE CHECKS TO SEE IF THE LENGTH OF THE TWO LIST IS EQUAL TO ZERO, THEN NOTHING HAS TO BE REMEDIATED
-#			if(len(minus_commands) == 0 and len(plus_commands) == 0 and auditcreeper == False):
-#				print("{}{} (none)".format(directory,template))
-#				print
-#				initialize.ntw_device.pop(node_index)
-#
-#			if(len(minus_commands) == 0 and len(plus_commands) == 0 and auditcreeper == True):
-#				print("{}{} (none)".format(directory,template))
-#				print
-#
-#			elif(len(minus_commands) >= 1 or len(plus_commands) >= 1):
-#
-#				print("MINUS_COMMANDS: {}".format(minus_commands))
-#				print("PLUS_COMMANDS: {}".format(plus_commands))
-#
-				### THIS WILL JUST PRINT THE HEADING OF THE TEMPLATE NAME SO YOU KNOW WHAT IS BEING CHANGED UNDER WHICH TEMPLATE
 				if(output):
 					print("{}{}".format(directory,template))
 
@@ -191,49 +165,6 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 					else:
 						if(output):
 							print("  {}".format(line))
-				### THIS SECTION OF CODE WILL PRINT THE DIFF OF WHAT CONFIG(S) WILL BE CHANGING
-#				for line in difflib.unified_diff(filtered_backup_config, rendered_config,n=10):
-#					if(line.startswith("---") or line.startswith("+++") or line.startswith("@")):
-#						continue
-#					else:
-#						print line
-#						if(line.startswith("-")):
-#							config_line = line.strip()
-							### THIS IF CONDITION IS TO SATISFY SOME CASES WHERE IT HAS A HYPEN IN BETWEEN A CONFIG. EX SNMP-SERVER
-#							if(re.match("-\w.+\-",config_line)):
-#								###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#								print("MATCHES THIS -\w.+\- CONDITION")
-#								config_line = re.sub("^\-","no ",config_line)
-#								print("CONFIG_LINE: {}".format(config_line))
-#								push_configs.append(config_line)
-#							elif(re.match("^-\s",config_line)):
-#								###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#								print("MATCHES THIS - CONDITION")
-#								config_line = re.sub("^-","no",config_line)
-#								print("CONFIG_LINE: {}".format(config_line))
-#								push_configs.append(config_line)
-#							elif(re.match("^-\w",line)):
-#								###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#								print("MATCHES THIS ^-\w CONDITION")
-#								config_line = re.sub("^-","no ",config_line)
-#								print("CONFIG_LINE: {}".format(config_line))
-#								push_configs.append(config_line)
-#						elif(line.startswith("+")):
-#							config_line = line.strip()
-#							config_line = line.strip("+")
-#							push_configs.append(config_line)
-#						else:
-#							config_line = line.strip("\n")
-#							push_configs.append(config_line)
-#				print("")	
-				### THIS SECTION OF CODE WILL CHECK FOR THE WHITE SPACES FROM THE BEGINNING OF THE LIST
-				### IF THE ELEMENT HAS 1 WHITE SPACE, IT THEN KNOWS IT'S A PARENT CONFIG
-				### ANYTHING GREATER THAN 1 WHITE SPACE IS A PARENT/CHILD
-#				config_index = 0
-#				whitespace = len(push_configs[config_index]) - len(push_configs[config_index].lstrip())
-#				while(whitespace != 0):
-#					push_configs.pop(config_index)
-#					whitespace = len(push_configs[config_index]) - len(push_configs[config_index].lstrip())
 					
 				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #				print("PUSH_CONFIGS: {}".format(push_configs))
@@ -256,9 +187,5 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 				initialize.configuration.pop(node_index)
 			template_list = get_template(template_list_copy)
 
-#	if(remediation):
-#		print("[+]: PUSH ENABLED")
-#		print("[!]: PUSH DISABLED")
-		
 			
 	return None
