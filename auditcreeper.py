@@ -12,14 +12,15 @@ import initialize
 def auditcreeper():
 
 	initialize.variables()
-	controller = 'push_config'
+	controller = 'push_cfgs'
 	commands = initialize.configuration
 	auditcreeper_flag = True
+	output = False
+	remediation = True
 	### AUGUMENT_NODE WILL MATCH EVERY NODES IN THE LIST OF NODE_OBJECT
 	argument_node = '.+'
 	template_list = []
 	
-
 	os.system('clear')
 
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
@@ -36,10 +37,9 @@ def auditcreeper():
 	### TO SEE IF THERE IS A TEMPLATE FOR THE SPECIFIC PLATFORM AND TYPE.
 	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper_flag)
 	node_create(match_node,node_object)
-	auditdiff_engine(template_list,node_object,auditcreeper_flag)
+	auditdiff_engine(template_list,node_object,auditcreeper_flag,output,remediation)
 	multithread_engine(initialize.ntw_device,controller,commands)
 	threading.Timer(5.0, auditcreeper).start()
-
 
 if __name__ == "__main__":
 	auditcreeper()

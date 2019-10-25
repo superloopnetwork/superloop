@@ -58,6 +58,7 @@ class BaseNode(object):
 		self.connect()
 		output = self.net_connect.enable()
 		output = self.net_connect.send_config_set(commands)
+		print output
 		self.net_connect.disconnect()
 
 	def exec_command(self,command):
@@ -66,7 +67,6 @@ class BaseNode(object):
 		output = self.net_connect.send_command(command)
 		output = output.replace('\n','\n{}: '.format(self.hostname))
 		output = re.sub(r'^','{}: '.format(self.hostname),output)
-		print ("{}".format(output))
 		self.net_connect.disconnect()
 
 	def get_config(self,command):
