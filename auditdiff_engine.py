@@ -11,7 +11,7 @@ from multithread import multithread_engine
 from get_property import get_directory
 from get_property import get_template
 import re
-import difflib
+#import difflib
 import initialize
 
 def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
@@ -55,7 +55,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			print("Only in the device: -")
 			print("Only in the generated config: +")
 
-		print ("{}".format(node_object[index]['hostname']))
+			print ("{}".format(node_object[index]['hostname']))
 
 		### THIS WILL LOOP THROUGH ALL THE TEMPLATES SPECIFIED FOR THE PARTICULAR HOST IN NODES.YAML
 		for template in template_list:
@@ -137,16 +137,13 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 			parse = CiscoConfParse(filtered_backup_config)
 			push_configs = parse.sync_diff(rendered_config, "",ignore_order=True, remove_lines=True, debug=False)
-
-			###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#			print("PUSH_CONFIGS: {}".format(push_configs))
-
 			if(len(push_configs) == 0):
 				if(output):
 					print("{}{} (none)".format(directory,template))
 					print
 			else:
 			
+				### THIS WILL JUST PRINT THE HEADING OF THE TEMPLATE NAME SO YOU KNOW WHAT IS BEING CHANGED UNDER WHICH TEMPLATE
 				if(output):
 					print("{}{}".format(directory,template))
 
@@ -155,7 +152,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 					if('no' in line):
 						line = re.sub("no","",line)
 						if(output):
-							print("-{}".format(line))
+							print("- {}".format(line))
 					elif(len(search) == 0):
 						if(output):
 							print("+ {}".format(line))
@@ -167,7 +164,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 							print("  {}".format(line))
 					
 				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-				print("PUSH_CONFIGS: {}".format(push_configs))
+#				print("PUSH_CONFIGS: {}".format(push_configs))
 				if(remediation):
 
 					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE (EXPECTED RESULTS)
@@ -187,5 +184,9 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 				initialize.configuration.pop(node_index)
 			template_list = get_template(template_list_copy)
 
+#	if(remediation):
+#		print("[+]: PUSH ENABLED")
+#		print("[!]: PUSH DISABLED")
+		
 			
 	return None

@@ -10,18 +10,20 @@ from search import search_node
 from search import search_template
 from auditdiff_engine import auditdiff_engine
 from node_create import node_create
-from multithread import multithread_engine
+from confirm_push import confirm_push
 import initialize
 
 def auditdiff(args):
 
 	ext = '.jinja2'
-	controller = 'push_config'
+	controller = 'push_cfgs'
 	auditcreeper_flag = False
 	output = True
 	remediation = False 
 	commands = initialize.configuration	
 	argument_node = args.node
+	if(args.parser_audit == 'remediate'):
+		remediation = True
 	if(args.file is None):
 #		print("ARGS.FILE IS NONE")
 		template_list = []
@@ -63,6 +65,9 @@ def auditdiff(args):
 			pass	
 
 		else:
+			if(remediation):
+				confirm_push(controller,commands)
+#			multithread_engine(initialize.ntw_device,controller,commands)
 			print("")
 #			proceed = raw_input("PROCEED TO REMEDIATE? [Y/N]: ")
 #
