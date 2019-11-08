@@ -21,6 +21,7 @@ def push_cfgs(args):
 	auditcreeper_flag = False
 	output = False
 	argument_node = args.node
+	with_remediation = True
 
 	if(args.file is None):
 #		print("ARGS.FILE IS NONE")
@@ -57,7 +58,7 @@ def push_cfgs(args):
 		print("")
 
 	else:
-		render(template_list,node_object,auditcreeper_flag,output)
+		render(template_list,node_object,auditcreeper_flag,output,with_remediation)
 		node_create(match_node,node_object)
 		confirm_push(controller,commands)
 		print("")

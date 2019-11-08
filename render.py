@@ -9,7 +9,7 @@ from parse_commands import parse_commands
 import initialize
 import re
 
-def render(template_list,node_object,auditcreeper,output):
+def render(template_list,node_object,auditcreeper,output,with_remediations):
 
 ### TEMPLATE_LIST_COPY TAKE A COPY OF THE CURRENT TEMPLATE_LIST
 	template_list_copy = template_list
@@ -28,7 +28,7 @@ def render(template_list,node_object,auditcreeper,output):
 			baseline = env.get_template(template)
 			f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "w") 
 			config_list = []
-			config = baseline.render(nodes = node_object[index])
+			config = baseline.render(nodes = node_object[index],with_remediations=with_remediations)
 			f.write(config) 
 			f.close 
 			print("{}{}".format(directory,template))
