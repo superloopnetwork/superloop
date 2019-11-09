@@ -105,7 +105,37 @@ ip dhcp pool DATA
  dns-server 8.8.8.8 
 ``` 
 Look at 'ip dhcp pool DATA'. The next line of config has an indentation. superloop is inteligent enough to render the remaining 3 lines of configs without having to include it into the audit_filter.
- 
+
+IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
+
+You will want to move the 'superloop.py' file to one of your $PATH directory and remove the *.py extention. Usually this can be '/usr/local/bin/'
+
+```
+root@jumpbox:~/superloop# echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+root@jumpbox:~/superloop# mv superloop.py /usr/local/bin/superloop
+```
+Now append the following code within '/usr/local/bin/superloop':
+```
+import sys
+sys.path.append('/root/superloop')
+```
+So it looks like this . . . 
+```
+#!/usr/bin/env python
+# VARIABLES LIKE "--node" OR "--file" ARE HOW IT'S BEING READ WHEN PASSED IN.
+# args.node OR args.file IS HOW YOU REFER TO THE USER INPUT
+import sys
+sys.path.append('/root/superloop')
+from auditdiff import auditdiff
+from push_cfgs import push_cfgs
+...
+..
+.
+<output truncated>
+```
+This will set the system path of superloop to '/root/superloop'. If you have superloop installed in another directory, change the path accordingly.
+
 Now that I have explained the basic operations, onto the fun stuff!
 
 ## superloop audit diff
