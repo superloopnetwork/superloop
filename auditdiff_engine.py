@@ -165,7 +165,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 							print("  {}".format(line))
 					
 				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-				print("PUSH_CONFIGS: {}".format(push_configs))
+#				print("PUSH_CONFIGS: {}".format(push_configs))
 				if(remediation):
 
 					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE (EXPECTED RESULTS)
