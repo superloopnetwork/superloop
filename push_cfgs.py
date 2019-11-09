@@ -8,6 +8,7 @@ from processdb import process_nodes
 from processdb import process_templates
 from search import search_node
 from search import search_template
+from auditdiff_engine import auditdiff_engine
 from render import render
 from node_create import node_create
 from confirm_push import confirm_push
@@ -19,9 +20,9 @@ def push_cfgs(args):
 	controller = 'push_cfgs'
 	commands = initialize.configuration
 	auditcreeper_flag = False
-	output = False
+	output = True 
 	argument_node = args.node
-	with_remediation = True
+	remediation = True
 
 	if(args.file is None):
 #		print("ARGS.FILE IS NONE")
@@ -58,8 +59,10 @@ def push_cfgs(args):
 		print("")
 
 	else:
-		render(template_list,node_object,auditcreeper_flag,output,with_remediation)
+#		render(template_list,node_object,auditcreeper_flag,output,with_remediation)
+
 		node_create(match_node,node_object)
+		auditdiff_engine(template_list,node_object,auditcreeper_flag,output,remediation)
 		confirm_push(controller,commands)
 		print("")
 

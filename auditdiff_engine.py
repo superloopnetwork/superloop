@@ -11,7 +11,6 @@ from multithread import multithread_engine
 from get_property import get_directory
 from get_property import get_template
 import re
-#import difflib
 import initialize
 
 def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
@@ -51,7 +50,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 		### TEMPLATE_NAME IS SET TO TRUE IN ORDER TO PRINT OUT THE TEMPLATE HEADING WHEN RECURSING
 		template_name = True
 
-		if(output):
+		if(not remediation):
 			print("Only in the device: -")
 			print("Only in the generated config: +")
 
@@ -132,9 +131,11 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 						for child in audit_string.all_children:
 							filtered_backup_config.append(child.text)
 
-			###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+			### UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #			print("FILTERED BACKUP CONFIG: {}".format(filtered_backup_config))		
 
+			### SYNC_DIFF WILL DIFF OUT THE FILTERED_BACKUP_COFNIG FROM THE RENDERED CONFIG AND STORE WHATEVER COMMANDS THAT
+			### NEEDS TO BE ADDED/REMOVE IN PUSH_CONFIGS VARIABLE
 			parse = CiscoConfParse(filtered_backup_config)
 			push_configs = parse.sync_diff(rendered_config, "",ignore_order=True, remove_lines=True, debug=False)
 			if(len(push_configs) == 0):
@@ -151,20 +152,20 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 					search = parse_backup_configs.find_objects(r"^{}".format(line))
 					if('no' in line):
 						line = re.sub("no","",line)
-						if(output):
-							print("- {}".format(line))
+						if(not remediation):
+							print("-{}".format(line))
 					elif(len(search) == 0):
-						if(output):
+						if(not remediation):
 							print("+ {}".format(line))
 					elif(len(search) > 1):
-						if(output):
+						if(not remediation):
 							print("+ {}".format(line))
 					else:
-						if(output):
+						if(not remediation):
 							print("  {}".format(line))
 					
 				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#				print("PUSH_CONFIGS: {}".format(push_configs))
+				print("PUSH_CONFIGS: {}".format(push_configs))
 				if(remediation):
 
 					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE (EXPECTED RESULTS)
