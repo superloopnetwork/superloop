@@ -195,9 +195,13 @@ If there are no discrepancies for a specific template, you should see something 
 
 If there are multiple devices that require remediation, superloop handles remediation concurrently - meaning, superloop connects to all devices in parallel via multithreading.
 
-## superloop push
+## superloop push cfgs
 
-The next set of features I developed was 'push'. 'push' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. 
+The next set of features I developed was 'push cfgs'. 'push cfgs' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. 
+
+## superloop push local
+
+The 'push local' command allows you to push configs that are stored in a text file to one more multiple nodes. I found this feature to be very useful when performing migrations. For example, if we wanted to drain/undrain traffic from one node, we could pre-configure the set of commands in the text file. At the time of migration, we can push the configs to the selected nodes. This method would eliminate any human error in the process.
 
 ## superloop host exec
 
@@ -205,7 +209,7 @@ The 'host exec' (formerly known as 'onscreen') features allow you to execute a c
 
 Here is an example of how you would use it:
 ```
-root@jumpbox:~/superloop# superloop.py host exec "show ip int br" -n core.*sw                
+root@jumpbox:~/superloop# superloop host exec "show ip int brief" -n core.*sw                
 core.sw.superloop.sfran: Interface              IP-Address      OK? Method Status                Protocol
 core.sw.superloop.sfran: Vlan1                  unassigned      YES NVRAM  administratively down down    
 core.sw.superloop.sfran: Vlan120                 10.120.20.1      YES NVRAM  up                    up      
@@ -222,7 +226,7 @@ Users are now able to take advantage of the 'ssh' menu screen. This feature allo
 
 Here is an example of how you would use it:
 ```
-root@jumpbox:~/superloop# python superloop ssh core.*
+root@jumpbox:~/superloop# superloop ssh core.*
 ID      name                    address         platform
 1       core-fw-superloop-toron 10.10.10.10     cisco
 2       core.sw.superloop.sfran 20.20.20.20     cisco
