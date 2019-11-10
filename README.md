@@ -8,21 +8,26 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
 
 ## Install
 
-The easist method at this time is to do a ```git clone https://github.com/superloopnetwork/superloop```. In the meantime, I will work towards creating a pip package.
+To install superloop, simply use pip:
+
+```$ pip install superloop```. This will install superloop along with all required ependencies to the directory ```/usr/local/lib/python2.7/dist-packages/superloop```.
 
 IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
 
-You will want to move the 'superloop.py' file to one of your $PATH directory and remove the *.py extention. Usually this can be '/usr/local/bin/'
-
+You will want to move the 'superloop.py' file to one of your $PATH directory and remove the *.py extention. 
+```
+$ mv superloop.py /usr/local/bin/superloop
+```
+Usually this can be '/usr/local/bin/'
 ```
 root@jumpbox:~/superloop# echo $PATH
 /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 root@jumpbox:~/superloop# mv superloop.py /usr/local/bin/superloop
 ```
-Now append the following code within '/usr/local/bin/superloop':
+Now append the following code within ```vi /usr/local/bin/superloop``` near the top:
 ```
 import sys
-sys.path.append('/root/superloop')
+sys.path.append('/usr/local/lib/python2.7/dist-packages/superloop')
 ```
 So it looks like this . . . 
 ```
@@ -30,7 +35,7 @@ So it looks like this . . .
 # VARIABLES LIKE "--node" OR "--file" ARE HOW IT'S BEING READ WHEN PASSED IN.
 # args.node OR args.file IS HOW YOU REFER TO THE USER INPUT
 import sys
-sys.path.append('/root/superloop')
+sys.path.append('/usr/local/lib/python2.7/dist-packages/superloop')
 from auditdiff import auditdiff
 from push_cfgs import push_cfgs
 ...
