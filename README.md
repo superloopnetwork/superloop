@@ -24,7 +24,7 @@ root@jumpbox:~/superloop# echo $PATH
 /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 root@jumpbox:~/superloop# mv superloop.py /usr/local/bin/superloop
 ```
-Now append the following code within ```vi /usr/local/bin/superloop``` near the top:
+Now append the following code within ```/usr/local/bin/superloop``` near the top:
 ```
 import sys
 sys.path.append('/usr/local/lib/python2.7/dist-packages/superloop')
@@ -43,7 +43,7 @@ from push_cfgs import push_cfgs
 .
 <output truncated>
 ```
-Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management:
+Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management (default path is /database/):
 
   1. nodes.yaml
   2. templates.yaml
@@ -51,7 +51,7 @@ Before we begin, I've constructed this application for easy database management 
 
 nodes.yaml acts as the inventory for all network devices. It must follow the format defined below as the application reads it in a specific method.
 ```
-root@jumpbox:~/superloop# cat nodes.yaml 
+root@jumpbox:~/database# cat nodes.yaml 
 ---
 - hostname: core-fw-superloop-toron
   ip: 10.10.10.10
@@ -92,7 +92,7 @@ The password is only decrypted during the time the application connects to your 
 
 templates.yaml is a database file that consist of all the jinja2 templates. You will need to include the full path. Here is a sample of how it should look like below. Do not change the format as the application reads it in a specific method. Only change the properties.
 ```
-root@jumpbox:~/superloop# cat templates.yaml 
+root@jumpbox:~/database# cat templates.yaml 
 ---
 - platform: cisco
   type: firewall
@@ -115,7 +115,7 @@ root@jumpbox:~/superloop# cat templates.yaml
   - /templates/cisco/ios/switch/hostname.jinja2
   - /templates/cisco/ios/switch/dhcp.jinja2
 ```
-I've structured the hierarchy based on vendor, os and the type. You should do the same in order to keep your templates orderly. Whatever hierarchy you choose, you will need to update/modify in the directory.py file to reflect.
+I've structured the hierarchy based on vendor, os and the type. You should do the same in order to keep your templates orderly. Whatever hierarchy you choose, you will need to update/modify in the directory.py file to reflect (default path /templates/).
 
 Let's look at a simple jinja2 template as an example.
 ```
