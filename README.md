@@ -5,6 +5,7 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
   1. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
   2. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
   3. ciscoconfparse - A library to help parse out Cisco (or similiar) CLI configs (https://pypi.org/project/ciscoconfparse/).
+  4. yaml - YAML is a human-readable data-serialization language (https://en.wikipedia.org/wiki/YAML).
 
 ## Install
 
@@ -13,6 +14,8 @@ To install superloop, simply use pip:
 ```$ pip install superloop```
 
 This will install superloop along with all required ependencies to the directory ```/usr/local/lib/python2.7/dist-packages/superloop```.
+
+You will need to install yaml system wide via the following command ```sudo apt-get install python-yaml```
 
 IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
 
