@@ -13,16 +13,15 @@ To install superloop, simply use pip:
 
 ```$ pip install superloop```
 
-This will install superloop along with all required dependencies to the directory ```/usr/local/lib/python2.7/dist-packages/superloop```.
-
-You will need to install yaml system wide via the following command ```sudo apt-get install python-yaml```.
+This will install superloop along with all required dependencies to the directory ```/usr/local/lib/python2.7/dist-packages/superloop```. You will need to install yaml system wide via the following command ```$ sudo apt-get install python-yaml```.
 
 IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
 
-You will want to move the 'superloop.py' file to one of your $PATH directory and remove the *.py extention. 
-
-```$ mv superloop.py /usr/local/bin/superloop```
-
+Move 'superloop.py' file to one of your $PATH directory and remove the *.py extention. Set the permission to 755.
+```
+$ mv superloop.py /usr/local/bin/superloop
+$ chmod 755 /usr/local/bin/superloop
+```
 Usually this can be '/usr/local/bin/'
 ```
 root@jumpbox:~/superloop# echo $PATH
