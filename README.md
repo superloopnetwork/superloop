@@ -1,11 +1,43 @@
 # superloop
 Inspired by a wide array of toolsets (unamed) used and developed by a leading social media tech company in the Bay Area for network automation, I have attempted to create my own version.
 
-Prerequisite:
+## Prerequisites
   1. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
   2. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
   3. ciscoconfparse - A library to help parse out Cisco (or similiar) CLI configs (https://pypi.org/project/ciscoconfparse/).
 
+## Install
+
+The easist method at this time is to do a ```git clone https://github.com/superloopnetwork/superloop```. In the meantime, I will work towards creating a pip package.
+
+IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
+
+You will want to move the 'superloop.py' file to one of your $PATH directory and remove the *.py extention. Usually this can be '/usr/local/bin/'
+
+```
+root@jumpbox:~/superloop# echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+root@jumpbox:~/superloop# mv superloop.py /usr/local/bin/superloop
+```
+Now append the following code within '/usr/local/bin/superloop':
+```
+import sys
+sys.path.append('/root/superloop')
+```
+So it looks like this . . . 
+```
+#!/usr/bin/env python
+# VARIABLES LIKE "--node" OR "--file" ARE HOW IT'S BEING READ WHEN PASSED IN.
+# args.node OR args.file IS HOW YOU REFER TO THE USER INPUT
+import sys
+sys.path.append('/root/superloop')
+from auditdiff import auditdiff
+from push_cfgs import push_cfgs
+...
+..
+.
+<output truncated>
+```
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management:
 
   1. nodes.yaml
@@ -106,34 +138,6 @@ ip dhcp pool DATA
 ``` 
 Look at 'ip dhcp pool DATA'. The next line of config has an indentation. superloop is inteligent enough to render the remaining 3 lines of configs without having to include it into the audit_filter.
 
-IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
-
-You will want to move the 'superloop.py' file to one of your $PATH directory and remove the *.py extention. Usually this can be '/usr/local/bin/'
-
-```
-root@jumpbox:~/superloop# echo $PATH
-/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
-root@jumpbox:~/superloop# mv superloop.py /usr/local/bin/superloop
-```
-Now append the following code within '/usr/local/bin/superloop':
-```
-import sys
-sys.path.append('/root/superloop')
-```
-So it looks like this . . . 
-```
-#!/usr/bin/env python
-# VARIABLES LIKE "--node" OR "--file" ARE HOW IT'S BEING READ WHEN PASSED IN.
-# args.node OR args.file IS HOW YOU REFER TO THE USER INPUT
-import sys
-sys.path.append('/root/superloop')
-from auditdiff import auditdiff
-from push_cfgs import push_cfgs
-...
-..
-.
-<output truncated>
-```
 This will set the system path of superloop to '/root/superloop'. If you have superloop installed in another directory, change the path accordingly.
 
 Now that I have explained the basic operations, onto the fun stuff!
