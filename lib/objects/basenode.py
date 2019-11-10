@@ -1,7 +1,7 @@
 ######################### BASE NODE ###########################
 
 from netmiko import ConnectHandler
-import base64
+import pybase64
 import re
 
 
@@ -14,7 +14,7 @@ class BaseNode(object):
    		self.password = password
    		self.platform = platform
    		self.type = type
-		self.password_decrypt = base64.b64decode(self.password)
+		self.password_decrypt = pybase64.b64decode(self.password)
 
 	def connect(self):
 		if (self.type == 'switch'):
@@ -25,9 +25,9 @@ class BaseNode(object):
 	def get_secret(self):
 		enable_get_secret = ''
 		if (self.location() == 'wdstk'):
-			enable_get_secret = base64.b64decode(self.password)
+			enable_get_secret = pybase64.b64decode(self.password)
 		elif (self.location() == 'ktch'):
-			enable_get_secret = base64.b64decode(self.password)
+			enable_get_secret = pybase64.b64decode(self.password)
 
 		return enable_get_secret
 		
