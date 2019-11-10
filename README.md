@@ -278,6 +278,7 @@ Enter ID to SSH to:
 root@jumpbox:~/superloop# superloop ssh .*sfran
 ID      name                    address         platform
 1       core.sw.superloop.sfran 20.20.20.20     cisco
+Password: 
 ```
 * Notice after 'ssh' it expects a positional argument(hostname).
 
