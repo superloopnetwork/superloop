@@ -10,14 +10,16 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
 
 To install superloop, simply use pip:
 
-```$ pip install superloop```. This will install superloop along with all required ependencies to the directory ```/usr/local/lib/python2.7/dist-packages/superloop```.
+```$ pip install superloop```
+
+This will install superloop along with all required ependencies to the directory ```/usr/local/lib/python2.7/dist-packages/superloop```.
 
 IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
 
 You will want to move the 'superloop.py' file to one of your $PATH directory and remove the *.py extention. 
-```
-$ mv superloop.py /usr/local/bin/superloop
-```
+
+```$ mv superloop.py /usr/local/bin/superloop```
+
 Usually this can be '/usr/local/bin/'
 ```
 root@jumpbox:~/superloop# echo $PATH
