@@ -41,6 +41,8 @@ from push_cfgs import push_cfgs
 .
 <output truncated>
 ```
+This will set the system path of superloop to '/usr/local/lib/python2.7/dist-packages/superloop'. If you have superloop installed in another directory, change the path accordingly.
+
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management (default path is /database/):
 
   1. nodes.yaml
@@ -140,8 +142,6 @@ ip dhcp pool DATA
  dns-server 8.8.8.8 
 ``` 
 Look at 'ip dhcp pool DATA'. The next line of config has an indentation. superloop is inteligent enough to render the remaining 3 lines of configs without having to include it into the audit_filter.
-
-This will set the system path of superloop to '/root/superloop'. If you have superloop installed in another directory, change the path accordingly.
 
 Now that I have explained the basic operations, onto the fun stuff!
 
