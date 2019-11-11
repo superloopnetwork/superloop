@@ -22,12 +22,6 @@ Move 'superloop.py' file to one of your $PATH directory and remove the *.py exte
 $ mv /usr/local/lib/python2.7/dist-packages/superloop/superloop.py /usr/local/bin/superloop
 $ chmod 755 /usr/local/bin/superloop
 ```
-Usually this can be in '/usr/local/bin/'
-```
-root@jumpbox:~/superloop# echo $PATH
-/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
-root@jumpbox:~/superloop# mv superloop.py /usr/local/bin/superloop
-```
 Now append the following code within ```/usr/local/bin/superloop``` near the top:
 ```
 import sys
