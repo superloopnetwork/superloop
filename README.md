@@ -19,10 +19,10 @@ IMPORTANT: To simplify the execution of superloop application, please do the fol
 
 Move 'superloop.py' file to one of your $PATH directory and remove the *.py extention. Set the permission to 755.
 ```
-$ mv superloop.py /usr/local/bin/superloop
+$ mv /usr/local/lib/python2.7/dist-packages/superloop/superloop.py /usr/local/bin/superloop
 $ chmod 755 /usr/local/bin/superloop
 ```
-Usually this can be '/usr/local/bin/'
+Usually this can be in '/usr/local/bin/'
 ```
 root@jumpbox:~/superloop# echo $PATH
 /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
