@@ -120,22 +120,29 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 			### FILTER OUT THE BACKUP_CONFIGS WITH THE AUDIT_FILTER
 			### THIS WILL TAKE EACH ELEMENT FROM THE AUDIT_FILTER LIST AND SEARCH FOR THE MATCHED LINES IN BACKUP_CONFIG
-			### MATCHED ENTRIES ARE THEN APPENDED TO FILTER_CONFIG VARIABLE AS A LIST
+			### PARSING THE BACKUP CONFIGS
 			parse_backup_configs = CiscoConfParse("/backup-configs/{}".format(node_object[index]['hostname']) + ".conf")
-			for audit in audit_filter:
+			### MATCHED ENTRIES ARE THEN APPENDED TO FILTER_BACKUP_CONFIG VARIABLE AS A LIST
+			### FUNCTION CALL TO PARSE_AUDIT_FILTER() TO FIND ALL THE PARENT/CHILD
+			filtered_backup_config = parse_audit_filter(node_object,index,parse_backup_configs,audit_filter)
 
-				current_template = parse_backup_configs.find_objects(r"^{}".format(audit))
-				for audit_string in current_template:       
-					filtered_backup_config.append(audit_string.text)
-					if(audit_string.is_parent):
-						for child in audit_string.all_children:
-							filtered_backup_config.append(child.text)
+#			for audit in audit_filter:
+#
+#				current_template = parse_backup_configs.find_objects(r"^{}".format(audit))
+#				for audit_string in current_template:       
+#					filtered_backup_config.append(audit_string.text)
+#					if(audit_string.is_parent):
+#						for child in audit_string.all_children:
+#							filtered_backup_config.append(child.text)
+#					if(node_object[index]['platform'] == 'juniper')
+#						filtered_backup_config.append('}')
+						
 
 			### UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #			print("FILTERED BACKUP CONFIG: {}".format(filtered_backup_config))		
 
 			### SYNC_DIFF WILL DIFF OUT THE FILTERED_BACKUP_COFNIG FROM THE RENDERED CONFIG AND STORE WHATEVER COMMANDS THAT
-			### NEEDS TO BE ADDED/REMOVE IN PUSH_CONFIGS VARIABLE
+			### COMMANDS THAT NEED TO BE ADDED/REMOVE IN PUSH_CONFIGS VARIABLE
 			parse = CiscoConfParse(filtered_backup_config)
 			push_configs = parse.sync_diff(rendered_config, "",ignore_order=True, remove_lines=True, debug=False)
 			if(len(push_configs) == 0):
@@ -191,3 +198,25 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 		
 			
 	return None
+
+
+### PARSE_AUDIT_FILTER FUNCTION FILTERS OUT THE BACKUP_CONFIGS WITH THE AUDIT_FILTER
+### THIS WILL TAKE EACH ELEMENT FROM THE AUDIT_FILTER LIST AND SEARCH FOR THE MATCHED LINES IN BACKUP_CONFIG
+### MATCHED ENTRIES ARE THEN APPENDED TO FILTER_BACKUP_CONFIG VARIABLE AS A LIST AND RETURNED
+def parse_audit_filter(node_object,index,parse_backup_configs,audit_filter):
+
+	filtered_backup_config = []
+
+	for audit in audit_filter:
+		current_template = parse_backup_configs.find_objects(r"^{}".format(audit))
+		for audit_string in current_template:
+			filtered_backup_config.append(audit_string.text)
+			if(audit_string.is_parent):
+				for child in audit_string.all_children:
+					filtered_backup_config.append(child.text)
+			### THE BELOW IF STATEMENT WILL ACCOMODATE JUNIPER PLATFORM SYNTAX AS IT'S MISSING A CLOSING CURLY BRACE AT THE END 
+			if(node_object[index]['platform'] == 'juniper'):
+				filtered_backup_config.append('}')
+
+	return filtered_backup_config
+
