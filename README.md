@@ -5,6 +5,7 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
   1. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
   2. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
   3. ciscoconfparse - A library to help parse out Cisco (or similiar) CLI configs (https://pypi.org/project/ciscoconfparse/).
+  4. yaml - YAML is a human-readable data-serialization language (https://en.wikipedia.org/wiki/YAML).
 
 ## Install
 
@@ -12,19 +13,14 @@ To install superloop, simply use pip:
 
 ```$ pip install superloop```
 
-This will install superloop along with all required ependencies to the directory ```/usr/local/lib/python2.7/dist-packages/superloop```.
+This will install superloop along with all required dependencies to the directory ```/usr/local/lib/python2.7/dist-packages/superloop```. You will need to install yaml system wide via the following command ```$ sudo apt-get install python-yaml```.
 
 IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
 
-You will want to move the 'superloop.py' file to one of your $PATH directory and remove the *.py extention. 
-
-```$ mv superloop.py /usr/local/bin/superloop```
-
-Usually this can be '/usr/local/bin/'
+Move 'superloop.py' file to one of your $PATH directory and remove the *.py extention. Set the permission to 755.
 ```
-root@jumpbox:~/superloop# echo $PATH
-/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
-root@jumpbox:~/superloop# mv superloop.py /usr/local/bin/superloop
+$ mv /usr/local/lib/python2.7/dist-packages/superloop/superloop.py /usr/local/bin/superloop
+$ chmod 755 /usr/local/bin/superloop
 ```
 Now append the following code within ```/usr/local/bin/superloop``` near the top:
 ```
@@ -45,6 +41,8 @@ from push_cfgs import push_cfgs
 .
 <output truncated>
 ```
+This will set the system path of superloop to '/usr/local/lib/python2.7/dist-packages/superloop'. If you have superloop installed in another directory, change the path accordingly.
+
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management (default path is /database/):
 
   1. nodes.yaml
@@ -144,8 +142,6 @@ ip dhcp pool DATA
  dns-server 8.8.8.8 
 ``` 
 Look at 'ip dhcp pool DATA'. The next line of config has an indentation. superloop is inteligent enough to render the remaining 3 lines of configs without having to include it into the audit_filter.
-
-This will set the system path of superloop to '/root/superloop'. If you have superloop installed in another directory, change the path accordingly.
 
 Now that I have explained the basic operations, onto the fun stuff!
 
