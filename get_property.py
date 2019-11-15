@@ -1,6 +1,7 @@
 ### THIS MODULE CONSIST OF ALL THE PROPERTIES THAT SUPERLOOP IS REQUIRED TO RETRIEVE
 
 def get_port(node_object,element,ssh_id):
+
 	### THIS FUNCTION GETS THE CORRECT PORTS BASED ON DEVICE TYPE.
 	### THIS IS SOLELY FOR MY OWN NETWORK. USERS MAY MODIFY THE PORTS OR COMPLETELY REMOVE THE STATMENTS BELOW
 	if(node_object[element[ssh_id]]['type'] == 'switch'):
@@ -14,17 +15,18 @@ def get_type(hostname):
 
 	### THIS WILL EVALUATE BASED ON HOSTNAME STANDARDS
 
-	if 'fw' in hostname:
+	if('fw' in hostname):
 		device_type = 'firewall'
-	elif 'rt' in hostname:
+	elif('rt' in hostname):
 		device_type = 'router'
-	elif 'sw' in hostname:
+	elif('sw' in hostname):
 		device_type = 'switch'
 
 	return device_type
 
 
 def get_directory(platform,os,device_type):
+
 	### THIS WILL RETURN THE CORRESPONDING DIRECTORY FOR THE APPLICATION TO OPEN THE FILE
 
     if(platform == 'cisco' and os == 'ios' and device_type == 'firewall'):
@@ -48,3 +50,14 @@ def get_template(template_list_copy):
 		template_list = template_list_copy[0]
 
 	return template_list
+
+def get_syntax(node_object,index):
+
+	### THIS WILL RETURN THE CORRECT SYNTAX USED FOR CISCOCONFPARSE BASED ON DEVICE PLATFORM
+
+	if(node_object[index]['platform'] == 'cisco' and node_object[index]['type'] == 'firewall'):
+		syntax = 'asa'
+	elif(node_object[index]['platform'] == 'cisco' and node_object[index]['type'] == 'switch'):
+		syntax = 'ios'
+
+	return syntax

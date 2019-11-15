@@ -10,6 +10,7 @@ from collections import Counter
 from multithread import multithread_engine
 from get_property import get_directory
 from get_property import get_template
+from get_property import get_syntax
 import re
 import initialize
 
@@ -95,7 +96,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 					rendered_config.append(strip_config)	
 
 			###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#			print ("RENDERED CONFIG: {}".format(rendered_config))
+			print ("RENDERED CONFIG: {}".format(rendered_config))
 			
 			### THIS SECTION OF CODE WILL OPEN BACKUP-CONFIG *.CONF FILE AND STORE IN BACKUP_CONFIG AS A LIST
 			f = open("/backup-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
@@ -121,22 +122,17 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			### FILTER OUT THE BACKUP_CONFIGS WITH THE AUDIT_FILTER
 			### THIS WILL TAKE EACH ELEMENT FROM THE AUDIT_FILTER LIST AND SEARCH FOR THE MATCHED LINES IN BACKUP_CONFIG
 			### PARSING THE BACKUP CONFIGS
-			parse_backup_configs = CiscoConfParse("/backup-configs/{}".format(node_object[index]['hostname']) + ".conf")
+			parse_backup_configs = CiscoConfParse("/backup-configs/{}".format(node_object[index]['hostname']) + ".conf", syntax=get_syntax(node_object,index))
+			print "SYNTAX: {}".format(get_syntax(node_object,index))
+
 			### MATCHED ENTRIES ARE THEN APPENDED TO FILTER_BACKUP_CONFIG VARIABLE AS A LIST
 			### FUNCTION CALL TO PARSE_AUDIT_FILTER() TO FIND ALL THE PARENT/CHILD
-			filtered_backup_config = parse_audit_filter(node_object,index,parse_backup_configs,audit_filter)
-
-#			for audit in audit_filter:
-#
-#				current_template = parse_backup_configs.find_objects(r"^{}".format(audit))
-#				for audit_string in current_template:       
-#					filtered_backup_config.append(audit_string.text)
-#					if(audit_string.is_parent):
-#						for child in audit_string.all_children:
-#							filtered_backup_config.append(child.text)
-#					if(node_object[index]['platform'] == 'juniper')
-#						filtered_backup_config.append('}')
-						
+			filtered_backup_config = parse_audit_filter(
+					node_object,
+					index,
+					parse_backup_configs,
+					audit_filter
+			)
 
 			### UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #			print("FILTERED BACKUP CONFIG: {}".format(filtered_backup_config))		
@@ -144,7 +140,14 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			### SYNC_DIFF WILL DIFF OUT THE FILTERED_BACKUP_COFNIG FROM THE RENDERED CONFIG AND STORE WHATEVER COMMANDS THAT
 			### COMMANDS THAT NEED TO BE ADDED/REMOVE IN PUSH_CONFIGS VARIABLE
 			parse = CiscoConfParse(filtered_backup_config)
-			push_configs = parse.sync_diff(rendered_config, "",ignore_order=True, remove_lines=True, debug=False)
+			push_configs = parse.sync_diff(
+					rendered_config,
+					"",
+					ignore_order=True, 
+					remove_lines=True, 
+					debug=False
+			)
+
 			if(len(push_configs) == 0):
 				if(output):
 					print("{}{} (none)".format(directory,template))
@@ -172,7 +175,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 							print("  {}".format(line))
 					
 				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#				print("PUSH_CONFIGS: {}".format(push_configs))
+				print("PUSH_CONFIGS: {}".format(push_configs))
 				if(remediation):
 
 					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE (EXPECTED RESULTS)
@@ -219,4 +222,3 @@ def parse_audit_filter(node_object,index,parse_backup_configs,audit_filter):
 				filtered_backup_config.append('}')
 
 	return filtered_backup_config
-
