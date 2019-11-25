@@ -16,7 +16,7 @@ import initialize
 
 def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
-	controller = 'get_config'
+	redirect = [] 
 	command = ''
 
 	### PUSH_CONFIGS IS A LIST OF THE FINAL CONFIGS TO BE PUSHED
@@ -33,13 +33,53 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 	AUDIT_FILTER_RE = r"\[.*\]"
 
 	### TEMPLATE_LIST_COPY TAKE A COPY OF THE CURRENT TEMPLATE_LIST
+	template_list_original = template_list[:]
 	template_list_copy = template_list
 
 	if(auditcreeper):
 		template_list = template_list_copy[0]
 
+	### THIS SECTION OF CODE WILL GATHER ALL RENDERED CONFIGS FIRST AS IT'S REQUIRED FOR ALL PLATFORMS (CISCO & JUNIPER)
+	### JUNIPER DOES NOT REQUIRE BACKUP-CONFIGS IN ORDER TO BE DIFFED SO INSTEAD IT WILL JUST PUSH (PUSH_CFGS) THE TEMPLATE AND PERFORM THE DIFF ON THE DEVICE ITSELF.
+	### CISCO WILL REQUIRE BACKUP-CONFIGS (GET_CONFIG)
+	for index in initialize.element:
+
+		for template in template_list:
+
+			### THIS SECTION OF CODE WILL PROCESS THE TEMPLATE AND OUTPUT TO A *.CONF FILE
+			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+			env = Environment(loader=FileSystemLoader("{}".format(directory)))
+			baseline = env.get_template(template)
+			f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.strip('jinja2')) + ".conf", "w") 
+
+			### GENERATING TEMPLATE BASED ON NODE OBJECT
+			config = baseline.render(nodes = node_object[index])
+
+			f.write(config) 
+			f.close 
+
+		template_list = get_template(template_list_copy)
+
+		if(node_object[index]['platform'] == 'cisco'):
+			redirect.append('get_config')
+		elif(node_object[index]['platform'] == 'juniper'):
+			redirect.append('push_cfgs')
+
 	print("[+] [COMPUTING DIFF. STANDBY...]")
-	multithread_engine(initialize.ntw_device,controller,command)
+	multithread_engine(initialize.ntw_device,redirect,command)
+	
+	### RESETING TEMPLATE_LIST TO ORIGINAL LIST
+
+	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#	print("ORIGINAL_LIST: {}".format(template_list_original))
+	template_list = template_list_original
+
+	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#	print("TEMPLATE_LIST: {}".format(template_list))
+
+	### REINITIALIZING TEMPLATE_LIST TO THE ORIGINAL LIST OF TEMPLATES
+	if(auditcreeper):
+		template_list = template_list_original[0]
 
 	### THIS FOR LOOP WILL LOOP THROUGH ALL THE MATCHED ELEMENTS FROM THE USER SEARCH AND AUDIT ON SPECIFIC TEMPLATE OR IF NO ARGUMENT IS GIVEN, ALL TEMPLATES
 	
@@ -57,6 +97,9 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 			print ("{}".format(node_object[index]['hostname']))
 
+		###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#		print("TEMPLATE_LIST: {}".format(template_list))
+
 		### THIS WILL LOOP THROUGH ALL THE TEMPLATES SPECIFIED FOR THE PARTICULAR HOST IN NODES.YAML
 		for template in template_list:
 
@@ -69,20 +112,20 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			### FILTERED_BACKUP_CONFIG IS THE FINAL LIST OF ALL THE AUDIT FILTERS THAT MATCHES THE LINES IN BACKUP_CONFIG. THESE ENTRIES INCLUDE DEPTHS/DEEP CONFIGS
 			filtered_backup_config = []
 
-			### THIS SECTION OF CODE WILL PROCESS THE TEMPLATE AND OUTPUT TO A *.CONF FILE
-			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
-			env = Environment(loader=FileSystemLoader("{}".format(directory)))
-			baseline = env.get_template(template)
-			f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "w") 
-
-			### GENERATING TEMPLATE BASED ON NODE OBJECT
-			config = baseline.render(nodes = node_object[index])
-
-			f.write(config) 
-			f.close 
+#			### THIS SECTION OF CODE WILL PROCESS THE TEMPLATE AND OUTPUT TO A *.CONF FILE
+#			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+#			env = Environment(loader=FileSystemLoader("{}".format(directory)))
+#			baseline = env.get_template(template)
+#			f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "w") 
+#
+#			### GENERATING TEMPLATE BASED ON NODE OBJECT
+#			config = baseline.render(nodes = node_object[index])
+#
+#			f.write(config) 
+#			f.close 
 
 			### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
-			f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
+			f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.strip('jinja2')) + ".conf", "r")
 			init_config = f.readlines()
 			### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
 			rendered_config = []
@@ -96,7 +139,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 					rendered_config.append(strip_config)	
 
 			###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-			print ("RENDERED CONFIG: {}".format(rendered_config))
+#			print ("RENDERED CONFIG: {}".format(rendered_config))
 			
 			### THIS SECTION OF CODE WILL OPEN BACKUP-CONFIG *.CONF FILE AND STORE IN BACKUP_CONFIG AS A LIST
 			f = open("/backup-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
@@ -123,7 +166,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			### THIS WILL TAKE EACH ELEMENT FROM THE AUDIT_FILTER LIST AND SEARCH FOR THE MATCHED LINES IN BACKUP_CONFIG
 			### PARSING THE BACKUP CONFIGS
 			parse_backup_configs = CiscoConfParse("/backup-configs/{}".format(node_object[index]['hostname']) + ".conf", syntax=get_syntax(node_object,index))
-			print "SYNTAX: {}".format(get_syntax(node_object,index))
+#			print "SYNTAX: {}".format(get_syntax(node_object,index))
 
 			### MATCHED ENTRIES ARE THEN APPENDED TO FILTER_BACKUP_CONFIG VARIABLE AS A LIST
 			### FUNCTION CALL TO PARSE_AUDIT_FILTER() TO FIND ALL THE PARENT/CHILD
@@ -174,8 +217,9 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 						if(not remediation):
 							print("  {}".format(line))
 					
+				print("")
 				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-				print("PUSH_CONFIGS: {}".format(push_configs))
+#				print("PUSH_CONFIGS: {}".format(push_configs))
 				if(remediation):
 
 					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE (EXPECTED RESULTS)
@@ -193,7 +237,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			if(ntw_device_pop == True):
 				initialize.ntw_device.pop(node_index)
 				initialize.configuration.pop(node_index)
-			template_list = get_template(template_list_copy)
+			template_list = get_template(template_list_original)
 
 #	if(remediation):
 #		print("[+]: PUSH ENABLED")

@@ -13,7 +13,8 @@ import initialize
 
 def exec_command(args):
 
-	controller = 'exec_command'
+	redirect = []
+	redirect.append('exec_command') 
 	command = args.argument
 	argument_node = args.node
 
@@ -30,4 +31,4 @@ def exec_command(args):
 	else:
 		node_element(match_node,node_object)
 		node_create(match_node,node_object)
-		multithread_engine(initialize.ntw_device,controller,command)
+		multithread_engine(initialize.ntw_device,redirect,command)

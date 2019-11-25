@@ -15,13 +15,16 @@ import initialize
 
 def auditdiff(args):
 
+	redirect = []
+	redirect.append('exec_command')
+	index = 0
 	ext = '.jinja2'
-	controller = 'push_cfgs'
 	auditcreeper_flag = False
 	output = True
 	remediation = False 
 	commands = initialize.configuration	
 	argument_node = args.node
+
 	if(args.parser_audit == 'remediate'):
 		remediation = True
 	if(args.file is None):
@@ -66,7 +69,7 @@ def auditdiff(args):
 
 		else:
 			if(remediation):
-				confirm_push(controller,commands)
+				confirm_push(redirect,commands)
 #			multithread_engine(initialize.ntw_device,controller,commands)
 			print("")
 #			proceed = raw_input("PROCEED TO REMEDIATE? [Y/N]: ")

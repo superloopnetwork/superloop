@@ -11,11 +11,12 @@ import initialize
 
 def auditcreeper():
 
+	redirect = []
+	redirect.append('push_cfgs') 
 	initialize.variables()
-	controller = 'push_cfgs'
 	commands = initialize.configuration
 	auditcreeper_flag = True
-	output = False
+	output = True 
 	remediation = True
 	### AUGUMENT_NODE WILL MATCH EVERY NODES IN THE LIST OF NODE_OBJECT
 	argument_node = '.+'
@@ -38,7 +39,9 @@ def auditcreeper():
 	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper_flag)
 	node_create(match_node,node_object)
 	auditdiff_engine(template_list,node_object,auditcreeper_flag,output,remediation)
-	multithread_engine(initialize.ntw_device,controller,commands)
+	for index in initialize.element:
+		redirect.append('push_cfgs')
+	multithread_engine(initialize.ntw_device,redirect,commands)
 	threading.Timer(5.0, auditcreeper).start()
 
 if __name__ == "__main__":

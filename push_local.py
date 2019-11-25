@@ -15,7 +15,8 @@ import os
 
 def push_local(args):
 
-	controller = 'push_cfgs'
+	redirect = [] 
+	redirect.append('push_cfgs')
 	commands = initialize.configuration
 	argument_node = args.node
 	filename = args.filename
@@ -33,6 +34,10 @@ def push_local(args):
 	else:
 		node_element(match_node,node_object)
 		node_create(match_node,node_object)
+
+		for index in initialize.element:
+			redirect.append('push_cfgs')
+
 		home_directory = os.path.expanduser('~')
 
 		for index in initialize.element:
@@ -44,4 +49,4 @@ def push_local(args):
 			init_config = f.readlines()
 			parse_commands(init_config)
 
-		confirm_push(controller,commands)
+		confirm_push(redirect,commands)

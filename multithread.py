@@ -9,13 +9,18 @@ def multithread_engine(ntw_object,redirect,commands):
 	
 	start_time = datetime.datetime.now()
 	index = 0
+	zero = 0
+	element = 0
+
 	for i in ntw_object:
-		if(redirect == 'push_cfgs'):
-			arguments = commands[index]
-		elif(redirect == 'exec_command' or redirect == 'get_config'):
+		if(redirect[zero] == 'exec_command' or redirect[index] == 'get_config'):
 			### ARGUMENT(S)/COMMAND(S) ARE BEING BLACKHOLED
 			arguments = commands
-		my_thread = threading.Thread(target=getattr(ntw_object[index],redirect) , args=(arguments,))
+			element = 0
+		elif(redirect[index] == 'push_cfgs' or redirect[index] == 'diff_config'):
+			arguments = commands[index]
+			element = index
+		my_thread = threading.Thread(target=getattr(ntw_object[index],redirect[element]) , args=(arguments,))
 		my_thread.start()
 
 		index = index + 1

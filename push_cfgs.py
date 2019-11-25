@@ -16,11 +16,12 @@ import initialize
 
 def push_cfgs(args):
 
+	redirect = []
+	redirect.append('push_cfgs')
 	ext = '.jinja2'
-	controller = 'push_cfgs'
 	commands = initialize.configuration
 	auditcreeper_flag = False
-	output = True 
+	output = False 
 	argument_node = args.node
 	remediation = True
 
@@ -59,23 +60,12 @@ def push_cfgs(args):
 		print("")
 
 	else:
-#		render(template_list,node_object,auditcreeper_flag,output,with_remediation)
 
 		node_create(match_node,node_object)
-		auditdiff_engine(template_list,node_object,auditcreeper_flag,output,remediation)
-		confirm_push(controller,commands)
-		print("")
+		render(template_list,node_object,auditcreeper_flag,output)
 
-#def confirm_push(controller,commands):
-#	check = str(raw_input("Push configs? [y/N]: ")).strip()
-#	try:
-#		if check[0] == 'y':
-#			multithread_engine(initialize.ntw_device,controller,commands)
-#		elif check[0] == 'N':
-#			return False
-#		else:
-#			print("RuntimeError: aborted at user request")
-#
-#	except Exception as error:
-#		print("ExceptionError: an exception occured")
-#		print(error)	
+		for index in initialize.element:
+			redirect.append('push_cfgs')
+
+		confirm_push(redirect,commands)
+		print("")
