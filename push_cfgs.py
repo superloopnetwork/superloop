@@ -17,7 +17,6 @@ import initialize
 def push_cfgs(args):
 
 	redirect = []
-	redirect.append('push_cfgs')
 	ext = '.jinja2'
 	commands = initialize.configuration
 	auditcreeper_flag = False

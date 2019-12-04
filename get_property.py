@@ -35,6 +35,8 @@ def get_directory(platform,os,device_type):
         directory = '/templates/cisco/ios/router/'
     elif(platform == 'cisco' and os == 'ios'and device_type == 'switch'):
         directory = '/templates/cisco/ios/switch/'
+    elif(platform == 'juniper' and os == 'junos' and device_type == 'vfirewall'):
+        directory = '/templates/juniper/junos/vfirewall/'
 
     return directory
 
@@ -59,5 +61,7 @@ def get_syntax(node_object,index):
 		syntax = 'asa'
 	elif(node_object[index]['platform'] == 'cisco' and node_object[index]['type'] == 'switch'):
 		syntax = 'ios'
+	elif(node_object[index]['platform'] == 'juniper' and node_object[index]['type'] == 'switch'):
+		syntax = 'junos'
 
 	return syntax

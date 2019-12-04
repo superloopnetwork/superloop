@@ -6,6 +6,7 @@ import initialize
 
 def confirm_push(redirect,commands):
 
+	print("COMMANDS: {}".format(commands))
 	check = str(raw_input("Push configs? [y/N]: ")).strip()
 	try:
 		if check[0] == 'y':

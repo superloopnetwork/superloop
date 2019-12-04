@@ -16,7 +16,6 @@ import os
 def push_local(args):
 
 	redirect = [] 
-	redirect.append('push_cfgs')
 	commands = initialize.configuration
 	argument_node = args.node
 	filename = args.filename
@@ -38,6 +37,7 @@ def push_local(args):
 		for index in initialize.element:
 			redirect.append('push_cfgs')
 
+		print("REDIRECT: {}".format(redirect))
 		home_directory = os.path.expanduser('~')
 
 		for index in initialize.element:

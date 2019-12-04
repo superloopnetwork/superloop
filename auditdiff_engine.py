@@ -17,7 +17,10 @@ import initialize
 def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 	redirect = [] 
-	command = ''
+	command = [] 
+	rendered_config = []
+	rendered_config.append('load replace terminal')
+	edit_list = []
 
 	### PUSH_CONFIGS IS A LIST OF THE FINAL CONFIGS TO BE PUSHED
 #	push_configs = []
@@ -39,6 +42,8 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 	if(auditcreeper):
 		template_list = template_list_copy[0]
 
+#	print "TEMPLATE_LIST: {}".format(template_list)
+
 	### THIS SECTION OF CODE WILL GATHER ALL RENDERED CONFIGS FIRST AS IT'S REQUIRED FOR ALL PLATFORMS (CISCO & JUNIPER)
 	### JUNIPER DOES NOT REQUIRE BACKUP-CONFIGS IN ORDER TO BE DIFFED SO INSTEAD IT WILL JUST PUSH (PUSH_CFGS) THE TEMPLATE AND PERFORM THE DIFF ON THE DEVICE ITSELF.
 	### CISCO WILL REQUIRE BACKUP-CONFIGS (GET_CONFIG)
@@ -50,7 +55,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 			env = Environment(loader=FileSystemLoader("{}".format(directory)))
 			baseline = env.get_template(template)
-			f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.strip('jinja2')) + ".conf", "w") 
+			f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "w") 
 
 			### GENERATING TEMPLATE BASED ON NODE OBJECT
 			config = baseline.render(nodes = node_object[index])
@@ -58,13 +63,43 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			f.write(config) 
 			f.close 
 
+			if(node_object[index]['platform'] == 'juniper'):
+	
+				### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
+				f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
+				init_config = f.readlines()
+				### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
+	
+				for config_line in init_config:
+					strip_config = config_line.strip('\n')
+					### THIS WILL REMOVE ANY LINES THAT ARE EMPTY OR HAS A '!' MARK
+					if(strip_config == '' or strip_config == "!"):
+						continue	
+					else:
+						rendered_config.append(strip_config)	
+	
+				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#				print ("RENDERED CONFIG: {}".format(rendered_config))
+
 		template_list = get_template(template_list_copy)
 
 		if(node_object[index]['platform'] == 'cisco'):
 			redirect.append('get_config')
+			command.append([''])
+		### JUNIPER DEVICES WILL RECEIVE A DIFFERENT REDIRECT THAN CISCO PLATFORM
+		### THREE ADDITIONAL COMMANDS ARE APPENEDED AT THE END, ^D, SHOW | COMPARE AND ROLLBACK 0
+		### ALL TEMPLATES MATCHING ARE EXECUTED AT ONCE PER DEVICE
 		elif(node_object[index]['platform'] == 'juniper'):
-			redirect.append('push_cfgs')
+			redirect.append('get_diff')
+			rendered_config.append('\x04')
+			rendered_config.append('show | compare')
+			rendered_config.append('rollback 0')
+			command.append(rendered_config)
 
+	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#	print"REDIRECT: {}".format(redirect)
+	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#	print"COMMAND: {}".format(command)
 	print("[+] [COMPUTING DIFF. STANDBY...]")
 	multithread_engine(initialize.ntw_device,redirect,command)
 	
@@ -103,134 +138,201 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 		### THIS WILL LOOP THROUGH ALL THE TEMPLATES SPECIFIED FOR THE PARTICULAR HOST IN NODES.YAML
 		for template in template_list:
 
-			### INDEX_LIST IS A LIST OF ALL THE POSITIONS COLLECTED FROM INDEX_POSITION VARIABLE
-			index_list = []
+			### THIS SECTION IS FOR CISCO SYSTEMS PLATFORM ###
+			if(node_object[index]['platform'] == 'cisco'):
 
-			### FILTER_CONFIG IS A LIST OF COLLECTION OF ALL THE AUDIT FILTERS THAT MATCHED THE LINES IN BACKUP_CONFIG. THESE ENTRIES DO NOT CONTAIN DEPTHS/DEEP CONFIGS
-			filtered_config = []
-
-			### FILTERED_BACKUP_CONFIG IS THE FINAL LIST OF ALL THE AUDIT FILTERS THAT MATCHES THE LINES IN BACKUP_CONFIG. THESE ENTRIES INCLUDE DEPTHS/DEEP CONFIGS
-			filtered_backup_config = []
-
-#			### THIS SECTION OF CODE WILL PROCESS THE TEMPLATE AND OUTPUT TO A *.CONF FILE
-#			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
-#			env = Environment(loader=FileSystemLoader("{}".format(directory)))
-#			baseline = env.get_template(template)
-#			f = open("/rendered-configs/{}".format(node_object[index]['hostname']) + ".conf", "w") 
-#
-#			### GENERATING TEMPLATE BASED ON NODE OBJECT
-#			config = baseline.render(nodes = node_object[index])
-#
-#			f.write(config) 
-#			f.close 
-
-			### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
-			f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.strip('jinja2')) + ".conf", "r")
-			init_config = f.readlines()
-			### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
-			rendered_config = []
-
-			for config_line in init_config:
-				strip_config = config_line.strip('\n')
-				### THIS WILL REMOVE ANY LINES THAT ARE EMPTY OR HAS A '!' MARK
-				if(strip_config == '' or strip_config == "!"):
-					continue	
-				else:
-					rendered_config.append(strip_config)	
-
-			###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#			print ("RENDERED CONFIG: {}".format(rendered_config))
-			
-			### THIS SECTION OF CODE WILL OPEN BACKUP-CONFIG *.CONF FILE AND STORE IN BACKUP_CONFIG AS A LIST
-			f = open("/backup-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
-			init_config = f.readlines()
-			backup_config = []
-
-			for config_line in init_config:
-				strip_config = config_line.strip('\n')
-				backup_config.append(strip_config)	
-
-			###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#			print ("BACKUP CONFIG: {}".format(backup_config))
-			
-			### THIS WILL OPEN THE JINJA2 TEMPLATE AND PARSE OUT THE AUDIT_FILTER SECTION VIA REGULAR EXPRESSION
-			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
-			f = open("{}".format(directory) + template, "r")
-			parse_audit = f.readline()
-			audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
-
-			###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#			print ("AUDIT_FILTER: {}".format(audit_filter))
-
-			### FILTER OUT THE BACKUP_CONFIGS WITH THE AUDIT_FILTER
-			### THIS WILL TAKE EACH ELEMENT FROM THE AUDIT_FILTER LIST AND SEARCH FOR THE MATCHED LINES IN BACKUP_CONFIG
-			### PARSING THE BACKUP CONFIGS
-			parse_backup_configs = CiscoConfParse("/backup-configs/{}".format(node_object[index]['hostname']) + ".conf", syntax=get_syntax(node_object,index))
-#			print "SYNTAX: {}".format(get_syntax(node_object,index))
-
-			### MATCHED ENTRIES ARE THEN APPENDED TO FILTER_BACKUP_CONFIG VARIABLE AS A LIST
-			### FUNCTION CALL TO PARSE_AUDIT_FILTER() TO FIND ALL THE PARENT/CHILD
-			filtered_backup_config = parse_audit_filter(
-					node_object,
-					index,
-					parse_backup_configs,
-					audit_filter
-			)
-
-			### UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#			print("FILTERED BACKUP CONFIG: {}".format(filtered_backup_config))		
-
-			### SYNC_DIFF WILL DIFF OUT THE FILTERED_BACKUP_COFNIG FROM THE RENDERED CONFIG AND STORE WHATEVER COMMANDS THAT
-			### COMMANDS THAT NEED TO BE ADDED/REMOVE IN PUSH_CONFIGS VARIABLE
-			parse = CiscoConfParse(filtered_backup_config)
-			push_configs = parse.sync_diff(
-					rendered_config,
-					"",
-					ignore_order=True, 
-					remove_lines=True, 
-					debug=False
-			)
-
-			if(len(push_configs) == 0):
-				if(output):
-					print("{}{} (none)".format(directory,template))
-					print
-			else:
-			
-				### THIS WILL JUST PRINT THE HEADING OF THE TEMPLATE NAME SO YOU KNOW WHAT IS BEING CHANGED UNDER WHICH TEMPLATE
-				if(output):
-					print("{}{}".format(directory,template))
-
-				for line in push_configs:
-					search = parse_backup_configs.find_objects(r"^{}".format(line))
-					if('no' in line):
-						line = re.sub("no","",line)
-						if(not remediation):
-							print("-{}".format(line))
-					elif(len(search) == 0):
-						if(not remediation):
-							print("+ {}".format(line))
-					elif(len(search) > 1):
-						if(not remediation):
-							print("+ {}".format(line))
-					else:
-						if(not remediation):
-							print("  {}".format(line))
-					
-				print("")
-				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#				print("PUSH_CONFIGS: {}".format(push_configs))
-				if(remediation):
-
-					### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE (EXPECTED RESULTS)
-					for config in push_configs:
-						node_configs.append(config)
-						ntw_device_pop = False
+				### INDEX_LIST IS A LIST OF ALL THE POSITIONS COLLECTED FROM INDEX_POSITION VARIABLE
+				index_list = []
 	
-					### INITIALIZE.COFIGURATION APPENDS ALL THE REMEDIATED CONFIGS AND PREPARES IT FOR PUSH
-					if(auditcreeper == False):
-						initialize.configuration.append(node_configs)
-					node_index = node_index + 1
+				### FILTER_CONFIG IS A LIST OF COLLECTION OF ALL THE AUDIT FILTERS THAT MATCHED THE LINES IN BACKUP_CONFIG. THESE ENTRIES DO NOT CONTAIN DEPTHS/DEEP CONFIGS
+				filtered_config = []
+	
+				### FILTERED_BACKUP_CONFIG IS THE FINAL LIST OF ALL THE AUDIT FILTERS THAT MATCHES THE LINES IN BACKUP_CONFIG. THESE ENTRIES INCLUDE DEPTHS/DEEP CONFIGS
+				filtered_backup_config = []
+	
+				### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
+				f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.strip('jinja2')) + ".conf", "r")
+				init_config = f.readlines()
+				### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
+				rendered_config = []
+	
+				for config_line in init_config:
+					strip_config = config_line.strip('\n')
+					### THIS WILL REMOVE ANY LINES THAT ARE EMPTY OR HAS A '!' MARK
+					if(strip_config == '' or strip_config == "!"):
+						continue	
+					else:
+						rendered_config.append(strip_config)	
+	
+				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#				print ("RENDERED CONFIG: {}".format(rendered_config))
+				
+				### THIS SECTION OF CODE WILL OPEN BACKUP-CONFIG *.CONF FILE AND STORE IN BACKUP_CONFIG AS A LIST
+				f = open("/backup-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
+				init_config = f.readlines()
+				backup_config = []
+	
+				for config_line in init_config:
+					strip_config = config_line.strip('\n')
+					backup_config.append(strip_config)	
+	
+				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#				print ("BACKUP CONFIG: {}".format(backup_config))
+				
+				### THIS WILL OPEN THE JINJA2 TEMPLATE AND PARSE OUT THE AUDIT_FILTER SECTION VIA REGULAR EXPRESSION
+				directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+				f = open("{}".format(directory) + template, "r")
+				parse_audit = f.readline()
+				audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
+	
+				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#				print ("AUDIT_FILTER: {}".format(audit_filter))
+	
+				### FILTER OUT THE BACKUP_CONFIGS WITH THE AUDIT_FILTER
+				### THIS WILL TAKE EACH ELEMENT FROM THE AUDIT_FILTER LIST AND SEARCH FOR THE MATCHED LINES IN BACKUP_CONFIG
+				### PARSING THE BACKUP CONFIGS
+				parse_backup_configs = CiscoConfParse("/backup-configs/{}".format(node_object[index]['hostname']) + ".conf", syntax=get_syntax(node_object,index))
+#				print "SYNTAX: {}".format(get_syntax(node_object,index))
+	
+				### MATCHED ENTRIES ARE THEN APPENDED TO FILTER_BACKUP_CONFIG VARIABLE AS A LIST
+				### FUNCTION CALL TO PARSE_AUDIT_FILTER() TO FIND ALL THE PARENT/CHILD
+				filtered_backup_config = parse_audit_filter(
+						node_object,
+						index,
+						parse_backup_configs,
+						audit_filter
+				)
+	
+				### UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#				print("FILTERED BACKUP CONFIG: {}".format(filtered_backup_config))		
+	
+				### SYNC_DIFF WILL DIFF OUT THE FILTERED_BACKUP_COFNIG FROM THE RENDERED CONFIG AND STORE WHATEVER COMMANDS THAT
+				### COMMANDS THAT NEED TO BE ADDED/REMOVE IN PUSH_CONFIGS VARIABLE
+				parse = CiscoConfParse(filtered_backup_config)
+				push_configs = parse.sync_diff(
+						rendered_config,
+						"",
+						ignore_order=True, 
+						remove_lines=True, 
+						debug=False
+				)
+	
+				if(len(push_configs) == 0):
+					if(output):
+						print("{}{} (none)".format(directory,template))
+						print
+				else:
+				
+					### THIS WILL JUST PRINT THE HEADING OF THE TEMPLATE NAME SO YOU KNOW WHAT IS BEING CHANGED UNDER WHICH TEMPLATE
+					if(output):
+						print("{}{}".format(directory,template))
+	
+					for line in push_configs:
+						search = parse_backup_configs.find_objects(r"^{}".format(line))
+						if('no' in line):
+							line = re.sub("no","",line)
+							if(not remediation):
+								print("-{}".format(line))
+						elif(len(search) == 0):
+							if(not remediation):
+								print("+ {}".format(line))
+						elif(len(search) > 1):
+							if(not remediation):
+								print("+ {}".format(line))
+						else:
+							if(not remediation):
+								print("  {}".format(line))
+						
+					print("")
+					###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+	#				print("PUSH_CONFIGS: {}".format(push_configs))
+					if(remediation):
+	
+						### THIS STEP WILL APPEND REMEDIATION CONFIGS FROM TEMPLATE (EXPECTED RESULTS)
+						for config in push_configs:
+							node_configs.append(config)
+							ntw_device_pop = False
+		
+						### INITIALIZE.COFIGURATION APPENDS ALL THE REMEDIATED CONFIGS AND PREPARES IT FOR PUSH
+						if(auditcreeper == False):
+							initialize.configuration.append(node_configs)
+						node_index = node_index + 1
+
+
+			### THIS SECTION IS FOR JUNIPER NETWORKS PLATFORM ###
+			if(node_object[index]['platform'] == 'juniper'):
+
+				directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+				### THIS SECTION OF CODE WILL OPEN DIFF-CONFIG *.CONF FILE AND STORE IN DIFF_CONFIG AS A LIST
+				f = open("/diff-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
+				init_config = f.readlines()
+				### DIFF_CONFIG ARE THE DIFFERENTIAL CONFIGS GENERATED BY THE /DIFF-CONFIGS/*.CONF FILE 
+				diff_config = []
+	
+				for config_line in init_config:
+					strip_config = config_line.strip('\n')
+					diff_config.append(strip_config)	
+	
+				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#				print ("DIFF CONFIG: {}".format(diff_config))
+
+				RE = re.compile(r'\[edit\s({})'.format(template.split('.')[0]))
+				search = list(filter(RE.match,diff_config))
+				if(len(search) == 0):
+					print("{}{} (none)".format(directory,template))
+						
+				else:
+					### THIS FIRST SECTION WILL FIND ALL THE INDEXES WITH THE '[edit <TEMPLATE>]' AND APPEND IT TO THE EDIT_LIST
+					### EDIT_LIST MAINTAINS A LIST OF ALL THE INDEXES THAT PERTAIN TO THE TEMPLATES
+					for line in diff_config:
+						if(re.search('\[edit\s{}'.format(template.split('.')[0]),line)):
+							element = diff_config.index(line) 
+							edit_list.append(element)
+							###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#							print('ELEMENT: {}'.format(element))
+#							print("{}".format(line))
+
+					###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#					print('EDIT_LIST 1st: {}'.format(edit_list))
+					end_of_template_list = template_list.index(template) + 1
+
+					### UPON THE LAST TEMPLATE, IT WILL THEN FIND THE CLOSING CURLY BRACES INDEX NUMBER TO APPEND TO THE EDIT_LIST
+					if(len(template_list) == end_of_template_list):
+						for line in diff_config:
+							if(re.search('exit configuration-mode',line)):
+								element = diff_config.index(line) 
+								###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#								print('ELEMENT: {}'.format(element))
+#								print("{}".format(line))
+								if(element<=edit_list[len(edit_list) - 1]):
+									continue
+								else:
+									element = element - 6 
+									edit_list.append(element)
+									break
+
+						###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#						print('EDIT_LIST 2nd: {}'.format(edit_list))
+
+						start = 0
+						end = 1
+						### THE LAST SECTION WILL PRINT THE APPROPREIATE DIFF BASED ON THE TEMPLATES FROM THE EDIT_LIST INFORMATION
+		  				for template in template_list: 
+							print("{}{}".format(directory,template))
+							for line in diff_config:
+								if(re.search('\[edit\s{}'.format(template.split('.')[0]),line)):
+									###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#									print "edit_list[start]: {}".format(edit_list[start])
+#									print "edit_list[end]: {}".format(edit_list[end])
+									diff_template = diff_config[edit_list[start]:edit_list[end]]  
+									###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#									print "DIFF_TEMPLATE: {}".format(diff_template)
+									for line in diff_template:
+										print("{}".format(line))
+								else:
+									continue
+								start = start + 1
+								end = end + 1
 
 		if(auditcreeper):
 			initialize.configuration.append(node_configs)

@@ -1,7 +1,7 @@
 ######################### BASE NODE ###########################
 
 from netmiko import ConnectHandler
-import pybase64
+import base64
 import re
 
 
@@ -14,20 +14,22 @@ class BaseNode(object):
    		self.password = password
    		self.platform = platform
    		self.type = type
-		self.password_decrypt = pybase64.b64decode(self.password)
+		self.password_decrypt = base64.b64decode(self.password)
 
 	def connect(self):
 		if (self.type == 'switch'):
 			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),port=65500,device_type=self.get_device())
+		elif (self.type == 'vsrx'):
+			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),port=65511,device_type=self.get_device())
 		else:
 			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),device_type=self.get_device())
 			
 	def get_secret(self):
 		enable_get_secret = ''
 		if (self.location() == 'wdstk'):
-			enable_get_secret = pybase64.b64decode(self.password)
+			enable_get_secret = base64.b64decode(self.password)
 		elif (self.location() == 'ktch'):
-			enable_get_secret = pybase64.b64decode(self.password)
+			enable_get_secret = base64.b64decode(self.password)
 
 		return enable_get_secret
 		
@@ -51,6 +53,9 @@ class BaseNode(object):
 		elif (self.type == 'firewall'):
 			device_attribute = 'cisco_asa'
 
+		elif (self.type == 'vsrx'):
+			device_attribute = 'juniper'
+
 		return device_attribute
 
 	def push_cfgs(self,commands):
@@ -58,6 +63,7 @@ class BaseNode(object):
 		self.connect()
 		output = self.net_connect.enable()
 		output = self.net_connect.send_config_set(commands)
+		print output
 		self.net_connect.disconnect()
 
 	def exec_command(self,command):
@@ -78,4 +84,13 @@ class BaseNode(object):
 		output = self.net_connect.send_command_expect("show running-config")
 		f.write(output)
 		f.close()
+		self.net_connect.disconnect()
+
+	def get_diff(self,command):
+
+		f = open("/diff-configs/{}".format(self.hostname) + ".conf", "w")
+		self.connect()
+		output = self.net_connect.enable()
+		output = self.net_connect.send_config_set(commands)
+		print output
 		self.net_connect.disconnect()
