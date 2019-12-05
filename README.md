@@ -7,6 +7,14 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
   3. ciscoconfparse - A library to help parse out Cisco (or similiar) CLI configs (https://pypi.org/project/ciscoconfparse/).
   4. yaml - YAML is a human-readable data-serialization language (https://en.wikipedia.org/wiki/YAML).
 
+## Support
+
+|__Platform__|__audit diff__|__push cfgs__|__host exec__|__ssh__ |__node list__|__host add__|__host remove__|
+|------------|:------------:|:-----------:|:-----------:|:------:|:-----------:|:----------:|:-------------:|
+| Cisco IOS  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |
+| Cisco ASA  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |
+| Juniper OS |       x      |             |       x     |    x   |      x      |            |               |
+
 ## Install
 
 To install superloop, simply use pip:
