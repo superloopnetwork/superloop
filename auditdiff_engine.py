@@ -18,6 +18,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 	redirect = [] 
 	command = [] 
+	### RENDERED_CONFIG IS TO ACCOMODATE JUNIPER PLATFORM BY APPENDING A 'LOAD REPLACE TERMINAL' TO GET THE DIFF OUTPUT
 	rendered_config = []
 	rendered_config.append('load replace terminal')
 	edit_list = []
@@ -55,7 +56,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 			env = Environment(loader=FileSystemLoader("{}".format(directory)))
 			baseline = env.get_template(template)
-			f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "w") 
+			f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "w") 
 
 			### GENERATING TEMPLATE BASED ON NODE OBJECT
 			config = baseline.render(nodes = node_object[index])
@@ -66,7 +67,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			if(node_object[index]['platform'] == 'juniper'):
 	
 				### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
-				f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
+				f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
 				init_config = f.readlines()
 				### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
 	
@@ -152,7 +153,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 				filtered_backup_config = []
 	
 				### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
-				f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.strip('jinja2')) + ".conf", "r")
+				f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
 				init_config = f.readlines()
 				### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
 				rendered_config = []

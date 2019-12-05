@@ -25,7 +25,7 @@ def render(template_list,node_object,auditcreeper,output):
 			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 			env = Environment(loader=FileSystemLoader("{}".format(directory)))
 			baseline = env.get_template(template)
-			f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.strip('jinja2')) + ".conf", "w") 
+			f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.strip('jinja2')) + ".conf", "w") 
 			config_list = []
 			config = baseline.render(nodes = node_object[index])
 			f.write(config) 
@@ -34,7 +34,7 @@ def render(template_list,node_object,auditcreeper,output):
 			if(output):
 				print("{}".format(config))
 
-			f = open("/rendered-configs/{} - {}".format(node_object[index]['hostname'],template.strip('jinja2')) + ".conf", "r")
+			f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.strip('jinja2')) + ".conf", "r")
 			init_config = f.readlines()
 			### THE BELOW PARSE_COMMANDS FUNCTION WILL ONLY GET EXECUTED IF NEEDS TO STORE COMMANDS IN THE GLOBAL VARILABLE INITIALIZE.CONFIGURATION FOR PUSH
 			### PUSH_CFGS(OUTPUT = TRUE) VS RENDER_CONFIG(OUTPUT = FALSE) FUNCTIONS.
