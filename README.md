@@ -244,13 +244,15 @@ If there are multiple devices that require remediation, superloop handles remedi
 
 The next set of features I developed was 'push cfgs'. 'push cfgs' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. 
 
-In the below demo, I have made a change to the 'system.jinja2' template for a Juniper device. I've added the DNS entry of '4.4.4.4;' I am then using 'superloop push cfgs' to push the template. I then use 'superloop host exec' (to be discussed further in this documentation) to view the changes.
+In the below demo, I have made a change to the 'system.jinja2' template for a Juniper device. I've added the DNS entry of '4.4.4.4;' Using 'superloop push cfgs' to push the template, I then veryify the changes using 'superloop host exec' (to be discussed further in this documentation) to view the changes.
 
 ![superloop push_cfgs demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_push_cfgs_demo.gif)
 
 Verifying changes have been pushed:
 
 ![superloop host_exec_after_push_cfgs demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_host_exec_after_push_cfgs_demo.gif)
+
+You can see the '4.4.4.4;' entry now exist.
 
 ## superloop push local
 
@@ -270,8 +272,9 @@ core.sw.superloop.sfran: Vlan130                 10.130.30.1      YES NVRAM  up 
 core.sw.superloop.sfran: Vlan140                 10.140.40.1      YES NVRAM  up                    up      
 core.sw.superloop.sfran: Vlan150                 10.150.50.1      YES NVRAM  up                    up      
 ```
+In this demo, I'm doing a 'show version' for all the devices I have in my database (3 - a mix of Cisco and Juniper Platform) and it's displaying all the information in 9.6 seconds. You can imagine how usful this feature would be if you have hundreds, if not thousands of devices that you need to pull information from without the need of logging in, one by one and capturing the output.
 
-![superloop push and onscreen demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_push_onscreen_demo.gif)
+![superloop host_exec_demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_host_exec_demo.gif)
 
 ## superloop ssh
 
