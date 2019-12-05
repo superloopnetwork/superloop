@@ -134,6 +134,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 		###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #		print("TEMPLATE_LIST: {}".format(template_list))
+		template_list_juniper = template_list[:]
 
 		### THIS WILL LOOP THROUGH ALL THE TEMPLATES SPECIFIED FOR THE PARTICULAR HOST IN NODES.YAML
 		for template in template_list:
@@ -262,6 +263,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			### THIS SECTION IS FOR JUNIPER NETWORKS PLATFORM ###
 			if(node_object[index]['platform'] == 'juniper'):
 
+
 				directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 				### THIS SECTION OF CODE WILL OPEN DIFF-CONFIG *.CONF FILE AND STORE IN DIFF_CONFIG AS A LIST
 				f = open("/diff-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
@@ -280,6 +282,13 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 				search = list(filter(RE.match,diff_config))
 				if(len(search) == 0):
 					print("{}{} (none)".format(directory,template))
+					print
+					element = template_list_juniper.index(template)
+#					print('ELEMENT: {}'.format(element))
+#					print('TEMPLATE: {}'.format(template))
+					template_list_juniper.pop(element)
+#					print('template_list: {}'.format(template_list))
+					
 						
 				else:
 					### THIS FIRST SECTION WILL FIND ALL THE INDEXES WITH THE '[edit <TEMPLATE>]' AND APPEND IT TO THE EDIT_LIST
@@ -317,7 +326,8 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 						start = 0
 						end = 1
 						### THE LAST SECTION WILL PRINT THE APPROPREIATE DIFF BASED ON THE TEMPLATES FROM THE EDIT_LIST INFORMATION
-		  				for template in template_list: 
+#						print('TEMPLATE_LIST_JUNIPER: {}'.format(template_list_juniper))
+		  				for template in template_list_juniper: 
 							print("{}{}".format(directory,template))
 							for line in diff_config:
 								if(re.search('\[edit\s{}'.format(template.split('.')[0]),line)):

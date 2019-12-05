@@ -19,7 +19,7 @@ class BaseNode(object):
 	def connect(self):
 		if (self.type == 'switch'):
 			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),port=65500,device_type=self.get_device())
-		elif (self.type == 'vsrx'):
+		elif (self.type == 'vfirewall'):
 			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),port=65511,device_type=self.get_device())
 		else:
 			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),device_type=self.get_device())
@@ -53,7 +53,7 @@ class BaseNode(object):
 		elif (self.type == 'firewall'):
 			device_attribute = 'cisco_asa'
 
-		elif (self.type == 'vsrx'):
+		elif (self.type == 'vfirewall'):
 			device_attribute = 'juniper'
 
 		return device_attribute
@@ -63,6 +63,8 @@ class BaseNode(object):
 		self.connect()
 		output = self.net_connect.enable()
 		output = self.net_connect.send_config_set(commands)
+		if(self.platform == 'juniper'):
+			self.net_connect.commit()
 		print output
 		self.net_connect.disconnect()
 
@@ -86,11 +88,12 @@ class BaseNode(object):
 		f.close()
 		self.net_connect.disconnect()
 
-	def get_diff(self,command):
+	def get_diff(self,commands):
 
 		f = open("/diff-configs/{}".format(self.hostname) + ".conf", "w")
 		self.connect()
-		output = self.net_connect.enable()
 		output = self.net_connect.send_config_set(commands)
-		print output
+#		print output
+		f.write(output)
+		f.close()
 		self.net_connect.disconnect()
