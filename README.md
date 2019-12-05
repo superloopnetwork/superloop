@@ -272,7 +272,7 @@ core.sw.superloop.sfran: Vlan130                 10.130.30.1      YES NVRAM  up 
 core.sw.superloop.sfran: Vlan140                 10.140.40.1      YES NVRAM  up                    up      
 core.sw.superloop.sfran: Vlan150                 10.150.50.1      YES NVRAM  up                    up      
 ```
-In this demo, I'm doing a 'show version' for all the devices I have in my database (3 - a mix of Cisco and Juniper Platform) and it's displaying all the information in 9.6 seconds. You can imagine how usful this feature would be if you have hundreds, if not thousands of devices that you need to pull information from without the need of logging in, one by one and capturing the output.
+In this demo, I'm doing a 'show version' for all the devices I have in my database (3 - a mix of Cisco and Juniper platform) and it's displaying all the information in 9.6 seconds. You can imagine how powerful this feature would be if you have hundreds, if not thousands of devices that you need to pull information from without the need of logging in, one by one and capturing the output.
 
 ![superloop host_exec_demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_host_exec_demo.gif)
 
