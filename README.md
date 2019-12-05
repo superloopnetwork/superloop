@@ -217,13 +217,12 @@ By leveraging the power of the auditdiff engine, I'm able to extend it's functio
 
 For the sake of this example, I've narrowed down to 5 second to speed things up so you'll have an idea of how it works.
 
-![superloop auditcreeper demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_auditcreeper.gif)
+![superloop auditcreeper demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_auditcreeper_demo.gif)
 
-In this demo, only one device gets remediated. A config was removed and a random config was added. superloop detected the discrepancies and proceeded to remediate:
+In this demo, only one device gets remediated. A config was removed from the device. superloop detected the discrepancies and proceeded to remediate. Upon remediation, the second time 'audicreeper' runs, you can see that all templates are then matched (shown by '(none)', as in NO discrepancies):
 
 ```
-- ip dhcp excluded-address 10.50.40.4
-+ ip dhcp excluded-address 10.10.10.10
++ ip dhcp excluded-address 10.50.30.3
 ```
 '-' indicating a config(s) was removed
 '+' indicating a config(s) was added
