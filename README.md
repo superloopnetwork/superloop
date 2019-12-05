@@ -250,7 +250,7 @@ In the below demo, I have made a change to the 'system.jinja2' template for a Ju
 
 Verifying changes have been pushed:
 
-![superloop host_exec_after_push_cfgs demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_host_exec_after_push_cfgs.gif)
+![superloop host_exec_after_push_cfgs demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_host_exec_after_push_cfgs_demo.gif)
 
 ## superloop push local
 
