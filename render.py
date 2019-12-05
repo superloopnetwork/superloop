@@ -16,7 +16,6 @@ def render(template_list,node_object,auditcreeper,output):
 
 	if(auditcreeper):
 	    template_list = template_list_copy[0]
-
 #	print("[!] [THE FOLLOWING TEMPLATE(S) IS/ARE RENDERED:]")
 	for index in initialize.element:
 
@@ -40,7 +39,7 @@ def render(template_list,node_object,auditcreeper,output):
 			### THE BELOW PARSE_COMMANDS FUNCTION WILL ONLY GET EXECUTED IF NEEDS TO STORE COMMANDS IN THE GLOBAL VARILABLE INITIALIZE.CONFIGURATION FOR PUSH
 			### PUSH_CFGS(OUTPUT = TRUE) VS RENDER_CONFIG(OUTPUT = FALSE) FUNCTIONS.
 			if(output!=True):
-				parse_commands(init_config)
+				parse_commands(node_object[index],init_config)
 
 		if(auditcreeper):
 			template_list = get_template(template_list_copy)

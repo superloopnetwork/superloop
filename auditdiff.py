@@ -25,8 +25,6 @@ def auditdiff(args):
 	commands = initialize.configuration	
 	argument_node = args.node
 
-	if(args.parser_audit == 'remediate'):
-		remediation = True
 	if(args.file is None):
 #		print("ARGS.FILE IS NONE")
 		template_list = []
