@@ -145,11 +145,8 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 				cisco_audit_diff(node_object,index,template,AUDIT_FILTER_RE,output,remediation)
 	
-
-
 			### THIS SECTION IS FOR JUNIPER NETWORKS PLATFORM ###
 			if(node_object[index]['platform'] == 'juniper'):
-
 
 				directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 				### THIS SECTION OF CODE WILL OPEN DIFF-CONFIG *.CONF FILE AND STORE IN DIFF_CONFIG AS A LIST
@@ -171,8 +168,10 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 				if(len(search) == 0):
 					print("{}{} (none)".format(directory,template))
 					print
-					
-					juniper_audit_diff(directory,template,template_list,diff_config,edit_list,line,search)
+					if(len(template_list) > 1):	
+						juniper_audit_diff(directory,template,template_list,diff_config,edit_list,search)
+					else:
+						continue
 						
 				else:
 					### THIS FIRST SECTION WILL FIND ALL THE INDEXES WITH THE '[edit <TEMPLATE>]' AND APPEND IT TO THE EDIT_LIST
@@ -187,11 +186,9 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 					###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #					print('EDIT_LIST 1st: {}'.format(edit_list))
-#					print('template_list_juniper: {}'.format(template_list_juniper))
 #					print("index_of_template_list: {}".format(index_of_template_list))
 #					print("length_template_list: {}".format(length_template_list))
-					juniper_audit_diff(directory,template,template_list,diff_config,edit_list,line,search)
-					
+					juniper_audit_diff(directory,template,template_list,diff_config,edit_list,search)
 
 #					print("end_of_template_list: {}".format(end_of_template_list))
 					### UPON THE LAST TEMPLATE, IT WILL THEN FIND THE CLOSING CURLY BRACES INDEX NUMBER TO APPEND TO THE EDIT_LIST
@@ -350,7 +347,7 @@ def cisco_audit_diff(node_object,index,template,AUDIT_FILTER_RE,output,remediati
 				initialize.configuration.append(node_configs)
 			node_index = node_index + 1
 
-def juniper_audit_diff(directory,template,template_list,diff_config,edit_list,line,search):
+def juniper_audit_diff(directory,template,template_list,diff_config,edit_list,search):
 
 	length_template_list = len(template_list)
 
@@ -360,6 +357,7 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list,li
 
 	index_of_template_list = template_list.index(template) + 1
 
+#	print("EDIT_LIST: {}".format(edit_list))
 
 	### THIS WILL CHECK IF IT'S ON THE LAST TEMPLATE. IF IT IS, IT WILL LOCATE THE LAST INDEX FOR EDIT_LIST AND APPEND IT TO THE LIST
 	if(index_of_template_list == length_template_list):
