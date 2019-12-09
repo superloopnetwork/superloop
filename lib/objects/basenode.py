@@ -64,9 +64,11 @@ class BaseNode(object):
 		output = self.net_connect.enable()
 		if(self.platform == 'cisco'):
 			output = self.net_connect.send_config_set(commands)
+			print output
 		if(self.platform == 'juniper'):
 			output = self.net_connect.send_config_set(commands,exit_config_mode=False)
 			self.net_connect.commit(and_quit=True)
+			print output
 		self.net_connect.disconnect()
 
 	def exec_command(self,command):

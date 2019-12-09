@@ -16,7 +16,7 @@ def auditcreeper():
 	initialize.variables()
 	commands = initialize.configuration
 	auditcreeper_flag = True
-	output = False 
+	output = True 
 	remediation = True
 	### AUGUMENT_NODE WILL MATCH EVERY NODES IN THE LIST OF NODE_OBJECT
 	argument_node = '.+'
