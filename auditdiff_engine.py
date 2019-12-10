@@ -22,6 +22,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 	rendered_config = []
 	rendered_config.append('load replace terminal')
 	edit_list = []
+	no_diff = 0
 
 	### PUSH_CONFIGS IS A LIST OF THE FINAL CONFIGS TO BE PUSHED
 #	push_configs = []
@@ -168,6 +169,9 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 				if(len(search) == 0):
 					print("{}{} (none)".format(directory,template))
 					print
+					no_diff = no_diff + 1
+					if(no_diff == len(template_list)):
+						break
 					if(len(template_list) > 1):	
 						juniper_audit_diff(directory,template,template_list,diff_config,edit_list,search)
 					else:
