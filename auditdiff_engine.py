@@ -64,6 +64,12 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 			f.write(config) 
 			f.close 
+			if(node_object[index]['platform'] == 'cisco'):
+
+				### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
+				f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
+				init_config = f.readlines()
+				### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
 
 			if(node_object[index]['platform'] == 'juniper'):
 	
@@ -246,6 +252,7 @@ def cisco_audit_diff(node_object,index,template,AUDIT_FILTER_RE,output,remediati
 	### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
 	f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
 	init_config = f.readlines()
+#	print"INIT_CONFIG: {}".format(init_config)
 	### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
 	rendered_config = []
 	
@@ -295,6 +302,7 @@ def cisco_audit_diff(node_object,index,template,AUDIT_FILTER_RE,output,remediati
 			parse_backup_configs,
 			audit_filter
 	)
+
 	
 	### UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print("FILTERED BACKUP CONFIG: {}".format(filtered_backup_config))		
@@ -309,7 +317,7 @@ def cisco_audit_diff(node_object,index,template,AUDIT_FILTER_RE,output,remediati
 			remove_lines=True, 
 			debug=False
 	)
-	
+
 	if(len(push_configs) == 0):
 		if(output):
 			print("{}{} (none)".format(directory,template))
@@ -402,6 +410,7 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list,se
 #					print "DIFF_TEMPLATE: {}".format(diff_template)
 					for line in diff_template:
 						print("{}".format(line))
+					print
 				else:
 					continue
 				start = start + 1
