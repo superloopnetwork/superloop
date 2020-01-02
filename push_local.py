@@ -37,7 +37,6 @@ def push_local(args):
 		for index in initialize.element:
 			redirect.append('push_cfgs')
 
-		print("REDIRECT: {}".format(redirect))
 		home_directory = os.path.expanduser('~')
 
 		for index in initialize.element:
@@ -47,6 +46,6 @@ def push_local(args):
 			f = open("{}/{}".format(home_directory,filename), "r")
 
 			init_config = f.readlines()
-			parse_commands(init_config)
+			parse_commands(node_object[index],init_config)
 
 		confirm_push(redirect,commands)
