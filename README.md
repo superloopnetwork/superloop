@@ -159,53 +159,9 @@ First and foremost, I would like to introduce to you the 'audit diff' function. 
 
 ![superloop audit_diff demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_audit_diff_demo.gif)
 
-In this demo, only one device gets remediated. A parent config was removed from the device. superloop detected the missing configs and prompted the user if they would like to proceed to remediate:
-
-```
-[+] [GATHERING RUNNING-CONFIG. STANDBY...]
-[!] [DONE] [0:00:09.419225]
-
-Only in the device: -
-Only in the generated config: +
-core.sw.superloop.sfran
-/templates/cisco/ios/switch/base.jinja2 (none)
-
-/templates/cisco/ios/switch/service.jinja2
--no service pad
- service tcp-keepalives-out
- service timestamps debug uptime
- service timestamps log datetime localtime
- service password-encryption
-
-/templates/cisco/ios/switch/dhcp.jinja2
- ip dhcp ping packets 5
- ip dhcp pool DATA
-  network 10.50.50.0 255.255.255.0
-  default-router 10.50.50.1 
-  dns-server 8.8.8.8 
-+ip dhcp pool SERVERS
-+ network 10.50.30.0 255.255.255.0
-+ default-router 10.50.30.1 
-+ dns-server 8.8.8.8 
- ip dhcp pool MANAGEMENT
-  network 10.50.80.0 255.255.255.0
-  default-router 10.50.80.1 
-  dns-server 8.8.8.8 
- ip dhcp pool WIRELESS
-
-/templates/cisco/ios/switch/crypto.jinja2 (none)
-
-
-PROCEED TO REMEDIATE? [Y/N]: y
-
-PUSHING CODE...
-[!] [DONE] [0:00:23.397795]
-```
 '-' indicating a config(s) should be removed
 '+' indicating a config(s) should be added
 * (none) indicating NO discrepancies.
-
-The demo shows the remediation was successful. 'ip dhcp pool SERVERS' along with it's children configs was reinstated.
 
 ## superloop auditcreeper
 
@@ -345,7 +301,7 @@ root@jumpbox:~/superloop# cat nodes.yaml
 Say we wanted to blow out the node 'core.sw.superloop.sfran'. Simply use the following command 'superloop host remove core.sw.superloop.sfran' or 'superloop host remove 20.20.20.20'. It supports both hostname and IP address.
 ```
 root@jumpbox:~/superloop# superloop host remove core.sw.superloop.sfran
-[+] NODE SUCCESSFULLY REMOVED FROM DATABASE
+[-] NODE SUCCESSFULLY REMOVED FROM DATABASE
 ```
 ```
 root@jumpbox:~/superloop# cat nodes.yaml
