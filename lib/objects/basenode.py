@@ -18,9 +18,9 @@ class BaseNode(object):
 
 	def connect(self):
 		if (self.type == 'switch'):
-			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),port=65500,device_type=self.get_device())
+			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),device_type=self.get_device())
 		elif (self.type == 'vfirewall'):
-			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),port=65511,device_type=self.get_device())
+			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),port=22,device_type=self.get_device())
 		else:
 			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),device_type=self.get_device())
 			

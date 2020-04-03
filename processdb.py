@@ -7,20 +7,20 @@ import yaml
 def process_nodes():
 
 	with open("/database/nodes.yaml") as yaml_file:
-		node_object = yaml.load(yaml_file,Loader=yaml.FullLoader)
+		node_object = yaml.load(yaml_file)
 
 	return node_object
 	
 def process_templates():
 
 	with open("/database/templates.yaml") as yaml_file:
-		template_object = yaml.load(yaml_file,Loader=yaml.FullLoader)
+		template_object = yaml.load(yaml_file)
 
 	return template_object
 
 def process_encrypted():
 
 	with open("/database/encrypted.yaml") as yaml_file:
-		passwords = yaml.load(yaml_file,Loader=yaml.FullLoader)
+		passwords = yaml.load(yaml_file)
 
 	return passwords

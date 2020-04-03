@@ -5,7 +5,7 @@ def get_port(node_object,element,ssh_id):
 	### THIS FUNCTION GETS THE CORRECT PORTS BASED ON DEVICE TYPE.
 	### THIS IS SOLELY FOR MY OWN NETWORK. USERS MAY MODIFY THE PORTS OR COMPLETELY REMOVE THE STATMENTS BELOW
 	if(node_object[element[ssh_id]]['type'] == 'switch'):
-		port = '65500'
+		port = '22'
 	else:
 		port = '22'
 

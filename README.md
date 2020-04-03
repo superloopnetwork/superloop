@@ -35,7 +35,7 @@ Now append the following code within ```/usr/local/bin/superloop``` near the top
 import sys
 sys.path.append('/usr/local/lib/python2.7/dist-packages/superloop')
 ```
-So it looks like this . . . 
+So it looks like this . . . . 
 ```
 #!/usr/bin/env python
 # VARIABLES LIKE "--node" OR "--file" ARE HOW IT'S BEING READ WHEN PASSED IN.
