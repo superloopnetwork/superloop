@@ -369,7 +369,7 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list,se
 
 	index_of_template_list = template_list.index(template) + 1
 
-#	print("EDIT_LIST: {}".format(edit_list))
+	print("EDIT_LIST: {}".format(edit_list))
 
 	### THIS WILL CHECK IF IT'S ON THE LAST TEMPLATE. IF IT IS, IT WILL LOCATE THE LAST INDEX FOR EDIT_LIST AND APPEND IT TO THE LIST
 	if(index_of_template_list == length_template_list):
@@ -409,7 +409,11 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list,se
 					###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #					print "DIFF_TEMPLATE: {}".format(diff_template)
 					for line in diff_template:
-						print("{}".format(line))
+						## THE BELOW IF STATEMENT IS TO CORRECT THE OUTPUT. AT RANDOM TIMES, THE DIFF-CONFIG MAY INCLUDE 'ROLLBACK 0' IN OUTPUT. IT WILL OMIT PRINTING THAT.
+						if line == 'rollback 0':
+							pass
+						else:
+							print("{}".format(line))
 					print
 				else:
 					continue
