@@ -9,7 +9,6 @@ from processdb import process_templates
 from search import node_element
 from search import search_node
 from search import search_template 
-from render import render
 from node_create import node_create
 from multithread import multithread_engine
 from get_property import get_port

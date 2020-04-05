@@ -21,6 +21,7 @@ def render_config(args):
 	auditcreeper_flag = False 
 	output = True
 	argument_node = args.node
+	with_remediation = False
 
 	if(args.file is None):
 #		print("ARGS.FILE IS NONE")
@@ -57,4 +58,4 @@ def render_config(args):
 		print("")
 
 	else:
-		render(template_list,node_object,auditcreeper_flag,output)
+		render(template_list,node_object,auditcreeper_flag,output,with_remediation)

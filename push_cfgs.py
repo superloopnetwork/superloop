@@ -23,6 +23,7 @@ def push_cfgs(args):
 	output = False 
 	argument_node = args.node
 	remediation = True
+	with_remediation = True
 
 	if(args.file is None):
 #		print("ARGS.FILE IS NONE")
@@ -61,7 +62,7 @@ def push_cfgs(args):
 	else:
 
 		node_create(match_node,node_object)
-		render(template_list,node_object,auditcreeper_flag,output)
+		render(template_list,node_object,auditcreeper_flag,output,with_remediation)
 
 		for index in initialize.element:
 			redirect.append('push_cfgs')

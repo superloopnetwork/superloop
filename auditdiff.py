@@ -21,9 +21,9 @@ def auditdiff(args):
 	ext = '.jinja2'
 	auditcreeper_flag = False
 	output = True
-	remediation = False 
 	commands = initialize.configuration	
 	argument_node = args.node
+	remediation = False 
 
 	if(args.file is None):
 #		print("ARGS.FILE IS NONE")
