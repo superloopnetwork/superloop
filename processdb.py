@@ -3,6 +3,7 @@
 
 from node_create import node_create
 import yaml
+import json
 
 def process_nodes():
 
@@ -24,3 +25,10 @@ def process_encrypted():
 		passwords = yaml.load(yaml_file)
 
 	return passwords
+
+def process_json():
+
+	with open("/policy/policy.json") as json_file:
+		data = json.load(json_file)
+
+	return data
