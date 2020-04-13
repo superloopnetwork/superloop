@@ -1,19 +1,21 @@
-### THIS MODULE CONTROLS THE PUSHING OF THE POLICIES.
-### NODE_OBJECT IS A LIST OF DICTIONARY COMPILED BY THE 
+### THIS MODULE CONTROLS THE PUSHING OF THE POLICIES FOR FIREWALLS.
+### NODE_POLICY IS A LIST OF DICTIONARY COMPILED BY THE 
 ### PROCESSDB MODULE. IT PROCESSES THE INFORMATION FROM THE
-### NODES.YAML FILE AND STORES IT INTO A LIST OF DICTIONARY.
+### POLICY_PUSH.YAML FILE AND STORES IT INTO A LIST OF DICTIONARY.
 
 from lib.objects.basenode import BaseNode
 from processdb import process_nodes
 from processdb import process_policies
 from processdb import process_json
 from search import search_node
+from search import search_template
 from search import search_policy
 from auditdiff_engine import auditdiff_engine
 from render import render
 from node_create import node_create
 from confirm_push import confirm_push
 from parse_cmd import parse_firewall_acl
+from get_property import get_template
 import initialize
 
 def push_acl(args):
@@ -37,12 +39,14 @@ def push_acl(args):
 		policy_list = []
 		policy_list.append(policy)
 
+
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
 
 	### NODE_POLICY IS A LIST OF ALL THE POLICY BASED ON PLATFORMS AND DEVICE TYPE
 	node_policy = process_policies()
 
+#	print("NODE_POLICY: {}".format(node_policy))
 	### MATCH_NODE IS A LIST OF NODES THAT MATCHES THE ARGUEMENTS PASSED IN BY USER
 	match_node = search_node(argument_node,node_object)
 
@@ -53,30 +57,40 @@ def push_acl(args):
 
 	### THIS WILL PARSE OUT THE GENERATED CONFIGS FROM THE *.JINJA2 FILE TO A LIST
 
+	### POLICY_LIST_COPY TAKE A COPY OF THE CURRENT POLICY_LIST
+	policy_list_original = policy_list[:]
+	policy_list_copy = policy_list
+	### THE BELOW LENGTH OF MATCH_POLICY != 0 WILL TAKE CARE OF INVALID MATCH OF FIREWALL NODES
+	### AGAINST NONE ARGS.FILE ARGUEMENT
+	if(auditcreeper_flag and len(match_policy) != 0):
+		policy_list = policy_list_copy[0]
+
 	if(len(match_node) == 0):
 		print("[!] [INVALID MATCHING NODE(S) AGAINST DATABASE]")
 		print("")
-	### WHEN UNKNOWN NODE(S) (MATCHED SEARCH ENTRIES BUT NOT FIREWALL) DO NOT HAVE ANY POLICIES SETUP
-	elif(len(match_policy) == 0):
+	elif((len(match_policy) == 0) or ('NO MATCH' in match_policy)):
 		print("[!] [INVALID FIREWALL NODE(S) ASSOCIATING WITH INVALID POLICY/POLICIES]")
-		print("")
-	### WHEN KNOWN NODE(S) (MATCHED SEARCH ENTRIES ARE FIREWALLS) BUT DO NOT MATCH A POLICY)
-	elif('NO MATCH' in match_policy):
-		print("[!] [VALID FIREWALL NODE(S) ASSOCIATING WITH INVALID POLICY/POLICIES]")
 		print("")
 
 	else:
 		node_create(match_node,node_object)
-		acl_list = process_json()
-		print acl_list
-	
-#		THE BELOW FORLOOP TAKES CARE OF THE REDIRECT FOR ALL NODES
-		for index in initialize.element:
+		###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+		print("ELEMENT_POLICY: {}".format(initialize.element_policy))
+		for index in initialize.element_policy:
 			redirect.append('push_acl')
+#			THE BELOW FORLOOP TAKES CARE OF THE CONFIGS FOR EACH POLICY TERM PER FIREWALL NODES
+			for policy in policy_list:
+				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+				print("NODE: {} ; POLICY: {}".format(node_policy[index]['hostname'],policy))
+				parse_firewall_acl(node_policy[index],policy)
+			if(auditcreeper_flag):
+				policy_list = get_template(policy_list_copy)
 
-#		THE BELOW FORLOOP TAKES CARE OF THE CONFIGS FOR EACH POLICY TERM
-		for index in initialize.element:
-			parse_firewall_acl(node_object[index],acl_list[index])
+#			for acl in acl_list:
+#				config_list = parse_firewall_acl(node_object[index],acl)
+#				commands.append(config_list)
+#
+#		print commands
 #
 #		confirm_push(redirect,commands)
 #		print("")
