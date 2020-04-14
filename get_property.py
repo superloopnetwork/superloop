@@ -25,7 +25,7 @@ def get_type(hostname):
 	return device_type
 
 
-def get_directory(platform,os,device_type):
+def get_template_directory(platform,os,device_type):
 
 	### THIS WILL RETURN THE CORRESPONDING DIRECTORY FOR THE APPLICATION TO OPEN THE FILE
 
@@ -40,18 +40,29 @@ def get_directory(platform,os,device_type):
 
     return directory
 
-def get_template(template_list_copy):
+def get_policy_directory(platform,os,device_type):
+
+	### THIS WILL RETURN THE CORRESPONDING DIRECTORY FOR THE APPLICATION TO OPEN THE FILE
+
+    if(platform == 'cisco' and os == 'ios' and device_type == 'firewall'):
+        directory = '/policy/cisco/ios/firewall/'
+    elif(platform == 'juniper' and os == 'junos' and device_type == 'vfirewall'):
+        directory = '/policy/juniper/junos/firewall/'
+
+    return directory
+
+def get_updated_list(list_copy):
 
 	### THIS WILL GET THE CURRENT TEMPLATE LIST FROM THE LIST. EXAMPLE: [['base.jinja'],['snmp.jinja','tacacs.jinja']]. 
 	### IT WILL CONTINUE TO POP OFF THE 1ST ELEMENT UNTIL THERE ARE ONLY ONE ELEMENT LEFT
 
-	template_list = []
+	updated_list = []
 
-	if(len(template_list_copy) != 1):
-		template_list_copy.pop(0)
-		template_list = template_list_copy[0]
+	if(len(list_copy) != 1):
+		list_copy.pop(0)
+		updated_list = list_copy[0]
 
-	return template_list
+	return updated_list
 
 def get_syntax(node_object,index):
 
