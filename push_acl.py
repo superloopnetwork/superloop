@@ -6,21 +6,17 @@
 from lib.objects.basenode import BaseNode
 from processdb import process_nodes
 from processdb import process_policies
-from processdb import process_json
 from search import search_node
-from search import search_template
 from search import search_policy
-from auditdiff_engine import auditdiff_engine
-from render import render
 from node_create import node_create
 from confirm_push import confirm_push
 from parse_cmd import parse_firewall_acl
-from get_property import get_template
+from get_property import get_updated_list
+from policies import policies
 import initialize
 
 def push_acl(args):
 
-	redirect = []
 	ext = '.json'
 	commands = initialize.configuration
 	auditcreeper_flag = False
@@ -74,17 +70,9 @@ def push_acl(args):
 
 	else:
 		node_create(match_node,node_object)
+		policies(policy_list,node_policy,policy_list_copy,auditcreeper_flag)
 		###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-		print("ELEMENT_POLICY: {}".format(initialize.element_policy))
-		for index in initialize.element_policy:
-			redirect.append('push_acl')
-#			THE BELOW FORLOOP TAKES CARE OF THE CONFIGS FOR EACH POLICY TERM PER FIREWALL NODES
-			for policy in policy_list:
-				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-				print("NODE: {} ; POLICY: {}".format(node_policy[index]['hostname'],policy))
-				parse_firewall_acl(node_policy[index],policy)
-			if(auditcreeper_flag):
-				policy_list = get_template(policy_list_copy)
+#		print("ELEMENT_POLICY: {}".format(initialize.element_policy))
 
 #			for acl in acl_list:
 #				config_list = parse_firewall_acl(node_object[index],acl)
