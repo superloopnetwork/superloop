@@ -117,7 +117,6 @@ def search_policy(policy_list,match_node,node_policy,node_object,auditcreeper):
 
 						if(auditcreeper):
 							policy_node_list = []
-	
 							for policy_dir_name in node_pol['policy']:
 								policy_name = policy_dir_name.split('/')[-1]
 								policy_node_list.append(policy_name)
@@ -140,7 +139,7 @@ def search_policy(policy_list,match_node,node_policy,node_object,auditcreeper):
 			else:
 				continue	
 
-#	print("TEMPLATE_LIST IN SEARCH.PY: {}".format(template_list))
+#	print("POLICY_LIST IN SEARCH.PY: {}".format(policy_list))
 	return search_result 
 
 def node_element(match_node,node_object):

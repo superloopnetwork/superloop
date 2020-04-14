@@ -3,9 +3,9 @@
 ### GLOBAL VARIABLE CALL INITIALIZE.CONFIGURATION.
 
 from jinja2 import Environment, FileSystemLoader
-from get_property import get_directory
-from get_property import get_template
-from parse_commands import parse_commands
+from get_property import get_template_directory
+from get_property import get_updated_list
+from parse_cmd import parse_commands
 import initialize
 import re
 
@@ -22,7 +22,7 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 		print ("{}".format(node_object[index]['hostname']))
 		for template in template_list:
 		### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE PLATFORM, OS AND TYPE
-			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+			directory = get_template_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 			env = Environment(loader=FileSystemLoader("{}".format(directory)),lstrip_blocks = True,trim_blocks=True)
 			baseline = env.get_template(template)
 			f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.strip('jinja2')) + ".conf", "w") 
@@ -42,7 +42,7 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 				parse_commands(node_object[index],init_config)
 
 		if(auditcreeper):
-			template_list = get_template(template_list_copy)
+			template_list = get_updated_list(template_list_copy)
 		print
 
 	return None

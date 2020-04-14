@@ -8,8 +8,8 @@ from jinja2 import Environment, FileSystemLoader
 from ciscoconfparse import CiscoConfParse
 from collections import Counter
 from multithread import multithread_engine
-from get_property import get_directory
-from get_property import get_template
+from get_property import get_template_directory
+from get_property import get_updated_list
 from get_property import get_syntax
 import re
 import initialize
@@ -54,7 +54,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 		for template in template_list:
 
 			### THIS SECTION OF CODE WILL PROCESS THE TEMPLATE AND OUTPUT TO A *.CONF FILE
-			directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+			directory = get_template_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 			env = Environment(loader=FileSystemLoader("{}".format(directory)))
 			baseline = env.get_template(template)
 			f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "w") 
@@ -89,7 +89,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #				print ("RENDERED CONFIG: {}".format(rendered_config))
 
-		template_list = get_template(template_list_copy)
+		template_list = get_updated_list(template_list_copy)
 
 		if(node_object[index]['platform'] == 'cisco'):
 			redirect.append('get_config')
@@ -155,7 +155,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			### THIS SECTION IS FOR JUNIPER NETWORKS PLATFORM ###
 			if(node_object[index]['platform'] == 'juniper'):
 
-				directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+				directory = get_template_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 				### THIS SECTION OF CODE WILL OPEN DIFF-CONFIG *.CONF FILE AND STORE IN DIFF_CONFIG AS A LIST
 				f = open("/diff-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
 				init_config = f.readlines()
@@ -208,7 +208,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			if(ntw_device_pop == True):
 				initialize.ntw_device.pop(node_index)
 				initialize.configuration.pop(node_index)
-			template_list = get_template(template_list_original)
+			template_list = get_updated_list(template_list_original)
 
 #	if(remediation):
 #		print("[+]: PUSH ENABLED")
@@ -280,7 +280,7 @@ def cisco_audit_diff(node_object,index,template,AUDIT_FILTER_RE,output,remediati
 #	print ("BACKUP CONFIG: {}".format(backup_config))
 	
 	### THIS WILL OPEN THE JINJA2 TEMPLATE AND PARSE OUT THE AUDIT_FILTER SECTION VIA REGULAR EXPRESSION
-	directory = get_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+	directory = get_template_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 	f = open("{}".format(directory) + template, "r")
 	parse_audit = f.readline()
 	audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
