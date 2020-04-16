@@ -2,6 +2,7 @@
 ### FED INTO THE METHOD OF THE OBJECT CREATED.
 ### PARSE_FIREWALL_ACL FUNCTION WILL GENERATE FIREWALL ACLS BASED ON THE PLATFORM AND OS
 from processdb import process_json
+from get_property import get_policy_directory
 import initialize
 import re
 
@@ -29,17 +30,22 @@ def parse_commands(node_object,init_config):
 def parse_firewall_acl(node_policy,policy):
 
 	config_list = []
-	AUDIT_FILTER_RE = r"\[.*\]"
+	PATH_FILTER_RE = r"\'.+\'"
 
-	### THIS WILL OPEN THE JINJA2 TEMPLATE AND PARSE OUT THE AUDIT_FILTER SECTION VIA REGULAR EXPRESSION
-	directory = get_template_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
-	f = open("{}".format(directory) + template, "r")
-	parse_audit = f.readline()
-	audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
+	### THIS WILL OPEN THE JSON POLICY AND PARSE OUT THE AUDIT_FILTER SECTION VIA REGULAR EXPRESSION
+	print("{} {} {}".format(node_policy['platform'],node_policy['os'],node_policy['type']))
+	directory = get_policy_directory(node_policy['platform'],node_policy['os'],node_policy['type'])
+	print directory
 
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print("NODE_POLICY: {}".format(node_policy))
+#	print("NODE: {}".format(policy))
 	acl_list = process_json(node_policy['platform'],node_policy['os'],node_policy['type'],policy)
+	f = open("{}".format(directory) + policy, "r")
+	parse_include = f.readline()
+	path = eval(re.findall(PATH_FILTER_RE, parse_include)[0])
+	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+	print("PATH_FILTER: {}".format(path))
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print("ACL_LIST inside parse_firewall_acl: {}".format(acl_list))
 	for acl in acl_list:
