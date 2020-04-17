@@ -41,7 +41,7 @@ def process_json(platform,os,device_type,policy_file):
 		with open("/policy/cisco/ios/firewall/{}".format(policy_file)) as json_file:
 			data = commentjson.load(json_file)
 
-	elif(platform == 'juniper' and os == 'junos' and device_type == 'firewall'):
+	elif(platform == 'juniper' and os == 'junos' and device_type == 'vfirewall'):
 		with open("/policy/juniper/junos/firewall/{}".format(policy_file)) as json_file:
 			data = commentjson.load(json_file)
 

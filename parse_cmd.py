@@ -59,3 +59,8 @@ def parse_firewall_acl(node_policy,policy):
 			config_list = "{} {} {} {} {} {}".format(term,source_address,destination_address,protocol,destination_port,action) 
 	
 	return config_list
+
+def parse_subnet(path):
+	
+
+	return None

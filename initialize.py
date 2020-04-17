@@ -10,6 +10,9 @@ def variables():
 	### ELEMENT IS A LIST OF THE INDEXES OF ALL THE MATCHED NODES
 	global element
 
+	### ELEMENT_POLICY IS A LIST OF THE INDEXES OF ALL THE MATCHED POLICIES
+	global element_policy
+
 	### CONFIGURATION IS A LIST OF THE CONFIGS TO BE PUSHED TO DEVICE
 	global configuration
 
@@ -22,6 +25,7 @@ def variables():
 	ntw_device = []
 	templates = []
 	element = []
+	element_policy = []
 	configuration = []
 	rendered_config = []
 	backup_config = []
