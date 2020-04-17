@@ -44,7 +44,7 @@ def parse_firewall_acl(node_policy,policy):
 	parse_include = f.readline()
 	path = eval(re.findall(PATH_FILTER_RE, parse_include)[0])
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-	print("PATH_FILTER: {}".format(path))
+#	print("PATH_FILTER: {}".format(path))
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print("ACL_LIST inside parse_firewall_acl: {}".format(acl_list))
 	for acl in acl_list:
