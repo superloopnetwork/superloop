@@ -33,9 +33,8 @@ def parse_firewall_acl(node_policy,policy):
 	PATH_FILTER_RE = r"\'.+\'"
 
 	### THIS WILL OPEN THE JSON POLICY AND PARSE OUT THE AUDIT_FILTER SECTION VIA REGULAR EXPRESSION
-	print("{} {} {}".format(node_policy['platform'],node_policy['os'],node_policy['type']))
+#	print("{} {} {}".format(node_policy['platform'],node_policy['os'],node_policy['type']))
 	directory = get_policy_directory(node_policy['platform'],node_policy['os'],node_policy['type'])
-	print directory
 
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print("NODE_POLICY: {}".format(node_policy))
@@ -58,6 +57,5 @@ def parse_firewall_acl(node_policy,policy):
 		if(node_policy['platform'] == 'cisco' or node_policy['platform'] == 'juniper'):
 			print("{} {} {} {} {} {}".format(term,source_address,destination_address,protocol,destination_port,action))
 			config_list = "{} {} {} {} {} {}".format(term,source_address,destination_address,protocol,destination_port,action) 
-		acl_list = process_json(node_policy['platform'],node_policy['os'],node_policy['type'],policy)
 	
 	return config_list
