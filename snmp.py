@@ -21,14 +21,14 @@ def snmp(argument_node):
 	snmp_hostname = snmp_data(device,HOSTNAME_OID,SNMP_PORT)
 	snmp_platform = snmp_data(device,PLATFORM_OID,SNMP_PORT)
 
-	snmp_parse_platform(snmp_platform)
+	platform = snmp_parse_platform(snmp_platform)
 
 	data = [{
 		'hostname': '{}'.format(snmp_hostname),
 		'ip': "{}".format(argument_node),
 		'username':'{}'.format(USERNAME_STRING),
 		'password': '{}'.format(PASSWORD_STRING),
-		'platform':'{}'.format(snmp_hostname),
+		'platform':'{}'.format(platform),
 		'os':'ios',
 		'type':'ios'
 		}
@@ -45,9 +45,9 @@ def snmp_data(device,oid,port):
 
 def snmp_parse_platform(snmp_platform):
 
-	PLATFORM_RE = r'.+'
-	platform = re.findall(PLATFORM_RE, snmp_platform)[0]
-	
-	print("SNMP_PLATFORM: {}".format(platform))
+	platform = snmp_platform.split(' ')[0].lower() 
+
+	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#	print("SNMP_PLATFORM: {}".format(platform))
 	
 	return platform
