@@ -39,9 +39,9 @@ def snmp(argument_node):
 def snmp_data(device,oid,port):
 
 	snmp_data = snmp_get_oid(device,oid,display_errors=True)
-	snmp_hostname = snmp_extract(snmp_data)
+	snmp_property = snmp_extract(snmp_data)
 
-	return snmp_hostname 
+	return snmp_property
 
 def snmp_parse_platform(snmp_platform):
 
