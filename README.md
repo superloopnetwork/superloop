@@ -268,9 +268,9 @@ If the search result returns one host, superloop automatically establishes a SSH
 
 ## superloop host add/remove
 
-When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is executed, superloop will connect to the device via snmp. It will pull the neccessary information such as it's hostname to populate it into nodes.yaml. Since there are sentitive information that are required like the username and password of the device, I have decided to create an 'encrypted.yaml' file. This file will store all sensitive information in encrypted format. Let's take a closer look:
+When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is invoked, superloop will connect to the device via snmp. It will pull the neccessary information such as it's hostname and platform to populate it into nodes.yaml. Since there are sentitive information that are required like the username and password of the device, I have decided to create an 'encrypted.yaml' file. This file will store all sensitive information in encrypted format. Let's take a closer look:
 ```
-root@jumpbox:~/staging/superloop#  cat encrypted.yaml 
+root@jumpbox:~/database#  cat encrypted.yaml 
 - username: YWRtaW4= 
   password: cGFzc3dvcmQ= 
   snmp: cGFzc3dvcmQ=
