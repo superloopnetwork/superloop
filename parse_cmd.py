@@ -56,7 +56,8 @@ def parse_firewall_acl(node_policy,policy):
 		destination_port = acl['destination-port']
 		action = acl['action']
 
-		object_group(path,source_address)
+		source_object_group = object_group(path,source_address)
+		destination_object_group = object_group(path,destination_address)
 
 		if(node_policy['platform'] == 'cisco' or node_policy['platform'] == 'juniper'):
 			print("{} {} {} {} {} {}".format(term,source_address,destination_address,protocol,destination_port,action))
@@ -67,6 +68,8 @@ def parse_firewall_acl(node_policy,policy):
 
 def object_group(path,object_group_search):
 
+	subnets = []
+
 	with open('{}'.format(path)) as f:
 		object_group_string = f.read()
 		object_group_list = object_group_string.split('\n')
@@ -74,6 +77,15 @@ def object_group(path,object_group_search):
 #	print('{} ='.format(object_group_search))
 	if('{} ='.format(object_group_search) in set(object_group_list)):
 		print 'TRUE'
+		element = object_group_list.index('{} ='.format(object_group_search))
+		element = element + 1
+		print '{}'.format(object_group_list[element])
+
+		while object_group_list[element] != "":
+			subnets.append(object_group_list[element])
+			element = element + 1
+
+		print subnets
 	else:
 		print 'FALSE'
 
