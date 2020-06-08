@@ -6,6 +6,8 @@ def get_port(node_object,element,ssh_id):
 	### THIS IS SOLELY FOR MY OWN NETWORK. USERS MAY MODIFY THE PORTS OR COMPLETELY REMOVE THE STATMENTS BELOW
 	if(node_object[element[ssh_id]]['type'] == 'switch'):
 		port = '22'
+	elif(node_object[element[ssh_id]]['type'] == 'nas'):
+		port = '2222'
 	else:
 		port = '22'
 
