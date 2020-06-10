@@ -24,9 +24,9 @@ def process_templates():
 def process_encrypted():
 
 	with open("/database/encrypted.yaml") as yaml_file:
-		passwords = yaml.load(yaml_file)
+		encrypted_string = yaml.load(yaml_file)
 
-	return passwords
+	return encrypted_string
 
 def process_policies():
 
