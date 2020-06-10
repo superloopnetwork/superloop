@@ -22,6 +22,7 @@ def snmp(argument_node):
 	snmp_platform = snmp_data(device,PLATFORM_OID,SNMP_PORT)
 
 	platform = snmp_parse_platform(snmp_platform)
+	operating_system = snmp_parse_os(platform)
 
 	data = [{
 		'hostname': '{}'.format(snmp_hostname),
@@ -29,7 +30,7 @@ def snmp(argument_node):
 		'username':'{}'.format(USERNAME_STRING),
 		'password': '{}'.format(PASSWORD_STRING),
 		'platform':'{}'.format(platform),
-		'os':'ios',
+		'os':'{}'.format(operating_system),
 		'type':'ios'
 		}
 	]
@@ -51,3 +52,14 @@ def snmp_parse_platform(snmp_platform):
 #	print("SNMP_PLATFORM: {}".format(platform))
 	
 	return platform
+
+def snmp_parse_os(platform):
+
+	os = ''
+
+	if(platform == 'cisco'):
+		os = 'ios'
+	elif(platform == 'juniper'):
+		os = 'junos'
+
+	return os
