@@ -28,6 +28,13 @@ def process_encrypted():
 
 	return encrypted_string
 
+def process_models():
+
+	with open("/database/models.yaml") as yaml_file:
+		models_object = yaml.load(yaml_file)
+
+	return models_object
+
 def process_policies():
 
 	with open("/database/policy_push.yaml") as yaml_file:
