@@ -3,6 +3,7 @@
 from snmp_helper import snmp_get_oid
 from snmp_helper import snmp_extract 
 from processdb import process_encrypted
+from processdb import process_models
 import re
 import pybase64
 import subprocess
@@ -23,6 +24,7 @@ def snmp(argument_node):
 
 	platform = snmp_parse_platform(snmp_platform)
 	operating_system = snmp_parse_os(platform)
+	type = snmp_parse_type(snmp_platform)
 
 	data = [{
 		'hostname': '{}'.format(snmp_hostname),
@@ -31,7 +33,7 @@ def snmp(argument_node):
 		'password': '{}'.format(PASSWORD_STRING),
 		'platform':'{}'.format(platform),
 		'os':'{}'.format(operating_system),
-		'type':'ios'
+		'type':'{}'.format(type),
 		}
 	]
 
@@ -63,3 +65,19 @@ def snmp_parse_os(platform):
 		os = 'junos'
 
 	return os
+
+def snmp_parse_type(snmp_platform):
+
+	snmp_platform = snmp_platform.lower()
+	models = process_models()
+	models_list = models.keys()
+
+	for model in models_list:
+		if(model in snmp_platform):
+			device_type = models[model]
+			print "{}".format(device_type)
+			break
+		else:
+			device_type = 'invalid' 
+
+	return device_type
