@@ -9,7 +9,7 @@ from search import search_node
 from search import node_element 
 from node_create import node_create
 from confirm_push import confirm_push
-from parse_commands import parse_commands
+from parse_cmd import parse_commands
 import initialize
 import os
 
