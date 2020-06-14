@@ -30,10 +30,10 @@ def process_encrypted():
 
 def process_models():
 
-	with open("/database/models.yaml") as yaml_file:
-		models_object = yaml.load(yaml_file)
+    with open("/database/models.yaml") as yaml_file:
+        models_object = yaml.load(yaml_file)
 
-	return models_object
+    return models_object
 
 def process_policies():
 
