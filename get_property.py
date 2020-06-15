@@ -37,10 +37,6 @@ def get_template_directory(platform,os,device_type):
         directory = '/templates/cisco/ios/router/'
     elif(platform == 'cisco' and os == 'ios'and device_type == 'switch'):
         directory = '/templates/cisco/ios/switch/'
-    elif(platform == 'cisco' and os == 'nxos'and device_type == 'switch'):
-        directory = '/templates/cisco/nxos/switch/'
-    elif(platform == 'cisco' and os == 'nxos'and device_type == 'router'):
-        directory = '/templates/cisco/nxos/router/'
     elif(platform == 'juniper' and os == 'junos' and device_type == 'vfirewall'):
         directory = '/templates/juniper/junos/vfirewall/'
 
@@ -78,9 +74,45 @@ def get_syntax(node_object,index):
 		syntax = 'asa'
 	elif(node_object[index]['platform'] == 'cisco' and node_object[index]['type'] == 'switch'):
 		syntax = 'ios'
-	elif(node_object[index]['platform'] == 'cisco' and node_object[index]['type'] == 'router'):
-		syntax = 'ios'
 	elif(node_object[index]['platform'] == 'juniper' and node_object[index]['type'] == 'switch'):
 		syntax = 'junos'
 
 	return syntax
+
+def get_sorted_juniper_template_list(template_list):
+
+	### THIS WILL SORT THE JUNIPER TEMPLATE LIST FROM TOP CONFIGURATION IN THE ORDER THEY APPEAR IN A 'SHOW CONFIGURATION' JUNIPER OUTPUT
+	### FOR EXAMPLE. GROUPS, SYSTEMS, CHASSIS, SECURITY, SNMP ETC....
+	
+	sorted_juniper_template_list = []
+	sorted_juniper_template_list_index = []
+	
+	config_order = {
+					'groups.jinja2': 0 ,
+					'system.jinja2': 1 ,
+					'interfaces.jinja2': 2,
+					'chassis.jinja2': 3 ,
+					'security.jinja2': 4 ,
+					'snmp.jinja2': 5 ,
+					'routing-options.jinja2': 6 ,
+					'policy-options.jinja2': 7 ,
+					'routing-instances.jinja2': 8
+			}
+			 
+	for template in template_list:         
+		if(template in config_order.keys()):   
+			sorted_juniper_template_list_index.append(config_order[template]) 
+
+	### SORTING THE ORDER OF HOW THE TEMPLATES SHOULD BE IN COMPARISON WITH THE JUNIPER 'SHOW CONFIGURATION' OUTPUT
+	sorted_juniper_template_list_index.sort()
+#	print("SORTED_JUNIPER_TEMPLATE_LIST: {}".format(sorted_juniper_template_list_index))
+
+	### BUILDING THE SORTED TEMPLATE LIST AND RETURNING IT
+	for element in sorted_juniper_template_list_index:
+
+		template = config_order.keys()[config_order.values().index(element)]
+		sorted_juniper_template_list.append(template)
+
+#	print("SORTED_JUNIPER_TEMPLATE_LIST: {}".format(sorted_juniper_template_list))
+
+	return sorted_juniper_template_list

@@ -11,6 +11,7 @@ from multithread import multithread_engine
 from get_property import get_template_directory
 from get_property import get_updated_list
 from get_property import get_syntax
+from get_property import get_sorted_juniper_template_list 
 import re
 import initialize
 
@@ -19,6 +20,9 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 	redirect = [] 
 	command = [] 
 	### RENDERED_CONFIG IS TO ACCOMODATE JUNIPER PLATFORM BY APPENDING A 'LOAD REPLACE TERMINAL' TO GET THE DIFF OUTPUT
+	rendered_config = []
+	rendered_config.append('load replace terminal')
+	edit_list = []
 	no_diff = 0
 
 	### PUSH_CONFIGS IS A LIST OF THE FINAL CONFIGS TO BE PUSHED
@@ -41,18 +45,21 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 	if(auditcreeper):
 		template_list = template_list_copy[0]
 
-#	print "TEMPLATE_LIST_ORIGINAL: {}".format(template_list_original)
+#	print "TEMPLATE_LIST: {}".format(template_list)
 
 	### THIS SECTION OF CODE WILL GATHER ALL RENDERED CONFIGS FIRST AS IT'S REQUIRED FOR ALL PLATFORMS (CISCO & JUNIPER)
 	### JUNIPER DOES NOT REQUIRE BACKUP-CONFIGS IN ORDER TO BE DIFFED SO INSTEAD IT WILL JUST PUSH (PUSH_CFGS) THE TEMPLATE AND PERFORM THE DIFF ON THE DEVICE ITSELF.
 	### CISCO WILL REQUIRE BACKUP-CONFIGS (GET_CONFIG)
 	for index in initialize.element:
 
-		rendered_config = []
-		rendered_config.append('load replace terminal')
-#		print("TEMPLATE_LIST {} FOR NODE {}".format(template_list,node_object[index]['hostname']))
+		if(node_object[index]['platform'] == 'juniper'):
+
+			### THIS WILL RETURN A SORTED JUNIPER TEMPLATE LIST BASED ON JUNIPER'S 'SHOW CONFIGURATION' OUTPUT
+			template_list = get_sorted_juniper_template_list(template_list)
+			print("TEMPLATE_LIST FIRST PHASE: {}".format(template_list))
 
 		for template in template_list:
+
 			### THIS SECTION OF CODE WILL PROCESS THE TEMPLATE AND OUTPUT TO A *.CONF FILE
 			directory = get_template_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 			env = Environment(loader=FileSystemLoader("{}".format(directory)))
@@ -72,11 +79,12 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 				### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
 
 			if(node_object[index]['platform'] == 'juniper'):
-#				print("PROCESSING TEMPLATE {} FOR {}".format(template,node_object[index]['hostname']))
+	
 				### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
 				f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
 				init_config = f.readlines()
 				### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
+	
 				for config_line in init_config:
 					strip_config = config_line.strip('\n')
 					### THIS WILL REMOVE ANY LINES THAT ARE EMPTY OR HAS A '!' MARK
@@ -86,10 +94,11 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 						rendered_config.append(strip_config)	
 	
 				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#				print ("RENDERED_CONFIG FOR TEMPLATE {} : {} ".format(template,rendered_config))
+#				print ("RENDERED CONFIG: {}".format(rendered_config))
+
+		template_list = get_updated_list(template_list_copy)
 
 		if(node_object[index]['platform'] == 'cisco'):
-			template_list = get_updated_list(template_list_copy)
 			redirect.append('get_config')
 			command.append([''])
 		### JUNIPER DEVICES WILL RECEIVE A DIFFERENT REDIRECT THAN CISCO PLATFORM
@@ -105,7 +114,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print"REDIRECT: {}".format(redirect)
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#	print("COMMAND: {}".format(command))
+#	print"COMMAND: {}".format(command)
 	print("[+] [COMPUTING DIFF. STANDBY...]")
 	multithread_engine(initialize.ntw_device,redirect,command)
 	
@@ -131,7 +140,6 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 		ntw_device_pop = True 
 		### TEMPLATE_NAME IS SET TO TRUE IN ORDER TO PRINT OUT THE TEMPLATE HEADING WHEN RECURSING
 		template_name = True
-		edit_list = []
 
 		if(not remediation):
 			print("Only in the device: -")
@@ -140,8 +148,12 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			print ("{}".format(node_object[index]['hostname']))
 
 		###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#		print("TEMPLATE_LIST: {}".format(template_list))
 		template_list_juniper = template_list[:]
+		if(node_object[index]['platform'] == 'juniper'):
+
+			### THIS WILL RETURN A SORTED JUNIPER TEMPLATE LIST BASED ON JUNIPER'S 'SHOW CONFIGURATION' OUTPUT
+			template_list = get_sorted_juniper_template_list(template_list)
+
 		### THIS WILL LOOP THROUGH ALL THE TEMPLATES SPECIFIED FOR THE PARTICULAR HOST IN NODES.YAML
 		for template in template_list:
 
@@ -366,6 +378,7 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list,se
 	element = template_list.index(template)
 
 	index_of_template_list = template_list.index(template) + 1
+
 
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print("EDIT_LIST: {}".format(edit_list))
