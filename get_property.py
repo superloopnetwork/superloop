@@ -92,13 +92,13 @@ def get_sorted_juniper_template_list(template_list):
 					'system.jinja2': 1 ,
 					'interfaces.jinja2': 2,
 					'chassis.jinja2': 3 ,
-					'security.jinja2': 4 ,
-					'snmp.jinja2': 5 ,
-					'routing-options.jinja2': 6 ,
-					'policy-options.jinja2': 7 ,
+					'snmp.jinja2': 4 ,
+					'routing-options.jinja2': 5 ,
+					'policy-options.jinja2': 6 ,
+					'security.jinja2': 7 ,
 					'routing-instances.jinja2': 8
-			}
-			 
+		}			 
+
 	for template in template_list:         
 		if(template in config_order.keys()):   
 			sorted_juniper_template_list_index.append(config_order[template]) 
