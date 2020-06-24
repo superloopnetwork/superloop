@@ -6,14 +6,17 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
   2. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
   3. ciscoconfparse - A library to help parse out Cisco (or similiar) CLI configs (https://pypi.org/project/ciscoconfparse/).
   4. yaml - YAML is a human-readable data-serialization language (https://en.wikipedia.org/wiki/YAML).
+  5. f5-sdk - F5 Networks SDK to allow communication with F5 BigIP LTMs
 
 ## Support
 
-|__Platform__|__audit diff__|__push cfgs__|__host exec__|__ssh__ |__node list__|__host add__|__host remove__|__push acl__|
-|------------|:------------:|:-----------:|:-----------:|:------:|:-----------:|:----------:|:-------------:|:-----------|
-| Cisco IOS  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |
-| Cisco ASA  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |
-| Juniper OS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |
+|__Platform__|__audit diff__|__push cfgs__|__host exec__|__ssh__ |__node list__|__host add__|__host remove__|__push acl__|__pull cfgs__|
+|------------|:------------:|:-----------:|:-----------:|:------:|:-----------:|:----------:|:-------------:|:----------:|:------------|
+| Cisco IOS  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
+| Cisco NXOS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
+| Cisco ASA  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
+| Juniper OS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
+|F5 BigIP LTM|              |             |             |    x   |      x      |            |               |            |      x      |
 
 ## Install
 
