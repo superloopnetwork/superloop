@@ -56,7 +56,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 			### THIS WILL RETURN A SORTED JUNIPER TEMPLATE LIST BASED ON JUNIPER'S 'SHOW CONFIGURATION' OUTPUT
 			template_list = get_sorted_juniper_template_list(template_list)
-			print("TEMPLATE_LIST FIRST PHASE: {}".format(template_list))
+#			print("TEMPLATE_LIST FIRST PHASE: {}".format(template_list))
 
 		for template in template_list:
 

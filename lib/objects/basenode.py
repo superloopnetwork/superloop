@@ -1,6 +1,7 @@
 ######################### BASE NODE ###########################
 
 from netmiko import ConnectHandler
+from f5.bigip import ManagementRoot
 import base64
 import pybase64
 import re
@@ -25,12 +26,12 @@ class BaseNode(object):
 		else:
 			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),device_type=self.get_device())
 			
+	def connect_to_f5(self):
+		self.f5_connect = ManagementRoot(self.ip, self.username,self.password_decrypt)
+
+
 	def get_secret(self):
-		enable_get_secret = ''
-		if (self.location() == 'wdstk'):
-			enable_get_secret = base64.b64decode(self.password)
-		elif (self.location() == 'ktch'):
-			enable_get_secret = base64.b64decode(self.password)
+		enable_get_secret = base64.b64decode(self.password) 
 
 		return enable_get_secret
 		
@@ -48,14 +49,17 @@ class BaseNode(object):
 
 	def get_device(self):
 		device_attribute = ''
-		if (self.type == 'router' or self.type == 'switch'):
+		if (self.type == 'switch'):
 			device_attribute = 'cisco_ios'
 		
 		elif (self.type == 'firewall'):
 			device_attribute = 'cisco_asa'
 
-		elif (self.type == 'vfirewall'):
+		elif (self.type == 'router' or self.type == 'vfirewall'):
 			device_attribute = 'juniper'
+
+		elif (self.type == 'loadbalancer'):
+			device_attribute = 'f5_linux'
 
 		return device_attribute
 
@@ -66,11 +70,36 @@ class BaseNode(object):
 		if(self.platform == 'cisco'):
 			output = self.net_connect.send_config_set(commands)
 			print output
-		if(self.platform == 'juniper'):
+		elif(self.platform == 'juniper'):
 			output = self.net_connect.send_config_set(commands,exit_config_mode=False)
 			self.net_connect.commit(and_quit=True)
 			print output
 		self.net_connect.disconnect()
+
+	def pull_cfgs(self,command):
+
+		if(self.platform == 'cisco'):
+			command = 'show running-config'
+			f = open("/backup-configs/{}".format(self.hostname) + ".conf", "w")
+			self.connect()
+			output = self.net_connect.send_command_expect(command)
+			f.write(output)
+			f.close()
+			self.net_connect.disconnect()
+
+		elif(self.platform == 'juniper'):
+			command = 'show configuration | display set'
+			f = open("/backup-configs/{}".format(self.hostname) + ".conf", "w")
+			self.connect()
+			output = self.net_connect.send_command_expect(command)
+			f.write(output)
+			f.close()
+			self.net_connect.disconnect()
+
+		elif(self.platform == 'f5'):
+			self.connect_to_f5()
+			self.f5_connect.shared.file_transfer.ucs_downloads.download_file('config.ucs', '/backup-configs/{}.ucs'.format(self.hostname))
+			print("")
 
 	def exec_command(self,command):
 
@@ -87,10 +116,11 @@ class BaseNode(object):
 		command = 'show running-config'
 		f = open("/backup-configs/{}".format(self.hostname) + ".conf", "w")
 		self.connect()
-		output = self.net_connect.send_command_expect("show running-config")
+		output = self.net_connect.send_command_expect(command)
 		f.write(output)
 		f.close()
 		self.net_connect.disconnect()
+
 
 	def get_diff(self,commands):
 

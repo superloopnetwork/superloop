@@ -4,6 +4,7 @@
 
 #from ssh import ssh
 from auditdiff import auditdiff
+from pull_cfgs import pull_cfgs
 from push_cfgs import push_cfgs
 from push_local import push_local
 from render_config import render_config
@@ -17,7 +18,6 @@ import os
 import initialize
 
 def main():
-
 
 	os.system('clear')
 	initialize.variables()
@@ -35,6 +35,12 @@ def main():
 	audit_remediate_cmd.set_defaults(func=auditdiff)
 	audit_remediate_cmd.add_argument('-n','--node', dest='node')
 	audit_remediate_cmd.add_argument('-f','--file', dest='file')
+
+	pull_cmd = subparsers.add_parser('pull')
+	pull_subparsers = pull_cmd.add_subparsers(dest='parser_pull')
+	pull_cfgs_cmd = pull_subparsers.add_parser('cfgs')
+	pull_cfgs_cmd.set_defaults(func=pull_cfgs)
+	pull_cfgs_cmd.add_argument('-n','--node', dest='node')
 
 	push_cmd = subparsers.add_parser('push')
 	push_subparsers = push_cmd.add_subparsers(dest='parser_push')
