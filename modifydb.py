@@ -15,7 +15,7 @@ def append(args):
 		file.write(new_node)
 
 	database = process_nodes()
-	database.sort()
+	database.sort(key=sorted)
 	updated_database = yaml.dump(database,default_flow_style = False)
 	with open('/database/nodes.yaml','w') as file:
 		file.write('---\n')

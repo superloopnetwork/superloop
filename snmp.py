@@ -66,7 +66,7 @@ def snmp_parse_os(platform):
 	elif(platform == 'vyatta'):
 		os = 'vyos'
 	elif(platform == 'big-ip'):
-		os = 'bigip'
+		os = 'tmsh'
 
 	return os
 
