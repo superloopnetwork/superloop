@@ -11,9 +11,8 @@ def multithread_engine(ntw_object,redirect,commands):
 	index = 0
 	zero = 0
 	element = 0
-
 	for i in ntw_object:
-		if(redirect[zero] == 'exec_command'):
+		if(redirect[zero] == 'exec_cmd' or redirect[zero] == 'pull_cfgs' ):
 			### ARGUMENT(S)/COMMAND(S) ARE BEING BLACKHOLED
 			arguments = commands
 			element = 0

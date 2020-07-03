@@ -4,7 +4,7 @@ from . import auditdiff_engine
 from . import basenode
 from . import confirm_push
 from . import directory
-from . import exec_command
+from . import exec_cmd
 from . import get_property
 from . import initialize
 from . import modifydb
@@ -14,6 +14,8 @@ from . import node_list
 from . import parse_commands
 from . import port
 from . import processdb
+from . import pull_acl
+from . import pull_cfgs
 from . import push_cfgs
 from . import push_config
 from . import push_local

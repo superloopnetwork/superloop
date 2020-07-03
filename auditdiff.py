@@ -16,7 +16,7 @@ import initialize
 def auditdiff(args):
 
 	redirect = []
-	redirect.append('exec_command')
+	redirect.append('exec_cmd')
 	index = 0
 	ext = '.jinja2'
 	auditcreeper_flag = False

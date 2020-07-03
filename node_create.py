@@ -10,6 +10,6 @@ def node_create(match_node,node_object):
 
 	for index in initialize.element:
 	
-		node = BaseNode(node_object[index]['ip'],node_object[index]['hostname'],node_object[index]['username'],node_object[index]['password'],node_object[index]['platform'],node_object[index]['type'])
+		node = BaseNode(node_object[index]['ip'],node_object[index]['hostname'],node_object[index]['username'],node_object[index]['password'],node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
 	
 		initialize.ntw_device.append(node)

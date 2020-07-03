@@ -11,10 +11,10 @@ from node_create import node_create
 from multithread import multithread_engine
 import initialize
 
-def exec_command(args):
+def exec_cmd(args):
 
 	redirect = []
-	redirect.append('exec_command') 
+	redirect.append('exec_cmd') 
 	command = args.argument
 	argument_node = args.node
 

@@ -1,4 +1,5 @@
 # THIS MODULE FETCHES INFORMATION FROM THE DEVICE VIA SNMP
+# SNMP_PARSE_OS WILL POPULATE THE OS NAME BASED ON IT'S PLATFORM VIA SNMP
 
 from snmp_helper import snmp_get_oid
 from snmp_helper import snmp_extract 
@@ -10,10 +11,9 @@ import subprocess
 
 def snmp(argument_node):
 
-	index = 0
-	USERNAME_STRING = pybase64.b64decode(process_encrypted()[index]['username'])
-	PASSWORD_STRING = process_encrypted()[index]['password']
-	COMMUNITY_STRING = process_encrypted()[index]['snmp']
+	USERNAME_STRING = pybase64.b64decode(process_encrypted()['username'])
+	PASSWORD_STRING = process_encrypted()['password']
+	COMMUNITY_STRING = process_encrypted()['snmp']
 	SNMP_PORT = 161
 
 	HOSTNAME_OID = '1.3.6.1.2.1.1.5.0'
@@ -33,7 +33,7 @@ def snmp(argument_node):
 		'password': '{}'.format(PASSWORD_STRING),
 		'platform':'{}'.format(platform),
 		'os':'{}'.format(operating_system),
-		'type':'{}'.format(type),
+		'type':'{}'.format(type)
 		}
 	]
 
@@ -60,24 +60,27 @@ def snmp_parse_os(platform):
 	os = ''
 
 	if(platform == 'cisco'):
-		os = 'ios'
+		os = 'nxos'
 	elif(platform == 'juniper'):
 		os = 'junos'
+	elif(platform == 'vyatta'):
+		os = 'vyos'
+	elif(platform == 'big-ip'):
+		os = 'bigip'
 
 	return os
 
 def snmp_parse_type(snmp_platform):
 
-	snmp_platform = snmp_platform.lower()
-	models = process_models()
-	models_list = models.keys()
+    snmp_platform = snmp_platform.lower()
+    models = process_models()
+    models_list = models.keys()
 
-	for model in models_list:
-		if(model in snmp_platform):
-			device_type = models[model]
-			print "{}".format(device_type)
-			break
-		else:
-			device_type = 'invalid' 
+    for model in models_list:
+        if(model in snmp_platform):
+            device_type = models[model]
+            break
+        else:
+            device_type = 'invalid'
 
-	return device_type
+    return device_type

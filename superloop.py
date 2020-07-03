@@ -8,7 +8,7 @@ from pull_cfgs import pull_cfgs
 from push_cfgs import push_cfgs
 from push_local import push_local
 from render_config import render_config
-from exec_command import exec_command 
+from exec_cmd import exec_cmd 
 from ssh_connect import ssh_connect
 from modifydb import append
 from modifydb import remove 
@@ -70,7 +70,7 @@ def main():
 	host_remove_cmd.set_defaults(func=remove)
 	host_remove_cmd.add_argument('argument')
 	host_exec_cmd = host_subparsers.add_parser('exec')
-	host_exec_cmd.set_defaults(func=exec_command)
+	host_exec_cmd.set_defaults(func=exec_cmd)
 	host_exec_cmd.add_argument('argument')
 	host_exec_cmd.add_argument('-n','--node', dest='node')
 

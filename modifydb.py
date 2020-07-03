@@ -11,16 +11,18 @@ def append(args):
 	argument_node = args.ip
 	device = snmp(argument_node)
 	new_node = yaml.dump(device,default_flow_style = False)
-	with open('/database/nodes.yaml','a') as f:
-		f.write(new_node)
+	with open('/database/nodes.yaml','a') as file:
+		file.write(new_node)
 
 	database = process_nodes()
 	database.sort()
 	updated_database = yaml.dump(database,default_flow_style = False)
-	with open('/database/nodes.yaml','w') as f:
-		f.write(updated_database)
+	with open('/database/nodes.yaml','w') as file:
+		file.write('---\n')
+		file.write(updated_database)
 
-	print("[+] NEW NODE SUCCESSFULLY APPENDED TO DATABASE")
+	print('[+] SNMP DISCOVERY SUCCESSFUL')
+	print('[+] NEW NODE APPENDED TO DATABASE')
 
 def remove(args):
 
@@ -39,8 +41,9 @@ def remove(args):
 	database.pop(index)
 	# WRITES TO DATABASE FILE
 	updated_database = yaml.dump(database,default_flow_style = False)
-	with open('/database/nodes.yaml','w') as f:
-		f.write(updated_database)
-		print("[-] NODE SUCCESSFULLY REMOVED FROM DATABASE")
+	with open('/database/nodes.yaml','w') as file:
+		file.write('---\n')
+		file.write(updated_database)
+		print('[-] NODE SUCCESSFULLY REMOVED FROM DATABASE')
 	
 

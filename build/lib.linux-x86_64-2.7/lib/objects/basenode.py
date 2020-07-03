@@ -9,13 +9,12 @@ import re
 
 class BaseNode(object):
 
-	def __init__(self,ip,hostname,username,password,platform,os,type):
+	def __init__(self,ip,hostname,username,password,platform,type):
 		self.ip = ip
    		self.hostname = hostname
    		self.username = username
    		self.password = password
    		self.platform = platform
-		self.os = os
    		self.type = type
 		self.password_decrypt = base64.b64decode(self.password)
 
@@ -102,7 +101,7 @@ class BaseNode(object):
 			self.f5_connect.shared.file_transfer.ucs_downloads.download_file('config.ucs', '/backup-configs/{}.ucs'.format(self.hostname))
 			print("")
 
-	def exec_cmd(self,command):
+	def exec_command(self,command):
 
 		self.connect()
 		output = self.net_connect.send_command(command)
