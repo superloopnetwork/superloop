@@ -8,6 +8,7 @@ from processdb import process_models
 import re
 import pybase64
 import subprocess
+import socket
 
 def snmp(argument_node):
 
@@ -22,13 +23,14 @@ def snmp(argument_node):
 	snmp_hostname = snmp_data(device,HOSTNAME_OID,SNMP_PORT)
 	snmp_platform = snmp_data(device,PLATFORM_OID,SNMP_PORT)
 
+	ip = snmp_ip(snmp_hostname)
 	platform = snmp_parse_platform(snmp_platform)
 	operating_system = snmp_parse_os(platform)
 	type = snmp_parse_type(snmp_platform)
 
 	data = [{
 		'hostname': '{}'.format(snmp_hostname),
-		'ip': "{}".format(argument_node),
+		'ip': "{}".format(ip),
 		'username':'{}'.format(USERNAME_STRING),
 		'password': '{}'.format(PASSWORD_STRING),
 		'platform':'{}'.format(platform),
@@ -46,9 +48,17 @@ def snmp_data(device,oid,port):
 
 	return snmp_property
 
+def snmp_ip(snmp_hostname):
+
+		ip = socket.gethostbyname(snmp_hostname)
+
+	return ip
+
 def snmp_parse_platform(snmp_platform):
 
 	platform = snmp_platform.split(' ')[0].lower() 
+	if(platform == 'big-ip'):
+		platform = 'f5'
 
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print("SNMP_PLATFORM: {}".format(platform))
@@ -65,7 +75,7 @@ def snmp_parse_os(platform):
 		os = 'junos'
 	elif(platform == 'vyatta'):
 		os = 'vyos'
-	elif(platform == 'big-ip'):
+	elif(platform == 'f5'):
 		os = 'tmsh'
 
 	return os
