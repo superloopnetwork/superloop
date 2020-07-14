@@ -50,7 +50,7 @@ def snmp_data(device,oid,port):
 
 def snmp_ip(snmp_hostname):
 
-		ip = socket.gethostbyname(snmp_hostname)
+	ip = socket.gethostbyname(snmp_hostname)
 
 	return ip
 

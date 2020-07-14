@@ -54,7 +54,7 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 	element = 0
 	for node in match_node:
 		for node_obj in node_object:
-			if(node in node_obj['hostname']):
+			if(node == node_obj['hostname']):
 
 				### INDEX GETS THE POSITION IN THE LIST AND APPENDS IT TO THE GLOBAL VARIABLE ELEMENT
 				index = node_object.index(node_obj)
