@@ -25,27 +25,22 @@ from get_property import get_policy_directory
 def search_node(argument_node,node_object):
 
 	node_list = extract_nodes(node_object)
-
 	query = re.compile(argument_node)
-
 	search_result = list(filter(query.match,node_list))
 
 	return search_result
 
 def extract_nodes(node_object):
 
-    node_list = []
-    index = 0
+	node_list = []
+	index = 0
 
-    for node in node_object:
-
+	for node in node_object:
 		hostname = node_object[index]['hostname']
-
 		node_list.append(hostname)
-
 		index = index + 1
 
-    return node_list	
+	return node_list	
 
 def search_template(template_list,match_node,node_template,node_object,auditcreeper):
 

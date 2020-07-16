@@ -76,17 +76,17 @@ def object_group(path,object_group_search):
 
 #	print('{} ='.format(object_group_search))
 	if('{} ='.format(object_group_search) in set(object_group_list)):
-		print 'TRUE'
+		print('TRUE')
 		element = object_group_list.index('{} ='.format(object_group_search))
 		element = element + 1
-		print '{}'.format(object_group_list[element])
+		print('{}'.format(object_group_list[element]))
 
 		while object_group_list[element] != "":
 			subnets.append(object_group_list[element])
 			element = element + 1
 
-		print subnets
+		print(subnets)
 	else:
-		print 'FALSE'
+		print('FALSE')
 
 	return None

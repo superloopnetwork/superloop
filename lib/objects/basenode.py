@@ -11,12 +11,12 @@ class BaseNode(object):
 
 	def __init__(self,ip,hostname,username,password,platform,os,type):
 		self.ip = ip
-   		self.hostname = hostname
-   		self.username = username
-   		self.password = password
-   		self.platform = platform
+		self.hostname = hostname
+		self.username = username
+		self.password = password
+		self.platform = platform
 		self.os = os
-   		self.type = type
+		self.type = type
 		self.password_decrypt = base64.b64decode(self.password)
 
 	def connect(self):
@@ -70,11 +70,11 @@ class BaseNode(object):
 		output = self.net_connect.enable()
 		if(self.platform == 'cisco'):
 			output = self.net_connect.send_config_set(commands)
-			print output
+			print(output)
 		elif(self.platform == 'juniper'):
 			output = self.net_connect.send_config_set(commands,exit_config_mode=False)
 			self.net_connect.commit(and_quit=True)
-			print output
+			print(output)
 		self.net_connect.disconnect()
 
 	def pull_cfgs(self,command):
@@ -128,7 +128,7 @@ class BaseNode(object):
 		f = open("/diff-configs/{}".format(self.hostname) + ".conf", "w")
 		self.connect()
 		output = self.net_connect.send_config_set(commands)
-#		print output
+#		print(output)
 		f.write(output)
 		f.close()
 		self.net_connect.disconnect()
