@@ -12,9 +12,10 @@ import socket
 
 def snmp(argument_node):
 
-	USERNAME_STRING = pybase64.b64decode(process_encrypted()['username'])
-	PASSWORD_STRING = process_encrypted()['password']
-	COMMUNITY_STRING = process_encrypted()['snmp']
+	index = 0
+	USERNAME_STRING = pybase64.b64decode(process_encrypted()[index]['username'])
+	PASSWORD_STRING = process_encrypted()[index]['password']
+	COMMUNITY_STRING = process_encrypted()[index]['snmp']
 	SNMP_PORT = 161
 
 	HOSTNAME_OID = '1.3.6.1.2.1.1.5.0'
@@ -50,6 +51,7 @@ def snmp_data(device,oid,port):
 
 def snmp_ip(snmp_hostname):
 
+	print(snmp_hostname)
 	ip = socket.gethostbyname(snmp_hostname)
 
 	return ip
