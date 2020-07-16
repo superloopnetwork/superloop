@@ -10,35 +10,35 @@ import commentjson
 def process_nodes():
 
 	with open("/database/nodes.yaml") as yaml_file:
-		node_object = yaml.load(yaml_file)
+		node_object = yaml.load(yaml_file, yaml.UnsafeLoader)
 
 	return node_object
 	
 def process_templates():
 
 	with open("/database/templates.yaml") as yaml_file:
-		template_object = yaml.load(yaml_file)
+		template_object = yaml.load(yaml_file, yaml.UnsafeLoader)
 
 	return template_object
 
 def process_encrypted():
 
 	with open("/database/encrypted.yaml") as yaml_file:
-		encrypted_string = yaml.load(yaml_file)
+		encrypted_string = yaml.load(yaml_file, yaml.UnsafeLoader)
 
 	return encrypted_string
 
 def process_models():
 
-    with open("/database/models.yaml") as yaml_file:
-        models_object = yaml.load(yaml_file)
+	with open("/database/models.yaml") as yaml_file:
+		models_object = yaml.load(yaml_file, yaml.UnsafeLoader)
 
-    return models_object
+	return models_object
 
 def process_policies():
 
 	with open("/database/policy_push.yaml") as yaml_file:
-		policy_object = yaml.load(yaml_file)
+		policy_object = yaml.load(yaml_file, yaml.UnsafeLoader)
 
 	return policy_object 
 

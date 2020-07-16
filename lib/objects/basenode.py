@@ -32,7 +32,7 @@ class BaseNode(object):
 
 
 	def get_secret(self):
-		enable_get_secret = base64.b64decode(self.password) 
+		enable_get_secret = base64.b64decode(self.password).decode('utf-8')
 
 		return enable_get_secret
 		
@@ -103,7 +103,6 @@ class BaseNode(object):
 			print("")
 
 	def exec_cmd(self,command):
-
 		self.connect()
 		output = self.net_connect.send_command(command)
 		output = output.replace('\n','\n{}: '.format(self.hostname))
