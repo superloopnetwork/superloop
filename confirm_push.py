@@ -6,7 +6,7 @@ import initialize
 
 def confirm_push(redirect,commands):
 
-	check = str(raw_input("Push configs? [y/N]: ")).strip()
+	check = str(input("Push configs? [y/N]: ")).strip()
 	try:
 		if check[0] == 'y':
 			multithread_engine(initialize.ntw_device,redirect,commands)
