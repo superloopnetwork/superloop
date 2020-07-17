@@ -30,17 +30,18 @@ def get_type(hostname):
 def get_template_directory(platform,os,device_type):
 
 	### THIS WILL RETURN THE CORRESPONDING DIRECTORY FOR THE APPLICATION TO OPEN THE FILE
+	directory = ''
 
-    if(platform == 'cisco' and os == 'ios' and device_type == 'firewall'):
-        directory = '/templates/cisco/ios/firewall/'
-    elif(platform == 'cisco' and os == 'ios'and device_type == 'router'):
-        directory = '/templates/cisco/ios/router/'
-    elif(platform == 'cisco' and os == 'ios'and device_type == 'switch'):
-        directory = '/templates/cisco/ios/switch/'
-    elif(platform == 'juniper' and os == 'junos' and device_type == 'vfirewall'):
-        directory = '/templates/juniper/junos/vfirewall/'
+	if(platform == 'cisco' and os == 'ios' and device_type == 'firewall'):
+		directory = '/templates/cisco/ios/firewall/'
+	elif(platform == 'cisco' and os == 'ios'and device_type == 'router'):
+		directory = '/templates/cisco/ios/router/'
+	elif(platform == 'cisco' and os == 'ios'and device_type == 'switch'):
+		directory = '/templates/cisco/ios/switch/'
+	elif(platform == 'juniper' and os == 'junos' and device_type == 'vfirewall'):
+		directory = '/templates/juniper/junos/vfirewall/'
 
-    return directory
+	return directory
 
 def get_policy_directory(platform,os,device_type):
 

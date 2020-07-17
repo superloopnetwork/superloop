@@ -144,7 +144,6 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 		if(not remediation):
 			print("Only in the device: -")
 			print("Only in the generated config: +")
-
 			print ("{}".format(node_object[index]['hostname']))
 
 		###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
@@ -184,7 +183,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 				if(len(search) == 0):
 					print("{}{} (none)".format(directory,template))
-					print
+					print('')
 					no_diff = no_diff + 1
 					if(no_diff == len(template_list)):
 						break
@@ -331,7 +330,7 @@ def cisco_audit_diff(node_object,index,template,AUDIT_FILTER_RE,output,remediati
 	if(len(push_configs) == 0):
 		if(output):
 			print("{}{} (none)".format(directory,template))
-			print
+			print('')
 	else:
 	
 		### THIS WILL JUST PRINT THE HEADING OF THE TEMPLATE NAME SO YOU KNOW WHAT IS BEING CHANGED UNDER WHICH TEMPLATE
