@@ -110,7 +110,7 @@ def get_sorted_juniper_template_list(template_list):
 	### BUILDING THE SORTED TEMPLATE LIST AND RETURNING IT
 	for element in sorted_juniper_template_list_index:
 
-		template = config_order.keys()[config_order.values().index(element)]
+		template = list(config_order.keys())[list(config_order.values()).index(element)]
 		sorted_juniper_template_list.append(template)
 
 #	print("SORTED_JUNIPER_TEMPLATE_LIST: {}".format(sorted_juniper_template_list))
