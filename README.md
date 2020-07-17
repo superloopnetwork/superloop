@@ -2,11 +2,12 @@
 Inspired by a wide array of toolsets (unamed) used and developed by a leading social media tech company in the Bay Area for network automation, I have attempted to create my own version.
 
 ## Prerequisites
-  1. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
-  2. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
-  3. ciscoconfparse - A library to help parse out Cisco (or similiar) CLI configs (https://pypi.org/project/ciscoconfparse/).
-  4. yaml - YAML is a human-readable data-serialization language (https://en.wikipedia.org/wiki/YAML).
-  5. f5-sdk - F5 Networks SDK to allow communication with F5 BigIP LTMs
+  1. Python 3.6 or higher.
+  2. netmiko - A HUGE thanks and shout out to Kirk Byers for developing the library!
+  3. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
+  4. ciscoconfparse - A library to help parse out Cisco (or similiar) CLI configs (https://pypi.org/project/ciscoconfparse/).
+  5. yaml - YAML is a human-readable data-serialization language (https://en.wikipedia.org/wiki/YAML).
+  6. f5-sdk - F5 Networks SDK to allow communication with F5 BigIP LTMs
 
 ## Support
 
@@ -22,21 +23,21 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
 
 To install superloop, simply use pip:
 
-```$ pip install superloop```
+```$ python -m pip install superloop```
 
-This will install superloop along with all required dependencies to the directory ```/usr/local/lib/python2.7/dist-packages/superloop```. You will need to install yaml system wide via the following command ```$ sudo apt-get install python-yaml```
+This will install superloop along with all required dependencies to the directory ```/usr/local/lib/python3.x/dist-packages/superloop```. You will need to install yaml system wide via the following command ```$ python -m pip install pyyaml```
 
 IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
 
-Move 'superloop.py' file to one of your $PATH directory and remove the *.py extention. Set the permission to 755.
+Move 'superloop.py' file to one of your $PATH directory and remove the *.py extention. Set the permission to 755. (replace python3.x with your correct python version)
 ```
-$ mv /usr/local/lib/python2.7/dist-packages/superloop/superloop.py /usr/local/bin/superloop
+$ mv /usr/local/lib/python3.x/dist-packages/superloop/superloop.py /usr/local/bin/superloop
 $ chmod 755 /usr/local/bin/superloop
 ```
 Now append the following code within ```/usr/local/bin/superloop``` near the top:
 ```
 import sys
-sys.path.append('/usr/local/lib/python2.7/dist-packages/superloop')
+sys.path.append('/usr/local/lib/python3.x/dist-packages/superloop')
 ```
 So it looks like this . . . . 
 ```
@@ -44,7 +45,7 @@ So it looks like this . . . .
 # VARIABLES LIKE "--node" OR "--file" ARE HOW IT'S BEING READ WHEN PASSED IN.
 # args.node OR args.file IS HOW YOU REFER TO THE USER INPUT
 import sys
-sys.path.append('/usr/local/lib/python2.7/dist-packages/superloop')
+sys.path.append('/usr/local/lib/python3.x/dist-packages/superloop')
 from auditdiff import auditdiff
 from push_cfgs import push_cfgs
 ...
@@ -52,7 +53,29 @@ from push_cfgs import push_cfgs
 .
 <output truncated>
 ```
-This will set the system path of superloop to '/usr/local/lib/python2.7/dist-packages/superloop'. If you have superloop installed in another directory, change the path accordingly.
+In Netmiko version 3.x by default is going to expect the configuration command to be echoed to the screen. This ensures Netmiko doesn't get out of sync with the underlying device (ex. keep sending configuration commands even though the remote device might be too slow and buffering them).
+
+We will need to turn off command verification in netmiko base_connection.py file:
+```
+vi /usr/local/lib/python3.7/dist-packages/netmiko/base_connection.py
+```
+Search for the function 'send_config_set' and change 'cmd_verify=True' to 'cmd_verify=False' like this:
+```
+    def send_config_set(
+        self,
+        config_commands=None,
+        exit_config_mode=True,
+        delay_factor=1,
+        max_loops=150,
+        strip_prompt=False,
+        strip_command=False,
+        config_mode_command=None,
+        cmd_verify=False,
+        enter_config_mode=True,
+    ):
+```
+
+This will set the system path of superloop to '/usr/local/lib/python3.x/dist-packages/superloop'. If you have superloop installed in another directory, change the path accordingly.
 
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management (default path is /database/):
 
@@ -89,8 +112,8 @@ root@jumpbox:~/database# cat nodes.yaml
 Most fields are self explainatory except the password. The password is encrypted in base64 format so it's not visible in clear text. The easiest way to generate this hash is via the python interpreter. Assume your password is 'password':
 ```  
 root@jumpbox:~/superloop# python
-Python 2.7.6 (default, Nov 23 2017, 15:49:48) 
-[GCC 4.8.4] on linux2
+Python 3.7.8 (default, Jun 29 2020, 05:46:05) 
+[GCC 5.4.0 20160609] on linux
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import base64
 >>> password = 'password'
