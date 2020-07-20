@@ -11,7 +11,7 @@ from search import search_template
 from auditdiff_engine import auditdiff_engine
 from render import render
 from node_create import node_create
-from confirm_push import confirm_push
+from confirm import confirm
 import initialize
 
 def push_cfgs(args):
@@ -67,5 +67,5 @@ def push_cfgs(args):
 		for index in initialize.element:
 			redirect.append('push_cfgs')
 
-		confirm_push(redirect,commands)
+		confirm(redirect,commands)
 		print("")

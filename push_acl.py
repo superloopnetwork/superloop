@@ -9,7 +9,7 @@ from processdb import process_policies
 from search import search_node
 from search import search_policy
 from node_create import node_create
-from confirm_push import confirm_push
+from confirm import confirm
 from parse_cmd import parse_firewall_acl
 from get_property import get_updated_list
 from policies import policies
@@ -80,5 +80,5 @@ def push_acl(args):
 #
 #		print commands
 #
-#		confirm_push(redirect,commands)
+#		confirm(redirect,commands)
 #		print("")

@@ -33,13 +33,13 @@ def parse_firewall_acl(node_policy,policy):
 	PATH_FILTER_RE = r"\'.+\'"
 
 	### THIS WILL OPEN THE JSON POLICY AND PARSE OUT THE AUDIT_FILTER SECTION VIA REGULAR EXPRESSION
-#	print("{} {} {}".format(node_policy['platform'],node_policy['os'],node_policy['type']))
-	directory = get_policy_directory(node_policy['platform'],node_policy['os'],node_policy['type'])
+#	print("{} {} {}".format(node_policy['platform'],node_policy['opersys'],node_policy['type']))
+	directory = get_policy_directory(node_policy['platform'],node_policy['opersys'],node_policy['type'])
 
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print("NODE_POLICY: {}".format(node_policy))
 #	print("NODE: {}".format(policy))
-	acl_list = process_json(node_policy['platform'],node_policy['os'],node_policy['type'],policy)
+	acl_list = process_json(node_policy['platform'],node_policy['opersys'],node_policy['type'],policy)
 	f = open("{}".format(directory) + policy, "r")
 	parse_include = f.readline()
 	path = eval(re.findall(PATH_FILTER_RE, parse_include)[0])

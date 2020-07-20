@@ -21,7 +21,7 @@ def append(args):
 		file.write('---\n')
 		file.write(updated_database)
 
-	print('[+] SNMP DISCOVERY SUCCESSFUL')
+	print('[\u2713] SNMP DISCOVERY SUCCESSFUL')
 	print('[+] NEW NODE APPENDED TO DATABASE')
 
 def remove(args):

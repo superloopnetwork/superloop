@@ -57,7 +57,7 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 
 				### THIS SECTION WILL PULL OUT ALL THE TEMPLATES BELONGING TO THE SPECIFIC PLATFORM, OS AND TYPE OF DEVICE FROM THE TEMPLATE DATABASE
 				for node_temp in node_template:
-					if(node_obj['platform'] == node_temp['platform'] and node_obj['os'] == node_temp['os'] and node_obj['type'] == node_temp['type']):
+					if(node_obj['platform'] == node_temp['platform'] and node_obj['opersys'] == node_temp['opersys'] and node_obj['type'] == node_temp['type']):
 
 #						print("NODE_TEMP: {}".format(node_temp['templates']))
 						if(auditcreeper):
@@ -71,7 +71,7 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 #							print("THIS IS THE TEMPLATE_LIST IN SEARCH.PY : {}".format(template_list))
 						else:
 							### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE PLATFORM, OS AND TYPE
-							directory = get_template_directory(node_obj['platform'],node_obj['os'],node_obj['type'])
+							directory = get_template_directory(node_obj['platform'],node_obj['opersys'],node_obj['type'])
 							file = directory + template_list[element]
 							if(file in node_temp['templates']):
 								search_result.append("MATCH")	
@@ -119,7 +119,7 @@ def search_policy(policy_list,match_node,node_policy,node_object,auditcreeper):
 							search_result.append("MATCH")	
 						else:
 							### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE PLATFORM, OS AND TYPE
-							directory = get_policy_directory(node_pol['platform'],node_obj['os'],node_obj['type'])
+							directory = get_policy_directory(node_pol['platform'],node_obj['opersys'],node_obj['type'])
 							file = directory + policy_list[element]
 							if(file in node_pol['policy']):
 								###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES

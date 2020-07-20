@@ -6,36 +6,32 @@ from snmp_helper import snmp_extract
 from processdb import process_encrypted
 from processdb import process_models
 import re
-import pybase64
 import subprocess
 import socket
+import os
 
 def snmp(argument_node):
 
 	index = 0
-	USERNAME_STRING = pybase64.b64decode(process_encrypted()[index]['username'])
-	PASSWORD_STRING = process_encrypted()[index]['password']
-	COMMUNITY_STRING = process_encrypted()[index]['snmp']
+	SNMP_COMMUNITY_STRING = os.envrion.get('SNMP_COMMUNITY_STRING')
 	SNMP_PORT = 161
 
 	HOSTNAME_OID = '1.3.6.1.2.1.1.5.0'
 	PLATFORM_OID = '1.3.6.1.2.1.1.1.0' 
-	device = (argument_node,pybase64.b64decode(COMMUNITY_STRING),SNMP_PORT)
+	device = (argument_node,SNMP_COMMUNITY_STRING,SNMP_PORT)
 	snmp_hostname = snmp_data(device,HOSTNAME_OID,SNMP_PORT)
 	snmp_platform = snmp_data(device,PLATFORM_OID,SNMP_PORT)
 
 	ip = snmp_ip(snmp_hostname)
 	platform = snmp_parse_platform(snmp_platform)
-	operating_system = snmp_parse_os(platform)
+	operating_system = snmp_parse_opersys(platform)
 	type = snmp_parse_type(snmp_platform)
 
 	data = [{
 		'hostname': '{}'.format(snmp_hostname),
 		'ip': "{}".format(ip),
-		'username':'{}'.format(USERNAME_STRING),
-		'password': '{}'.format(PASSWORD_STRING),
 		'platform':'{}'.format(platform),
-		'os':'{}'.format(operating_system),
+		'opersys':'{}'.format(operating_system),
 		'type':'{}'.format(type)
 		}
 	]
@@ -67,18 +63,18 @@ def snmp_parse_platform(snmp_platform):
 	
 	return platform
 
-def snmp_parse_os(platform):
+def snmp_parse_opersys(platform):
 
-	os = ''
+	opersys = ''
 
 	if(platform == 'cisco'):
-		os = 'nxos'
+		opersys = 'nxos'
 	elif(platform == 'juniper'):
-		os = 'junos'
+		opersys = 'junos'
 	elif(platform == 'vyatta'):
-		os = 'vyos'
+		opersys = 'vyos'
 	elif(platform == 'f5'):
-		os = 'tmsh'
+		opersys = 'tmsh'
 
 	return os
 

@@ -50,7 +50,7 @@ def node_list(args):
 				  "\t\"mgmt_ip\": \"{}\"\n" \
 				  "\t\"os\": \"{}\"\n" \
 				  "\t\"platform\": \"{}\"\n" \
-				  "\t\"type\": \"{}\"".format(node_object[index]['hostname'],node_object[index]['ip'],node_object[index]['os'],node_object[index]['platform'],node_object[index]['type']) + "\n" \
+				  "\t\"type\": \"{}\"".format(node_object[index]['hostname'],node_object[index]['ip'],node_object[index]['opersys'],node_object[index]['platform'],node_object[index]['type']) + "\n" \
 				  "\t\"data\": {\n" \
 				  "\t    \"managed_configs\": {" \
 			)

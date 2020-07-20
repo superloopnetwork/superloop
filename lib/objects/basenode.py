@@ -2,39 +2,27 @@
 
 from netmiko import ConnectHandler
 from f5.bigip import ManagementRoot
-import base64
-import pybase64
 import re
+import os
 
 
 class BaseNode(object):
 
-	def __init__(self,ip,hostname,username,password,platform,os,type):
+	def __init__(self,ip,hostname,platform,opersys,type):
+
 		self.ip = ip
 		self.hostname = hostname
-		self.username = username
-		self.password = password
+		self.username = os.environ.get('USERNAME') 
+		self.password = os.environ.get('PASSWORD')
 		self.platform = platform
-		self.os = os
+		self.opersys = opersys
 		self.type = type
-		self.password_decrypt = base64.b64decode(self.password)
 
 	def connect(self):
-		if (self.type == 'switch'):
-			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),device_type=self.get_device())
-		elif (self.type == 'vfirewall'):
-			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),port=22,device_type=self.get_device())
-		else:
-			self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password_decrypt,self.get_secret(),device_type=self.get_device())
+		self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password,self.password,device_type=self.get_device())
 			
 	def connect_to_f5(self):
-		self.f5_connect = ManagementRoot(self.ip, self.username,self.password_decrypt)
-
-
-	def get_secret(self):
-		enable_get_secret = base64.b64decode(self.password).decode('utf-8')
-
-		return enable_get_secret
+		self.f5_connect = ManagementRoot(self.ip, self.username,self.password)
 		
 	def location(self):
 		datacenter_location = ''
@@ -66,6 +54,7 @@ class BaseNode(object):
 
 	def push_cfgs(self,commands):
 
+
 		self.connect()
 		output = self.net_connect.enable()
 		if(self.platform == 'cisco'):
@@ -81,7 +70,7 @@ class BaseNode(object):
 
 		if(self.platform == 'cisco'):
 			command = 'show running-config'
-			f = open("/backup-configs/{}".format(self.hostname) + ".conf", "w")
+			f = open("{}/backup-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w")
 			self.connect()
 			output = self.net_connect.send_command_expect(command)
 			f.write(output)
@@ -90,7 +79,7 @@ class BaseNode(object):
 
 		elif(self.platform == 'juniper'):
 			command = 'show configuration | display set'
-			f = open("/backup-configs/{}".format(self.hostname) + ".conf", "w")
+			f = open("{}/backup-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w")
 			self.connect()
 			output = self.net_connect.send_command_expect(command)
 			f.write(output)
@@ -99,7 +88,7 @@ class BaseNode(object):
 
 		elif(self.platform == 'f5'):
 			self.connect_to_f5()
-			self.f5_connect.shared.file_transfer.ucs_downloads.download_file('config.ucs', '/backup-configs/{}.ucs'.format(self.hostname))
+			self.f5_connect.shared.file_transfer.ucs_downloads.download_file('config.ucs', '{}/backup-configs/{}.ucs'.format(self.get_home_directory(),self.hostname))
 			print("")
 
 	def exec_cmd(self,command):
@@ -111,10 +100,16 @@ class BaseNode(object):
 		print("")
 		self.net_connect.disconnect()
 
+	def get_home_directory(self):
+
+		home_directory = os.environ.get('HOME')
+
+		return home_directory
+
 	def get_config(self,command):
 
 		command = 'show running-config'
-		f = open("/backup-configs/{}".format(self.hostname) + ".conf", "w")
+		f = open("{}/backup-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w")
 		self.connect()
 		output = self.net_connect.send_command_expect(command)
 		f.write(output)
@@ -124,7 +119,7 @@ class BaseNode(object):
 
 	def get_diff(self,commands):
 
-		f = open("/diff-configs/{}".format(self.hostname) + ".conf", "w")
+		f = open("{}/diff-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w")
 		self.connect()
 		output = self.net_connect.send_config_set(commands)
 #		print(output)

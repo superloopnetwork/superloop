@@ -10,7 +10,7 @@ from search import search_node
 from search import search_template
 from auditdiff_engine import auditdiff_engine
 from node_create import node_create
-from confirm_push import confirm_push
+from confirm import confirm
 import initialize
 
 def auditdiff(args):
@@ -67,7 +67,7 @@ def auditdiff(args):
 
 		else:
 			if(remediation):
-				confirm_push(redirect,commands)
+				confirm(redirect,commands)
 #			multithread_engine(initialize.ntw_device,controller,commands)
 			print("")
 #			proceed = raw_input("PROCEED TO REMEDIATE? [Y/N]: ")

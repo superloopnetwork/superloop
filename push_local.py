@@ -8,7 +8,7 @@ from processdb import process_nodes
 from search import search_node
 from search import node_element 
 from node_create import node_create
-from confirm_push import confirm_push
+from confirm import confirm
 from parse_cmd import parse_commands
 import initialize
 import os
@@ -48,4 +48,4 @@ def push_local(args):
 			init_config = f.readlines()
 			parse_commands(node_object[index],init_config)
 
-		confirm_push(redirect,commands)
+		confirm(redirect,commands)

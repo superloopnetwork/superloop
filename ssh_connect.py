@@ -14,12 +14,14 @@ from multithread import multithread_engine
 from get_property import get_port
 import initialize
 import subprocess
+import os
 
 def ssh_connect(args):
 
 	auditcreeper = False
 	commands = initialize.configuration
 	argument_node = args.hostname
+	username = os.environ.get('USERNAME')
 	
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
@@ -46,13 +48,13 @@ def ssh_connect(args):
 		port = get_port(node_object,initialize.element,ssh_id)
 
 		if(len(initialize.element) == 1):
-			subprocess.call("ssh admin@{} -p {}".format(node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
+		 	subprocess.call("ssh {}@{} -p {}".format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
 
 		else:
-			ssh_id = int(raw_input("Enter ID to SSH to: "))
+			ssh_id = int(input("Enter ID to SSH to: "))
 
 			### NODE_ID WILL MAP TO THE CORRECT NODE_OBJECT HOST TO CONNECT TO.
 			ssh_id = ssh_id - 1
 
 			port = get_port(node_object,initialize.element,ssh_id)
-			subprocess.call("ssh admin@{} -p {}".format(node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
+			subprocess.call("ssh {}@{} -p {}".format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)

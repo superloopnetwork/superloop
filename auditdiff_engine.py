@@ -61,7 +61,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 		for template in template_list:
 
 			### THIS SECTION OF CODE WILL PROCESS THE TEMPLATE AND OUTPUT TO A *.CONF FILE
-			directory = get_template_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+			directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
 			env = Environment(loader=FileSystemLoader("{}".format(directory)))
 			baseline = env.get_template(template)
 			f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.split('.')[0]) + ".conf", "w") 
@@ -115,7 +115,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 #	print"REDIRECT: {}".format(redirect)
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print"COMMAND: {}".format(command)
-	print("[+] [COMPUTING DIFF. STANDBY...]")
+#	print("[+] [COMPUTING DIFF. STANDBY...]")
 	multithread_engine(initialize.ntw_device,redirect,command)
 	
 	### RESETING TEMPLATE_LIST TO ORIGINAL LIST
@@ -164,7 +164,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			### THIS SECTION IS FOR JUNIPER NETWORKS PLATFORM ###
 			if(node_object[index]['platform'] == 'juniper'):
 
-				directory = get_template_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+				directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
 				### THIS SECTION OF CODE WILL OPEN DIFF-CONFIG *.CONF FILE AND STORE IN DIFF_CONFIG AS A LIST
 				f = open("/diff-configs/{}".format(node_object[index]['hostname']) + ".conf", "r")
 				init_config = f.readlines()
@@ -289,7 +289,7 @@ def cisco_audit_diff(node_object,index,template,AUDIT_FILTER_RE,output,remediati
 #	print ("BACKUP CONFIG: {}".format(backup_config))
 	
 	### THIS WILL OPEN THE JINJA2 TEMPLATE AND PARSE OUT THE AUDIT_FILTER SECTION VIA REGULAR EXPRESSION
-	directory = get_template_directory(node_object[index]['platform'],node_object[index]['os'],node_object[index]['type'])
+	directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
 	f = open("{}".format(directory) + template, "r")
 	parse_audit = f.readline()
 	audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
