@@ -77,56 +77,51 @@ Search for the function 'send_config_set' and change 'cmd_verify=True' to 'cmd_v
 
 This will set the system path of superloop to '/usr/local/lib/python3.x/dist-packages/superloop'. If you have superloop installed in another directory, change the path accordingly.
 
-Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management (default path is /database/):
+Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management (default path is ~/database/):
 
   1. nodes.yaml
   2. templates.yaml
-  3. encrypted.yaml
 
 nodes.yaml acts as the inventory for all network devices. It must follow the format defined below as the application reads it in a specific method.
 ```
-root@jumpbox:~/database# cat nodes.yaml 
+root@devvm:~/database# cat nodes.yaml 
 ---
 - hostname: core-fw-superloop-toron
   ip: 10.10.10.10
-  username: admin
-  password: cGFzc3dvcmQ=
   platform: cisco
-  os: ios
+  opersys: ios
   type: firewall
 - hostname: core.sw.superloop.sfran
   ip: 20.20.20.20  
-  username: admin
-  password: cGFzc3dvcmQ=
   platform: cisco
-  os: ios
+  opersys: ios
   type: switch 
 - hostname: core.rt.superloop.sjose 
   ip: 30.30.30.30 
-  username: admin
-  password: cGFzc3dvcmQ=
   platform: cisco
-  os: ios
+  opersys: ios
   type: router
 ```  
-Most fields are self explainatory except the password. The password is encrypted in base64 format so it's not visible in clear text. The easiest way to generate this hash is via the python interpreter. Assume your password is 'password':
-```  
-root@jumpbox:~/superloop# python
-Python 3.7.8 (default, Jun 29 2020, 05:46:05) 
-[GCC 5.4.0 20160609] on linux
-Type "help", "copyright", "credits" or "license" for more information.
->>> import base64
->>> password = 'password'
->>> encode = base64.b64encode(password)
->>> encode
-'cGFzc3dvcmQ='
->>> 
+Credentials used to connect to nodes are via OS environment varilables. This eliminates any files associated to the application 'superloop' hardcoded with the username and password and thus, reduces the risk of being hacked. To setup the OS environment variables, the easiest is to create a hiddle file like ```.secret``` placed in your home directory. Set permission so only you can read/write ```chmod 600 .secret```.
+
+Your file should look like this:
 ```
-The password is only decrypted during the time the application connects to your device(s). For now, I've only tested this application on Cisco IOS as those are the only equipment I have powering my home network. However, technically it should also be compatible with anything that has a Cisco IOS style of configuration. This includes Juniper Networks Junos, F5 Networks configurations etc.
+root@devvm:~# cat .secret
+export USERNAME="username"
+export PASSWORD="password"
+export SNMP_COMMUNITY_STRING="snmp_k3y"
+```
+* Please replace the fields with the appropriate values
+
+Now open up your ```.bashrc``` file from your home directory ```vi ~/.bashrc``` and place the below code at the end of the file:
+```
+source /<home_directory>/.secret
+```
+Disconnect from your ssh session and reconnect again for changes to take effect. The environment variables have now been loaded.
 
 templates.yaml is a database file that consist of all the jinja2 templates. You will need to include the full path. Here is a sample of how it should look like below. Do not change the format as the application reads it in a specific method. Only change the properties.
 ```
-root@jumpbox:~/database# cat templates.yaml 
+root@devvm:~/database# cat templates.yaml 
 ---
 - platform: cisco
   type: firewall
@@ -153,7 +148,7 @@ I've structured the hierarchy based on vendor, os and the type. You should do th
 
 Let's look at a simple jinja2 template as an example.
 ```
-root@jumpbox:~/superloop# cat /templates/cisco/ios/switch/base.jinja2 
+root@devvm:~/superloop# cat /templates/cisco/ios/switch/base.jinja2 
 {# audit_filter = ['hostname.*'] #}
 {% if with_remediation %}
 no hostname
@@ -167,7 +162,7 @@ Notice there is a section called 'audit_filter' at the top of file. This audit f
 
 You may also have a template that consist of one or several levels deep like so.
 ```
-root@jumpbox:~/superloop# cat /templates/cisco/ios/switch/dhcp.jinja2
+root@devvm:~/superloop# cat /templates/cisco/ios/switch/dhcp.jinja2
 {# audit_filter = ['ip dhcp.*'] #}
 
 ip dhcp excluded-address 10.50.80.1
@@ -250,7 +245,7 @@ The 'host exec' (formerly known as 'onscreen') features allow you to execute a c
 
 Here is an example of how you would use it:
 ```
-root@jumpbox:~/superloop# superloop host exec "show ip int brief" -n core.*sw                
+root@devvm:~/superloop# superloop host exec "show ip int brief" -n core.*sw                
 core.sw.superloop.sfran: Interface              IP-Address      OK? Method Status                Protocol
 core.sw.superloop.sfran: Vlan1                  unassigned      YES NVRAM  administratively down down    
 core.sw.superloop.sfran: Vlan120                 10.120.20.1      YES NVRAM  up                    up      
@@ -268,7 +263,7 @@ Users are now able to take advantage of the 'ssh' menu screen. This feature allo
 
 Here is an example of how you would use it:
 ```
-root@jumpbox:~/superloop# superloop ssh core.*
+root@devvm:~/superloop# superloop ssh core.*
 ID      name                    address         platform
 1       core-fw-superloop-toron 10.10.10.10     cisco
 2       core.sw.superloop.sfran 20.20.20.20     cisco
@@ -276,14 +271,14 @@ ID      name                    address         platform
 Enter ID to SSH to: 
 ```
 ```
-root@jumpbox:~/superloop# python superloop ssh core.*(fw|rt)
+root@devvm:~/superloop# python superloop ssh core.*(fw|rt)
 ID      name                    address         platform
 1       core-fw-superloop-toron 10.10.10.10     cisco
 2       core.rt.superloop.sjose 30.30.30.30     cisco
 Enter ID to SSH to: 
 ```
 ```
-root@jumpbox:~/superloop# superloop ssh .*sfran
+root@devvm:~/superloop# superloop ssh .*sfran
 ID      name                    address         platform
 1       core.sw.superloop.sfran 20.20.20.20     cisco
 Password: 
@@ -296,7 +291,7 @@ If the search result returns one host, superloop automatically establishes a SSH
 
 When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is invoked, superloop will connect to the device via snmp. It will pull the neccessary information such as it's hostname and platform to populate it into nodes.yaml. Since there are sentitive information that are required like the username and password of the device, I have decided to create an 'encrypted.yaml' file. This file will store all sensitive information in encrypted format. Let's take a closer look:
 ```
-root@jumpbox:~/database#  cat encrypted.yaml 
+root@devvm:~/database#  cat encrypted.yaml 
 - username: YWRtaW4= 
   password: cGFzc3dvcmQ= 
   snmp: cGFzc3dvcmQ=
@@ -305,7 +300,7 @@ root@jumpbox:~/database#  cat encrypted.yaml
 
 Let's now look at 'host remove' feature. Just like 'add', 'remove' allows you to remove a node from the database without having to manually edit the nodes.yaml file. Here is how you use it:
 ```
-root@jumpbox:~/superloop# cat nodes.yaml
+root@devvm:~/superloop# cat nodes.yaml
 ---
 - hostname: core-fw-superloop-toron
   ip: 10.10.10.10
@@ -331,11 +326,11 @@ root@jumpbox:~/superloop# cat nodes.yaml
   ```
 Say we wanted to blow out the node 'core.sw.superloop.sfran'. Simply use the following command 'superloop host remove core.sw.superloop.sfran' or 'superloop host remove 20.20.20.20'. It supports both hostname and IP address.
 ```
-root@jumpbox:~/superloop# superloop host remove core.sw.superloop.sfran
+root@devvm:~/superloop# superloop host remove core.sw.superloop.sfran
 [-] NODE SUCCESSFULLY REMOVED FROM DATABASE
 ```
 ```
-root@jumpbox:~/superloop# cat nodes.yaml
+root@devvm:~/superloop# cat nodes.yaml
 ---
 - hostname: core-fw-superloop-toron
   ip: 10.10.10.10
@@ -358,7 +353,7 @@ root@jumpbox:~/superloop# cat nodes.yaml
 
 We can now leverage the power of 'superloop host add' by having snmp poll more attributes on the node(s) such as the software version, location, serial number etc. Once we have these details in our database file, we are then able list them in cli. This will give us all the details about a particular node. To use this, simply type 'superloop node list <hostname>'. Regular expressions is supported for this feature so if you have multiple hosts you would like to view, you can match it via regex.
 ```  
-root@jumpbox:~/superloop# superloop node list core.*
+root@devvm:~/superloop# superloop node list core.*
 [
     {
         "hostname": "core-fw-superloop-toron"
@@ -401,7 +396,7 @@ root@jumpbox:~/superloop# superloop node list core.*
 ```
 Or a particular node...
 ```
-root@jumpbox:~/superloop# superloop node list .*sfran  
+root@devvm:~/superloop# superloop node list .*sfran  
 [
     {
         "hostname": "core.sw.superloop.sfran"
