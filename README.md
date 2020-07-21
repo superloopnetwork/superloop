@@ -102,7 +102,7 @@ root@devvm:~/database# cat nodes.yaml
   opersys: ios
   type: router
 ```  
-Credentials used to connect to nodes are via OS environment varilables. This eliminates any files associated to the application 'superloop' hardcoded with the username and password and thus, reduces the risk of being hacked. To setup the OS environment variables, the easiest is to create a hiddle file like ```.secret``` placed in your home directory. Set permission so only you can read/write ```chmod 600 .secret```.
+Credentials used to connect to nodes are via OS environment varilables. This eliminates any files associated to the application 'superloop' hardcoded with the username and password and thus, reduces the risk of being leaked/hacked. To setup the OS environment variables, the easiest way is to create a hidden file like ```.secret``` placed in your home directory. This file absolutely needs to be locked down to the service account owner. Set permission so only the service account owner where superloop is executed can read/write ```chmod 600 .secret```.
 
 Your file should look like this:
 ```
