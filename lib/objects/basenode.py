@@ -1,10 +1,8 @@
 ######################### BASE NODE ###########################
-
 from netmiko import ConnectHandler
 from f5.bigip import ManagementRoot
 import re
 import os
-
 
 class BaseNode(object):
 
@@ -70,26 +68,20 @@ class BaseNode(object):
 
 		if(self.platform == 'cisco'):
 			command = 'show running-config'
-			f = open("{}/backup-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w")
 			self.connect()
-			output = self.net_connect.send_command_expect(command)
-			f.write(output)
-			f.close()
+			self.write_to_file(command)
 			self.net_connect.disconnect()
 
 		elif(self.platform == 'juniper'):
 			command = 'show configuration | display set'
-			f = open("{}/backup-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w")
 			self.connect()
-			output = self.net_connect.send_command_expect(command)
-			f.write(output)
-			f.close()
+			self.write_to_file(command)
 			self.net_connect.disconnect()
 
 		elif(self.platform == 'f5'):
 			self.connect_to_f5()
 			self.f5_connect.shared.file_transfer.ucs_downloads.download_file('config.ucs', '{}/backup-configs/{}.ucs'.format(self.get_home_directory(),self.hostname))
-			print("")
+			print('')
 
 	def exec_cmd(self,command):
 		self.connect()
@@ -101,7 +93,6 @@ class BaseNode(object):
 		self.net_connect.disconnect()
 
 	def get_home_directory(self):
-
 		home_directory = os.environ.get('HOME')
 
 		return home_directory
@@ -116,7 +107,6 @@ class BaseNode(object):
 		f.close()
 		self.net_connect.disconnect()
 
-
 	def get_diff(self,commands):
 
 		f = open("{}/diff-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w")
@@ -126,3 +116,10 @@ class BaseNode(object):
 		f.write(output)
 		f.close()
 		self.net_connect.disconnect()
+
+	def write_to_file(self,command):
+
+		with open("{}/backup-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w") as file:
+			output = self.net_connect.send_command_expect(command)
+			file.write(output)
+			file.close()
