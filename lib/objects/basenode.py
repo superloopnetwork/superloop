@@ -17,7 +17,7 @@ class BaseNode(object):
 		self.type = type
 
 	def connect(self):
-		self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password,self.password,device_type=self.get_device())
+		self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password,self.password,device_type=self.get_device_type())
 			
 	def connect_to_f5(self):
 		self.f5_connect = ManagementRoot(self.ip, self.username,self.password)
@@ -34,21 +34,22 @@ class BaseNode(object):
 
 		return datacenter_location
 
-	def get_device(self):
-		device_attribute = ''
-		if (self.type == 'switch'):
-			device_attribute = 'cisco_ios'
-		
-		elif (self.type == 'firewall'):
-			device_attribute = 'cisco_asa'
+	def get_device_type(self):
 
-		elif (self.type == 'router' or self.type == 'vfirewall'):
-			device_attribute = 'juniper'
-
-		elif (self.type == 'loadbalancer'):
-			device_attribute = 'f5_linux'
-
-		return device_attribute
+		device_type = {
+				"asa" : "cisco_asa",
+				"ios" : "cisco_ios",
+				"nxos" : "cisco_nxos",
+				"f5linux" : "f5_linux",
+				"ltm" : "f5_ltm",
+				"tmsh" : "f5_tmsh",
+				"juniper" : "juniper",
+				"junos" : "juniper_junos",
+				"vyattavyos" : "vyatta_vyos",
+				"vyos" : "vyos"
+		}
+	
+		return device_type['{}'.format(self.opersys)]
 
 	def push_cfgs(self,commands):
 
