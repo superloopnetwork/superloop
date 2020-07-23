@@ -289,14 +289,7 @@ If the search result returns one host, superloop automatically establishes a SSH
 
 ## superloop host add/remove
 
-When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is invoked, superloop will connect to the device via snmp. It will pull the neccessary information such as it's hostname and platform to populate it into nodes.yaml. Since there are sentitive information that are required like the username and password of the device, I have decided to create an 'encrypted.yaml' file. This file will store all sensitive information in encrypted format. Let's take a closer look:
-```
-root@devvm:~/database#  cat encrypted.yaml 
-- username: YWRtaW4= 
-  password: cGFzc3dvcmQ= 
-  snmp: cGFzc3dvcmQ=
-```
-'username' and 'password' are the credentials for the node(s). 'snmp' is the community string used to poll device infomation. The default snmp port it uses is UDP 161. This can be modified in the 'snmp.py' file under the varilable' SNMP_PORT = 161'
+When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is invoked, superloop will connect to the device via snmp. It will pull the neccessary information such as it's hostname and platform to populate it into nodes.yaml.
 
 Let's now look at 'host remove' feature. Just like 'add', 'remove' allows you to remove a node from the database without having to manually edit the nodes.yaml file. Here is how you use it:
 ```
@@ -304,22 +297,16 @@ root@devvm:~/superloop# cat nodes.yaml
 ---
 - hostname: core-fw-superloop-toron
   ip: 10.10.10.10
-  username: admin
-  password: cGFzc3dvcmQ=
   platform: cisco
   os: ios
   type: firewall
 - hostname: core.sw.superloop.sfran
   ip: 20.20.20.20  
-  username: admin
-  password: cGFzc3dvcmQ=
   platform: cisco
   os: ios
   type: switch 
 - hostname: core.rt.superloop.sjose 
   ip: 30.30.30.30 
-  username: admin
-  password: cGFzc3dvcmQ=
   platform: cisco
   os: ios
   type: router
@@ -335,17 +322,13 @@ root@devvm:~/superloop# cat nodes.yaml
 - hostname: core-fw-superloop-toron
   ip: 10.10.10.10
   os: ios
-  password: cGFzc3dvcmQ=
   platform: cisco
   type: firewall
-  username: admin
 - hostname: core.rt.superloop.sjose
   ip: 30.30.30.30
   os: ios
-  password: cGFzc3dvcmQ=
   platform: cisco
   type: router
-  username: admin
 ```
 * Noticed how the node 'core.sw.superloop.sfran' has been removed from the database.
 
