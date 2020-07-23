@@ -25,7 +25,7 @@ def append(args):
 		else:
 			continue
 	if('MATCH' in match_node):
-		print("[!] NODE CURRENTLY EXIST IN DATABASE")
+		print("[x] NODE CURRENTLY EXIST IN DATABASE")
 	else:
 		with open('{}/database/nodes.yaml'.format(home_directory),'a') as file:
 			file.write(new_node)
