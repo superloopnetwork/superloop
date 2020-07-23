@@ -17,12 +17,15 @@ class BaseNode(object):
 		self.type = type
 
 	def connect(self):
+
 		self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password,self.password,device_type=self.get_device_type())
 			
 	def connect_to_f5(self):
+
 		self.f5_connect = ManagementRoot(self.ip, self.username,self.password)
 		
 	def location(self):
+
 		datacenter_location = ''
 		if (self.type == 'firewall'):
 			location_list = self.hostname.split('-')	
@@ -52,7 +55,6 @@ class BaseNode(object):
 		return device_type['{}'.format(self.opersys)]
 
 	def push_cfgs(self,commands):
-
 
 		self.connect()
 		output = self.net_connect.enable()
@@ -85,6 +87,7 @@ class BaseNode(object):
 			print('')
 
 	def exec_cmd(self,command):
+
 		self.connect()
 		output = self.net_connect.send_command(command)
 		output = output.replace('\n','\n{}: '.format(self.hostname))

@@ -5,24 +5,39 @@
 from processdb import process_nodes
 from snmp import snmp
 import yaml
+import os
+
+home_directory = os.environ.get('HOME')
 
 def append(args):
 
+	match_node = []
+	index = 0
 	argument_node = args.ip
 	device = snmp(argument_node)
 	new_node = yaml.dump(device,default_flow_style = False)
-	with open('/database/nodes.yaml','a') as file:
-		file.write(new_node)
-
 	database = process_nodes()
-	database.sort(key=sorted)
-	updated_database = yaml.dump(database,default_flow_style = False)
-	with open('/database/nodes.yaml','w') as file:
-		file.write('---\n')
-		file.write(updated_database)
-
-	print('[\u2713] SNMP DISCOVERY SUCCESSFUL')
-	print('[+] NEW NODE APPENDED TO DATABASE')
+	# CHECK IF NEW NODE CURRENTLY EXIST IN DATABASE
+	for node in database:
+		if(device[index]['ip'] == node['ip']):
+			match_node.append("MATCH")	
+			break
+		else:
+			continue
+	if('MATCH' in match_node):
+		print("[!] NODE CURRENTLY EXIST IN DATABASE")
+	else:
+		with open('{}/database/nodes.yaml'.format(home_directory),'a') as file:
+			file.write(new_node)
+		database = process_nodes()
+		database.sort(key=sorted)
+		updated_database = yaml.dump(database,default_flow_style = False)
+		with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
+			file.write('---\n')
+			file.write(updated_database)
+	
+		print('[\u2713] SNMP DISCOVERY SUCCESSFUL')
+		print('[+] NEW NODE APPENDED TO DATABASE')
 
 def remove(args):
 
@@ -41,7 +56,7 @@ def remove(args):
 	database.pop(index)
 	# WRITES TO DATABASE FILE
 	updated_database = yaml.dump(database,default_flow_style = False)
-	with open('/database/nodes.yaml','w') as file:
+	with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
 		file.write('---\n')
 		file.write(updated_database)
 		print('[-] NODE SUCCESSFULLY REMOVED FROM DATABASE')

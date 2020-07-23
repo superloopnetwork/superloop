@@ -13,7 +13,7 @@ import os
 def snmp(argument_node):
 
 	index = 0
-	SNMP_COMMUNITY_STRING = os.envrion.get('SNMP_COMMUNITY_STRING')
+	SNMP_COMMUNITY_STRING = os.environ.get('SNMP_COMMUNITY_STRING')
 	SNMP_PORT = 161
 
 	HOSTNAME_OID = '1.3.6.1.2.1.1.5.0'
