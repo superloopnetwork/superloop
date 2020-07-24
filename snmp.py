@@ -75,7 +75,7 @@ def snmp_parse_opersys(platform):
 	elif(platform == 'f5'):
 		opersys = 'tmsh'
 
-	return os
+	return opersys
 
 def snmp_parse_type(snmp_platform):
 
