@@ -77,7 +77,7 @@ Search for the function 'send_config_set' and change 'cmd_verify=True' to 'cmd_v
 
 This will set the system path of superloop to '/usr/local/lib/python3.x/dist-packages/superloop'. If you have superloop installed in another directory, change the path accordingly.
 
-Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of three YAML files that require management (default path is ~/database/):
+Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of two YAML files that require management (default path is ~/database/):
 
   1. nodes.yaml
   2. templates.yaml

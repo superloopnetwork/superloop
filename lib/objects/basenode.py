@@ -123,6 +123,8 @@ class BaseNode(object):
 
 	def write_to_file(self,command):
 
+		if(not os.path.isdir('{}/backup-configs/'.format(self.get_home_directory()))):
+			os.makedirs('{}/backup-configs/'.format(self.get_home_directory()))
 		with open("{}/backup-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w") as file:
 			output = self.net_connect.send_command_expect(command)
 			file.write(output)
