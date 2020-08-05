@@ -239,6 +239,10 @@ The 'push local' command allows you to push configs that are stored in a text fi
 
 ![superloop push_local demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_push_local_demo.gif)
 
+## superloop pull cfgs
+
+The 'pull cfgs' feature allows you to pull configs from one or multiple nodes. It's a function used to backup your configs manually when the command is invoked.
+
 ## superloop host exec
 
 The 'host exec' (formerly known as 'onscreen') features allow you to execute a command on the device(s) without requiring you to log in. In the example below, the screen on the right is using 'push' and the screen on the left is using 'host exec' to check the changes after.
