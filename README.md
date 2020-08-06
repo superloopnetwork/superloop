@@ -147,7 +147,7 @@ I've structured the hierarchy based on vendor, os and the type. You should do th
 
 Let's look at a simple jinja2 template as an example.
 ```
-root@devvm:~/superloop# cat /templates/cisco/ios/switch/base.jinja2 
+root@devvm:~/superloop# cat ~/templates/cisco/ios/switch/base.jinja2 
 {# audit_filter = ['hostname.*'] #}
 {% if with_remediation %}
 no hostname
@@ -161,7 +161,7 @@ Notice there is a section called 'audit_filter' at the top of file. This audit f
 
 You may also have a template that consist of one or several levels deep like so.
 ```
-root@devvm:~/superloop# cat /templates/cisco/ios/switch/dhcp.jinja2
+root@devvm:~/superloop# cat ~/templates/cisco/ios/switch/dhcp.jinja2
 {# audit_filter = ['ip dhcp.*'] #}
 
 ip dhcp excluded-address 10.50.80.1
@@ -240,7 +240,7 @@ The 'push local' command allows you to push configs that are stored in a text fi
 
 ## superloop pull cfgs
 
-The 'pull cfgs' feature allows you to pull configs from one or multiple nodes. It's a function used to backup your configs manually when the command is invoked. To use it, ssimply type 'superloop pull cfgs -n core.*'. This will backup all node configurations that matches the regex. For F5 platforms, this will download the *.ucs file from the appliance.
+The 'pull cfgs' feature allows you to pull configs from one or multiple nodes. It's a function used to backup your configs manually when the command is invoked. To use it, simply type 'superloop pull cfgs -n core.*'. This will backup all node configurations that matches the regex. For F5 platforms, this will download the *.ucs file from the appliance.
 
 ## superloop host exec
 
