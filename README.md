@@ -53,6 +53,8 @@ from push_cfgs import push_cfgs
 .
 <output truncated>
 ```
+This will set the system path of superloop to '/usr/local/lib/python3.x/dist-packages/superloop'. If you have superloop installed in another directory, change the path accordingly.
+
 In Netmiko version 3.x by default is going to expect the configuration command to be echoed to the screen. This ensures Netmiko doesn't get out of sync with the underlying device (ex. keep sending configuration commands even though the remote device might be too slow and buffering them).
 
 We will need to turn off command verification in netmiko base_connection.py file:
@@ -74,9 +76,6 @@ Search for the function 'send_config_set' and change 'cmd_verify=True' to 'cmd_v
         enter_config_mode=True,
     ):
 ```
-
-This will set the system path of superloop to '/usr/local/lib/python3.x/dist-packages/superloop'. If you have superloop installed in another directory, change the path accordingly.
-
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of two YAML files that require management (default path is ~/database/):
 
   1. nodes.yaml
@@ -125,24 +124,24 @@ root@devvm:~/database# cat templates.yaml
 ---
 - platform: cisco
   type: firewall
-  os: ios
+  opersys: ios
   templates:
-  - /templates/cisco/ios/firewall/snmp.jinja2
-  - /templates/cisco/ios/firewall/base.jinja2
+  - ~/templates/cisco/ios/firewall/snmp.jinja2
+  - ~/templates/cisco/ios/firewall/base.jinja2
 - platform: cisco
   type: router 
-  os: ios
+  opersys: ios
   templates:
-  - /templates/cisco/ios/router/base.jinja2
+  - ~/templates/cisco/ios/router/base.jinja2
 - platform: cisco
   type: switch 
-  os: ios
+  opersys: ios
   templates:
-  - /templates/cisco/ios/switch/access.jinja2
-  - /templates/cisco/ios/switch/services.jinja2
-  - /templates/cisco/ios/switch/snmp.jinja2
-  - /templates/cisco/ios/switch/hostname.jinja2
-  - /templates/cisco/ios/switch/dhcp.jinja2
+  - ~/templates/cisco/ios/switch/access.jinja2
+  - ~/templates/cisco/ios/switch/services.jinja2
+  - ~/templates/cisco/ios/switch/snmp.jinja2
+  - ~/templates/cisco/ios/switch/hostname.jinja2
+  - ~/templates/cisco/ios/switch/dhcp.jinja2
 ```
 I've structured the hierarchy based on vendor, os and the type. You should do the same in order to keep your templates orderly. Whatever hierarchy you choose, you will need to update/modify in the directory.py file to reflect (default path /templates/).
 
@@ -241,7 +240,7 @@ The 'push local' command allows you to push configs that are stored in a text fi
 
 ## superloop pull cfgs
 
-The 'pull cfgs' feature allows you to pull configs from one or multiple nodes. It's a function used to backup your configs manually when the command is invoked.
+The 'pull cfgs' feature allows you to pull configs from one or multiple nodes. It's a function used to backup your configs manually when the command is invoked. To use it, ssimply type 'superloop pull cfgs -n core.*'. This will backup all node configurations that matches the regex. For F5 platforms, this will download the *.ucs file from the appliance.
 
 ## superloop host exec
 
@@ -302,17 +301,17 @@ root@devvm:~/superloop# cat nodes.yaml
 - hostname: core-fw-superloop-toron
   ip: 10.10.10.10
   platform: cisco
-  os: ios
+  opersys: ios
   type: firewall
 - hostname: core.sw.superloop.sfran
   ip: 20.20.20.20  
   platform: cisco
-  os: ios
+  opersys: ios
   type: switch 
 - hostname: core.rt.superloop.sjose 
   ip: 30.30.30.30 
   platform: cisco
-  os: ios
+  opersys: ios
   type: router
   ```
 Say we wanted to blow out the node 'core.sw.superloop.sfran'. Simply use the following command 'superloop host remove core.sw.superloop.sfran' or 'superloop host remove 20.20.20.20'. It supports both hostname and IP address.
@@ -325,12 +324,12 @@ root@devvm:~/superloop# cat nodes.yaml
 ---
 - hostname: core-fw-superloop-toron
   ip: 10.10.10.10
-  os: ios
+  opersys: ios
   platform: cisco
   type: firewall
 - hostname: core.rt.superloop.sjose
   ip: 30.30.30.30
-  os: ios
+  opersys: ios
   platform: cisco
   type: router
 ```
