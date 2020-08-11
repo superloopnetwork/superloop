@@ -1,4 +1,7 @@
 ### THIS MODULE CONSIST OF ALL THE PROPERTIES THAT SUPERLOOP IS REQUIRED TO RETRIEVE
+import os
+
+home_directory = os.environ.get('HOME')
 
 def get_port(node_object,element,ssh_id):
 
@@ -27,30 +30,38 @@ def get_type(hostname):
 	return device_type
 
 
-def get_template_directory(platform,os,device_type):
+def get_template_directory(platform,opersys,device_type):
 
 	### THIS WILL RETURN THE CORRESPONDING DIRECTORY FOR THE APPLICATION TO OPEN THE FILE
 	directory = ''
 
-	if(platform == 'cisco' and os == 'ios' and device_type == 'firewall'):
-		directory = '/templates/cisco/ios/firewall/'
-	elif(platform == 'cisco' and os == 'ios'and device_type == 'router'):
-		directory = '/templates/cisco/ios/router/'
-	elif(platform == 'cisco' and os == 'ios'and device_type == 'switch'):
-		directory = '/templates/cisco/ios/switch/'
-	elif(platform == 'juniper' and os == 'junos' and device_type == 'vfirewall'):
-		directory = '/templates/juniper/junos/vfirewall/'
+	if(platform == 'cisco' and opersys == 'asa' and device_type == 'firewall'):
+		directory = '{}/templates/cisco/asa/firewall/'.format(home_directory)
+	elif(platform == 'cisco' and opersys == 'ios'and device_type == 'router'):
+		directory = '{}/templates/cisco/ios/router'.format(home_directory)
+	elif(platform == 'cisco' and opersys == 'ios'and device_type == 'switch'):
+		directory = '{}/templates/cisco/ios/switch/'.format(home_directory)
+	elif(platform == 'cisco' and opersys == 'nxos'and device_type == 'switch'):
+		directory = '{}/templates/cisco/nxos/switch/'.format(home_directory)
+	elif(platform == 'cisco' and opersys == 'nxos'and device_type == 'router'):
+		directory = '{}/templates/cisco/nxos/router/'.format(home_directory)
+	elif(platform == 'juniper' and opersys == 'junos' and device_type == 'vfirewall'):
+		directory = '{}/templates/juniper/junos/vfirewall/'.format(home_directory)
+	elif(platform == 'juniper' and opersys == 'junos' and device_type == 'router'):
+		directory = '{}/templates/juniper/junos/router/'.format(home_directory)
+	elif(platform == 'f5' and opersys == 'bigip' and device_type == 'loadbalancer'):
+		directory = '{}/templates/f5/bigip/ltm/'.format(home_directory)
 
 	return directory
 
-def get_policy_directory(platform,os,device_type):
+def get_policy_directory(platform,opersys,device_type):
 
 	### THIS WILL RETURN THE CORRESPONDING DIRECTORY FOR THE APPLICATION TO OPEN THE FILE
 
     if(platform == 'cisco' and os == 'ios' and device_type == 'firewall'):
-        directory = '/policy/cisco/ios/firewall/'
+        directory = '{}/policy/cisco/ios/firewall/'.format(home_directory)
     elif(platform == 'juniper' and os == 'junos' and device_type == 'vfirewall'):
-        directory = '/policy/juniper/junos/firewall/'
+        directory = '{}/policy/juniper/junos/firewall/'.format(home_directory)
 
     return directory
 

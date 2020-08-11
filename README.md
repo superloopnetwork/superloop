@@ -34,10 +34,10 @@ Move 'superloop.py' file to one of your $PATH directory and remove the *.py exte
 $ mv /usr/local/lib/python3.x/dist-packages/superloop/superloop.py /usr/local/bin/superloop
 $ chmod 755 /usr/local/bin/superloop
 ```
-Now append the following code within ```/usr/local/bin/superloop``` near the top:
+Now uncomment the following code within ```/usr/local/bin/superloop``` near the top:
 ```
-import sys
-sys.path.append('/usr/local/lib/python3.x/dist-packages/superloop')
+#import sys
+#sys.path.append('/usr/local/lib/python3.x/dist-packages/superloop')
 ```
 So it looks like this . . . . 
 ```
@@ -53,7 +53,7 @@ from push_cfgs import push_cfgs
 .
 <output truncated>
 ```
-This will set the system path of superloop to '/usr/local/lib/python3.x/dist-packages/superloop'. If you have superloop installed in another directory, change the path accordingly.
+This will set the system path of superloop to '/usr/local/lib/python3.x/dist-packages/superloop'. If you have superloop installed in another directory, change the path accordingly (replace python3.x with appropriate version).
 
 In Netmiko version 3.x by default is going to expect the configuration command to be echoed to the screen. This ensures Netmiko doesn't get out of sync with the underlying device (ex. keep sending configuration commands even though the remote device might be too slow and buffering them).
 
