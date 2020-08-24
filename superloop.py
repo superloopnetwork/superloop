@@ -42,6 +42,7 @@ def main():
 	pull_cfgs_cmd = pull_subparsers.add_parser('cfgs')
 	pull_cfgs_cmd.set_defaults(func=pull_cfgs)
 	pull_cfgs_cmd.add_argument('-n','--node', dest='node')
+	pull_cfgs_cmd.add_argument('-c','--confirm', dest='confirm')
 
 	push_cmd = subparsers.add_parser('push')
 	push_subparsers = push_cmd.add_subparsers(dest='parser_push')
