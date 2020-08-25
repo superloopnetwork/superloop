@@ -8,7 +8,7 @@ def confirm(redirect,commands):
 
 	index = 0
 
-	if(redirect[index] == 'push_cfgs'):
+	if redirect[index] == 'push_cfgs':
 		check = str(input("Push configs? [y/N]: ")).strip()
 	else:
 		check = str(input("Pull configs? [y/N]: ")).strip()

@@ -37,7 +37,7 @@ def pull_cfgs(args):
 		### MATCH_NODE IS A LIST OF NODES THAT MATCHES THE ARGUEMENTS PASSED IN BY USER
 		match_node = search_node(argument_node,node_object)
 	
-		if(len(match_node) == 0):
+		if len(match_node) == 0:
 			print("[+] [NO MATCHING NODES AGAINST DATABASE]")
 			print("")
 	
@@ -47,7 +47,7 @@ def pull_cfgs(args):
 			for index in initialize.element:
 				redirect.append('pull_cfgs')
 	
-			if(confirm_flag):
+			if confirm_flag:
 				confirm(redirect,commands)
 			else:
 				multithread_engine(initialize.ntw_device,redirect,commands)

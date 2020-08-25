@@ -73,7 +73,7 @@ def main():
 	host_remove_cmd.add_argument('argument')
 	host_exec_cmd = host_subparsers.add_parser('exec')
 	host_exec_cmd.set_defaults(func=exec_cmd)
-	host_exec_cmd.add_argument('argument')
+	host_exec_cmd.add_argument('command')
 	host_exec_cmd.add_argument('-n','--node', dest='node')
 
 	node_cmd= subparsers.add_parser('node')
