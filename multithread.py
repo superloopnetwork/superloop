@@ -30,5 +30,5 @@ def multithread_engine(ntw_object,redirect,commands):
 #			print(some_thread)
 			some_thread.join()
 
-	print('[\u2713] [SUCCESS] [{}]\n'.format(datetime.datetime.now() - start_time))
+	print('[\u2713] [complete] [{}]\n'.format(datetime.datetime.now() - start_time))
 
