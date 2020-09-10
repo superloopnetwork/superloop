@@ -76,7 +76,7 @@ class BaseNode(object):
 			self.net_connect.disconnect()
 
 		elif(self.platform == 'juniper'):
-			command = 'show configuration | display set'
+			command = 'show configuration'
 			self.connect()
 			self.write_to_file(command)
 			self.net_connect.disconnect()
