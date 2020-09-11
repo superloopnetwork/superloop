@@ -38,11 +38,12 @@ def ssh_connect(args):
 		id = 1
 		ssh_id = 0
 
-		print("ID\tname\t\t\taddress\t\tplatform")
+		print("{} {: >27} {: >28} {: >26}".format('id','name','address','platform'))
 
 		for index in initialize.element:
 
-			print("{}\t{}\t{}\t{}".format(id,node_object[index]['hostname'],node_object[index]['ip'],node_object[index]['platform']))
+			print('{id: {align}{space}} {hostname: {align}{space}} {ip: {align}{space}} {platform: {align}{space}}'.format(id = id,hostname = node_object[index]['hostname'],ip = node_object[index]['ip'],platform = node_object[index]['platform'],align = '<',space = 25))
+
 			id = id + 1
 
 		port = get_port(node_object,initialize.element,ssh_id)
