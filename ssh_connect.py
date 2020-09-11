@@ -48,14 +48,18 @@ def ssh_connect(args):
 
 		port = get_port(node_object,initialize.element,ssh_id)
 
-		if(len(initialize.element) == 1):
-		 	subprocess.call("ssh {}@{} -p {}".format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
+		try:
+			if(len(initialize.element) == 1):
+		 		subprocess.call("ssh {}@{} -p {}".format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
+			else:
+				ssh_id = int(input("Enter ID to SSH to: "))
 
-		else:
-			ssh_id = int(input("Enter ID to SSH to: "))
-
-			### NODE_ID WILL MAP TO THE CORRECT NODE_OBJECT HOST TO CONNECT TO.
-			ssh_id = ssh_id - 1
-
-			port = get_port(node_object,initialize.element,ssh_id)
-			subprocess.call("ssh {}@{} -p {}".format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
+				### NODE_ID WILL MAP TO THE CORRECT NODE_OBJECT HOST TO CONNECT TO.
+				ssh_id = ssh_id - 1
+				if ssh_id < 1:
+					print('IndexError: incorrect connection id')
+				else:
+					port = get_port(node_object,initialize.element,ssh_id)
+					subprocess.call("ssh {}@{} -p {}".format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
+		except IndexError:
+			print('IndexError: incorrect connection id')
