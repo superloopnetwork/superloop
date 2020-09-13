@@ -29,37 +29,41 @@ def ssh_connect(args):
 	### MATCH_NODE IS A LIST OF NODES THAT MATCHES THE ARGUEMENTS PASSED IN BY USER
 	match_node = search_node(argument_node,node_object)
 
-	if(len(match_node) == 0):
-		print("[+] [NO MATCHING NODES AGAINST DATABASE]")
-		print("")
-
-	else:
-		node_element(match_node,node_object)
-		id = 1
-		ssh_id = 0
-
-		print("{} {: >27} {: >28} {: >26}".format('id','name','address','platform'))
-
-		for index in initialize.element:
-
-			print('{id: {align}{space}} {hostname: {align}{space}} {ip: {align}{space}} {platform: {align}{space}}'.format(id = id,hostname = node_object[index]['hostname'],ip = node_object[index]['ip'],platform = node_object[index]['platform'],align = '<',space = 25))
-
-			id = id + 1
-
-		port = get_port(node_object,initialize.element,ssh_id)
-
-		try:
-			if(len(initialize.element) == 1):
-		 		subprocess.call("ssh {}@{} -p {}".format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
-			else:
-				ssh_id = int(input("Enter ID to SSH to: "))
-
-				### NODE_ID WILL MAP TO THE CORRECT NODE_OBJECT HOST TO CONNECT TO.
-				ssh_id = ssh_id - 1
-				if ssh_id < 1:
-					print('IndexError: incorrect connection id')
+	try:
+		if(len(match_node) == 0):
+			print("[+] [NO MATCHING NODES AGAINST DATABASE]")
+			print("")
+	
+		else:
+			node_element(match_node,node_object)
+			id = 1
+			ssh_id = 0
+	
+			print("{} {: >27} {: >28} {: >26}".format('id','name','address','platform'))
+	
+			for index in initialize.element:
+	
+				print('{id: {align}{space}} {hostname: {align}{space}} {ip: {align}{space}} {platform: {align}{space}}'.format(id = id,hostname = node_object[index]['hostname'],ip = node_object[index]['ip'],platform = node_object[index]['platform'],align = '<',space = 25))
+	
+				id = id + 1
+	
+			port = get_port(node_object,initialize.element,ssh_id)
+	
+			try:
+				if(len(initialize.element) == 1):
+			 		subprocess.call("ssh {}@{} -p {}".format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
 				else:
-					port = get_port(node_object,initialize.element,ssh_id)
-					subprocess.call("ssh {}@{} -p {}".format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
-		except IndexError:
-			print('IndexError: incorrect connection id')
+					ssh_id = int(input("Enter ID to SSH to: "))
+	
+					### NODE_ID WILL MAP TO THE CORRECT NODE_OBJECT HOST TO CONNECT TO.
+					ssh_id = ssh_id - 1
+					if ssh_id < 1:
+						print('IndexError: incorrect connection id')
+					else:
+						port = get_port(node_object,initialize.element,ssh_id)
+						subprocess.call("ssh {}@{} -p {}".format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
+			except IndexError:
+				print('IndexError: incorrect connection id')
+
+	except ValueError as error:
+		print("ValueError: expected an integer")
