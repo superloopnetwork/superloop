@@ -9,10 +9,11 @@ from parse_cmd import parse_commands
 import initialize
 import re
 
-def render(template_list,node_object,auditcreeper,output,with_remediation):
+def render(template_list,node_object,auditcreeper,output,with_remediation,audit_flag):
 
 ### TEMPLATE_LIST_COPY TAKE A COPY OF THE CURRENT TEMPLATE_LIST
 	template_list_copy = template_list
+	audit_flag=False
 
 	if(auditcreeper):
 	    template_list = template_list_copy[0]
@@ -39,7 +40,7 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 			### THE BELOW PARSE_COMMANDS FUNCTION WILL ONLY GET EXECUTED IF NEEDS TO STORE COMMANDS IN THE GLOBAL VARILABLE INITIALIZE.CONFIGURATION FOR PUSH
 			### PUSH_CFGS(OUTPUT = TRUE) VS RENDER_CONFIG(OUTPUT = FALSE) FUNCTIONS.
 			if(output!=True):
-				parse_commands(node_object[index],init_config)
+				parse_commands(node_object[index],init_config,audit_flag)
 
 		if(auditcreeper):
 			template_list = get_updated_list(template_list_copy)

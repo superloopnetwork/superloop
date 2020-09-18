@@ -57,7 +57,7 @@ def ssh_connect(args):
 	
 					### NODE_ID WILL MAP TO THE CORRECT NODE_OBJECT HOST TO CONNECT TO.
 					ssh_id = ssh_id - 1
-					if ssh_id < 1:
+					if ssh_id + 1 < 1:
 						print('IndexError: incorrect connection id')
 					else:
 						port = get_port(node_object,initialize.element,ssh_id)

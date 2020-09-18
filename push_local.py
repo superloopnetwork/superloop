@@ -19,6 +19,7 @@ def push_local(args):
 	commands = initialize.configuration
 	argument_node = args.node
 	filename = args.filename
+	audit_flag = False
 
 	### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 	node_object = process_nodes()
@@ -46,6 +47,6 @@ def push_local(args):
 			f = open("{}/{}".format(home_directory,filename), "r")
 
 			init_config = f.readlines()
-			parse_commands(node_object[index],init_config)
+			parse_commands(node_object[index],init_config,audit_flag)
 
 		confirm(redirect,commands)
