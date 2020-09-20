@@ -32,10 +32,6 @@ def main():
 	audit_diff_cmd.set_defaults(func=auditdiff)
 	audit_diff_cmd.add_argument('-n','--node', dest='node')
 	audit_diff_cmd.add_argument('-f','--file', dest='file')
-	audit_remediate_cmd = audit_subparser.add_parser('remediate')
-	audit_remediate_cmd.set_defaults(func=auditdiff)
-	audit_remediate_cmd.add_argument('-n','--node', dest='node')
-	audit_remediate_cmd.add_argument('-f','--file', dest='file')
 
 	pull_cmd = subparsers.add_parser('pull')
 	pull_subparsers = pull_cmd.add_subparsers(dest='parser_pull')
