@@ -13,11 +13,11 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
 
 |__Platform__|__audit diff__|__push cfgs__|__host exec__|__ssh__ |__node list__|__host add__|__host remove__|__push acl__|__pull cfgs__|
 |------------|:------------:|:-----------:|:-----------:|:------:|:-----------:|:----------:|:-------------:|:----------:|:------------|
-| Cisco IOS  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
-| Cisco NXOS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
+| Cisco IOS  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |      -     |      x      |
+| Cisco NXOS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |      -     |      x      |
 | Cisco ASA  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
 | Juniper OS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
-|F5 BigIP LTM|              |             |             |    x   |      x      |            |               |            |      x      |
+|F5 BigIP LTM|              |             |       x     |    x   |      x      |            |               |      -     |      x      |
 
 ## Install
 
