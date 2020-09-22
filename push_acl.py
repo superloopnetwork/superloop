@@ -74,11 +74,12 @@ def push_acl(args):
 		###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #		print("ELEMENT_POLICY: {}".format(initialize.element_policy))
 
-#			for acl in acl_list:
-#				config_list = parse_firewall_acl(node_object[index],acl)
-#				commands.append(config_list)
-#
-#		print commands
+		for acl in acl_list:
+			print("HELLO")
+			config_list = parse_firewall_acl(node_object[index],acl)
+			commands.append(config_list)
+
+		print("{}".format(commands))
 #
 #		confirm(redirect,commands)
 #		print("")

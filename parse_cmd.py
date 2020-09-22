@@ -1,6 +1,7 @@
 ### PARSE_COMMANDS FUNCTION WILL GENERATE THE COMMANDS IN A FORM A LIST SO IT CAN BE
 ### FED INTO THE METHOD OF THE OBJECT CREATED.
 ### PARSE_FIREWALL_ACL FUNCTION WILL GENERATE FIREWALL ACLS BASED ON THE PLATFORM AND OS
+### OBJECT_GROUP FUNCTION WILL OPEN UP THE *.NET FILE TO SEARCH FOR ANY OBJECT GROUPS THAT WAS LISTED FROM THE POLICY FILE
 from processdb import process_json
 from get_property import get_policy_directory
 import initialize
@@ -40,11 +41,12 @@ def parse_firewall_acl(node_policy,policy):
 #	print("NODE_POLICY: {}".format(node_policy))
 #	print("NODE: {}".format(policy))
 	acl_list = process_json(node_policy['platform'],node_policy['opersys'],node_policy['type'],policy)
+	print("ACL_LIST: {}".format(acl_list))
 	f = open("{}".format(directory) + policy, "r")
 	parse_include = f.readline()
 	path = eval(re.findall(PATH_FILTER_RE, parse_include)[0])
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-	print("PATH_FILTER: {}".format(path))
+#	print("PATH_FILTER: {}".format(path))
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print("ACL_LIST inside parse_firewall_acl: {}".format(acl_list))
 	for acl in acl_list:
@@ -78,14 +80,18 @@ def object_group(path,object_group_search):
 	if('{} ='.format(object_group_search) in set(object_group_list)):
 		print('TRUE')
 		element = object_group_list.index('{} ='.format(object_group_search))
+		### THIS WILL MOVE THE ELEMENT INDEX TO THE FIRST IP ADDRESS OF THE LIST
 		element = element + 1
-		print('{}'.format(object_group_list[element]))
+		### UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#		print('{}'.format(object_group_list[element]))
 
+		### WHILE LOOP WILL GO THROUGH ALL THE IP ADDRESSES WITHIN THE OBJECT-GROUP AND APPEND IT TO THE LIST, SUBNETS.
+		### ONCE THE ELEMENT BECOMES AN EMPTY SPACE, THE WHILE LOOP TERMINATES
 		while object_group_list[element] != "":
 			subnets.append(object_group_list[element])
 			element = element + 1
 
-		print(subnets)
+		print("SUBNETS: {}".format(subnets))
 	else:
 		print('FALSE')
 
