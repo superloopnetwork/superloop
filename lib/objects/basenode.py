@@ -1,6 +1,5 @@
 ######################### BASE NODE ###########################
-from netmiko import ConnectHandler
-from f5.bigip import ManagementRoot
+from netmiko import ConnectHandler, SCPConn
 import re
 import os
 
@@ -20,9 +19,9 @@ class BaseNode(object):
 
 		self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password,self.password,device_type=self.get_device_type())
 			
-	def connect_to_f5(self):
-
-		self.f5_connect = ManagementRoot(self.ip, self.username,self.password)
+	def scpconnect(self):
+		self.connect()
+		self.scp_connect = SCPConn(self.net_connect)
 		
 	def location(self):
 
@@ -69,22 +68,37 @@ class BaseNode(object):
 
 	def pull_cfgs(self,command):
 
-		if(self.platform == 'cisco'):
+		if self.platform == 'cisco':
 			command = 'show running-config'
 			self.connect()
 			self.write_to_file(command)
 			self.net_connect.disconnect()
 
-		elif(self.platform == 'juniper'):
+		elif self.platform == 'cisco' and self.opersys == 'nxos':
+			command = 'show running-config | exclude Time'
+			self.connect()
+			self.write_to_file(command)
+			self.net_connect.disconnect()
+
+		elif self.platform == 'juniper':
 			command = 'show configuration'
 			self.connect()
 			self.write_to_file(command)
 			self.net_connect.disconnect()
 
-		elif(self.platform == 'f5'):
-			self.connect_to_f5()
-			self.f5_connect.shared.file_transfer.ucs_downloads.download_file('config.ucs', '{}/backup-configs/{}.ucs'.format(self.get_home_directory(),self.hostname))
-			print('')
+		elif(self.platform == 'vyatta'):
+			command = 'show configuration commands'
+			self.connect()
+			self.write_to_file(command)
+			self.net_connect.disconnect()
+
+		elif self.platform == 'f5':
+			command = 'list ltm one-line'
+			self.scpconnect()
+			self.write_to_file(command)
+			self.scp_connect.scp_get_file('/var/local/ucs/config.ucs', '{}/backup-configs/{}'.format(self.get_home_directory(),self.hostname))
+			self.scp_connect.close()
+			self.net_connect.disconnect()
 
 	def exec_cmd(self,command):
 

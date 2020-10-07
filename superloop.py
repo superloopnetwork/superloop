@@ -54,6 +54,10 @@ def main():
 	push_local_cmd.set_defaults(func=push_local)
 	push_local_cmd.add_argument('filename')
 	push_local_cmd.add_argument('-n','--node', dest='node')
+	push_acl_cmd = push_subparsers.add_parser('acl')
+	push_acl_cmd.set_defaults(func=push_acl)
+	push_acl_cmd.add_argument('-n','--node', dest='node')
+	push_acl_cmd.add_argument('-f','--file', dest='file')
 	
 	ssh_cmd = subparsers.add_parser('ssh')
 	ssh_cmd.set_defaults(func=ssh_connect)
