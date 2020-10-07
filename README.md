@@ -114,7 +114,7 @@ export SNMP_COMMUNITY_STRING="snmp_k3y"
 
 Now open up your ```.bashrc``` file from your home directory ```vi ~/.bashrc``` and place the below code at the end of the file:
 ```
-source /<home_directory>/.secret
+source /{home_directory}/.secret
 ```
 Disconnect from your ssh session and reconnect again for changes to take effect. The environment variables have now been loaded.
 
