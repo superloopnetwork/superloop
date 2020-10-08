@@ -57,11 +57,21 @@ class BaseNode(object):
 
 		self.connect()
 		output = self.net_connect.enable()
-		if(self.platform == 'cisco'):
-			output = self.net_connect.send_config_set(commands)
+
+		if self.platform == 'cisco' and self.opersys == 'ios':
+			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
+			save = self.net_connect.send_command('write memory')
 			print(output)
-		elif(self.platform == 'juniper'):
-			output = self.net_connect.send_config_set(commands,exit_config_mode=False)
+			print(save)
+
+		elif self.platform == 'cisco' and self.opersys == 'nxos':
+			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
+			save = self.net_connect.send_command('copy running-config startup-config')
+			print(output)
+			print(save)
+
+		elif self.platform == 'juniper':
+			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
 			self.net_connect.commit(and_quit=True)
 			print(output)
 		self.net_connect.disconnect()
