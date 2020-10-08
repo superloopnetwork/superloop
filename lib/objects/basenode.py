@@ -74,6 +74,13 @@ class BaseNode(object):
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
 			self.net_connect.commit(and_quit=True)
 			print(output)
+
+		elif self.platform == 'f5':
+			output = self.net_connect.send_config_set(commands,enter_config_mode=False,exit_config_mode=False)
+			save = self.net_connect.send_command('save sys config')
+			print(output)
+			print(save)
+
 		self.net_connect.disconnect()
 
 	def pull_cfgs(self,command):
