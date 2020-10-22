@@ -77,7 +77,7 @@ class BaseNode(object):
 
 		elif self.platform == 'vyatta':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
-			self.net_connect.commit(and_quit=False)
+			self.net_connect.commit()
 			print(output)
 
 		elif self.platform == 'f5':
@@ -92,27 +92,15 @@ class BaseNode(object):
 
 		if self.platform == 'cisco':
 			command = 'show running-config'
-			self.connect()
-			self.write_to_file(command)
-			self.net_connect.disconnect()
 
 		elif self.platform == 'cisco' and self.opersys == 'nxos':
 			command = 'show running-config | exclude Time'
-			self.connect()
-			self.write_to_file(command)
-			self.net_connect.disconnect()
 
 		elif self.platform == 'juniper':
 			command = 'show configuration'
-			self.connect()
-			self.write_to_file(command)
-			self.net_connect.disconnect()
 
 		elif(self.platform == 'vyatta'):
 			command = 'show configuration commands'
-			self.connect()
-			self.write_to_file(command)
-			self.net_connect.disconnect()
 
 		elif self.platform == 'f5':
 			command = 'list ltm one-line'
@@ -120,6 +108,11 @@ class BaseNode(object):
 			self.write_to_file(command)
 			self.scp_connect.scp_get_file('/var/local/ucs/config.ucs', '{}/backup-configs/{}'.format(self.get_home_directory(),self.hostname))
 			self.scp_connect.close()
+			self.net_connect.disconnect()
+
+		if self.platform != 'f5':
+			self.connect()
+			self.write_to_file(command)
 			self.net_connect.disconnect()
 
 	def exec_cmd(self,command):
