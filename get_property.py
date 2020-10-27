@@ -106,9 +106,10 @@ def get_sorted_juniper_template_list(template_list):
 					'chassis.jinja2': 3 ,
 					'snmp.jinja2': 4 ,
 					'routing-options.jinja2': 5 ,
-					'policy-options.jinja2': 6 ,
-					'security.jinja2': 7 ,
-					'routing-instances.jinja2': 8
+					'protocols.jinja2': 6 ,
+					'policy-options.jinja2': 7 ,
+					'security.jinja2': 8 ,
+					'routing-instances.jinja2': 9
 		}			 
 
 	for template in template_list:         
