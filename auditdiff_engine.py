@@ -14,7 +14,9 @@ from get_property import get_sorted_juniper_template_list
 import re
 import initialize
 import os
+
 home_directory = os.environ.get('HOME')
+
 def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 	redirect = [] 
 	command = [] 
@@ -118,6 +120,10 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 		template_list = template_list_original[0]
 	### THIS FOR LOOP WILL LOOP THROUGH ALL THE MATCHED ELEMENTS FROM THE USER SEARCH AND AUDIT ON SPECIFIC TEMPLATE OR IF NO ARGUMENT IS GIVEN, ALL TEMPLATES
 	
+	if(node_object[index]['platform'] == 'juniper'):
+		### THIS WILL RETURN A SORTED JUNIPER TEMPLATE LIST BASED ON JUNIPER'S 'SHOW CONFIGURATION' OUTPUT
+		template_list = get_sorted_juniper_template_list(template_list)
+
 	for index in initialize.element:
 		### INITIALIZING 'edit_list' FOR EACH NEW NODE IT CYCLES THROUGH
 		edit_list = []
@@ -130,14 +136,18 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 			print("Only in the device: -")
 			print("Only in the generated config: +")
 			print ("{}".format(node_object[index]['hostname']))
+
+#		print('template_list: {}'.format(template_list))
 		### THIS WILL LOOP THROUGH ALL THE TEMPLATES SPECIFIED FOR THE PARTICULAR HOST IN TEMPLATES.YAML
+
 		for template in template_list:
+
 			### THIS SECTION IS FOR CISCO SYSTEMS PLATFORM ###
-			if(node_object[index]['platform'] == 'cisco'):
+			if  node_object[index]['platform'] == 'cisco':
 				cisco_audit_diff(node_object,index,template,AUDIT_FILTER_RE,output,remediation)
 	
 			### THIS SECTION IS FOR JUNIPER NETWORKS PLATFORM ###
-			if(node_object[index]['platform'] == 'juniper'):
+			if node_object[index]['platform'] == 'juniper':
 				directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
 				### THIS SECTION OF CODE WILL OPEN DIFF-CONFIG *.CONF FILE AND STORE IN DIFF_CONFIG AS A LIST
 				f = open("{}/diff-configs/{}".format(home_directory,node_object[index]['hostname']) + ".conf", "r")
@@ -151,37 +161,31 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 	
 				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #				print ("DIFF CONFIG: {}".format(diff_config))
-				RE = re.compile(r'\[edit\s({})\]'.format(template.split('.')[0]))
-				search = list(filter(RE.match,diff_config))
-				if(len(search) == 0):
-					print("{}{} (none)".format(directory,template))
-					print('')
-					no_diff = no_diff + 1
-					if(no_diff == len(template_list)):
+
+				### THIS FIRST SECTION WILL FIND ALL THE INDEXES WITH THE '[edit <TEMPLATE>]' AND APPEND IT TO THE EDIT_LIST
+				### EDIT_LIST MAINTAINS A LIST OF ALL THE INDEXES THAT PERTAIN TO THE TEMPLATES
+				for line in diff_config:
+					if re.search('\[edit\s{}'.format(template.split('.')[0]),line):
+						element = diff_config.index(line) 
+						edit_list.append(element)
 						break
-					if(len(template_list) > 1):	
-						juniper_audit_diff(directory,template,template_list,diff_config,edit_list,search)
+					elif re.search('\+\s\s{}\s'.format(template.split('.')[0]),line):
+						element = diff_config.index(line) 
+						edit_list.append(element)
+						break
 					else:
 						continue
-						
-				else:
-					### THIS FIRST SECTION WILL FIND ALL THE INDEXES WITH THE '[edit <TEMPLATE>]' AND APPEND IT TO THE EDIT_LIST
-					### EDIT_LIST MAINTAINS A LIST OF ALL THE INDEXES THAT PERTAIN TO THE TEMPLATES
-					for line in diff_config:
-						if(re.search('\[edit\s{}\]'.format(template.split('.')[0]),line)):
-							element = diff_config.index(line) 
-							edit_list.append(element)
-							###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#							print('ELEMENT: {}'.format(element))
-#							print("{}".format(line))
-					###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#					print('EDIT_LIST 1st: {}'.format(edit_list))
-#					print("index_of_template_list: {}".format(index_of_template_list))
-#					print("length_template_list: {}".format(length_template_list))
-					juniper_audit_diff(directory,template,template_list,diff_config,edit_list,search)
+						###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#						print('ELEMENT: {}'.format(element))
+#						print("{}".format(line))
+				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#				print('EDIT_LIST 1st: {}'.format(edit_list))
+#				print("index_of_template_list: {}".format(index_of_template_list))
+#				print("length_template_list: {}".format(length_template_list))
+		if node_object[index]['platform'] == 'juniper':
+			juniper_audit_diff(directory,template,template_list,diff_config,edit_list)
 #					print("end_of_template_list: {}".format(end_of_template_list))
 					### UPON THE LAST TEMPLATE, IT WILL THEN FIND THE CLOSING CURLY BRACES INDEX NUMBER TO APPEND TO THE EDIT_LIST
-			print('')
 		if(auditcreeper):
 			initialize.configuration.append(node_configs)
 			if(ntw_device_pop == True):
@@ -326,64 +330,102 @@ def cisco_audit_diff(node_object,index,template,AUDIT_FILTER_RE,output,remediati
 			if(auditcreeper == False):
 				initialize.configuration.append(node_configs)
 			node_index = node_index + 1
-def juniper_audit_diff(directory,template,template_list,diff_config,edit_list,search):
+def juniper_audit_diff(directory,template,template_list,diff_config,edit_list):
+
 	length_template_list = len(template_list)
 	index_of_template_list = template_list.index(template) + 1
 	element = template_list.index(template)
 	index_of_template_list = template_list.index(template) + 1
+	template_list = get_sorted_juniper_template_list(template_list)
+	no_duplicate_edit_list = []	
+
+#	for element in edit_list:
+#		if element not in no_duplicate_edit_list:
+#			no_duplicate_edit_list.append(element)
+#
+#	edit_list = no_duplicate_edit_list[:]
+
 	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #	print('DIFF_CONFIG: {}'.format(diff_config))
 #	print("EDIT_LIST: {}".format(edit_list))
 	### THIS WILL CHECK IF IT'S ON THE LAST TEMPLATE. IF IT IS, IT WILL LOCATE THE LAST INDEX FOR EDIT_LIST AND APPEND IT TO THE LIST
-	if(index_of_template_list == length_template_list):
+#	if(index_of_template_list == length_template_list):
+	for line in diff_config:
+		if(re.search('exit configuration-mode',line)):
+			element = diff_config.index(line) 
+			###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#			print('ELEMENT: {}'.format(element))
+#			print("{}".format(line))
+			### THE BELOW STATEMENT IS TO CHECK IF THE PIVOT POINT (INDEX)IS LESS THEN OR EQUAL TO THE INDEX OF THE LAST ELEMENT OF THE EDIT_LIST. IF IT'S LESS THAN
+			### OR EQUAL TO, IT KNOWS THAT IT HAS NOT REACHED PASSED THE LAST INDEX OF EDIT_LIST (LAST ELEMENT). THEREFORE PIVOT POINT MUST BE GREATER TO KNOW IT'S THE
+			### END
+#			if(element<=edit_list[len(edit_list) - 1]):
+#				continue
+#			else:
+				### THE COUNTER 6 IS TO DECREMENT THE INDEX '6' TIMES FROM THE 'exit configuration-mode'. THIS WILL LAND THE PIVOT POINT AT THE END OF THE DIFF.
+				### THE LAST ELEMENT OF THE 'DIFF' IS NOW APPENDED TO THE EDIT_LIST, (ALL UNNECCESSARY INFO EX. SHOW | COMPARE, ROLLBACK 0 ETC... HAVE BEEN LEFT OUT
+				### AND THEREFORE WE ARE ABLE TO FILTER OUT THE DIFF OUTPUT.
+			element = element - 6 
+			edit_list.append(element)
+			break
+	###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#	print('EDIT_LIST 2nd: {}'.format(edit_list))
+	start = 0
+	end = 1
+	### THE LAST SECTION WILL PRINT THE APPROPREIATE DIFF BASED ON THE TEMPLATES FROM THE EDIT_LIST INFORMATION
+#	print('TEMPLATE_LIST: {}'.format(template_list))
+#	print('DIFF_config: {}'.format(diff_config))
+
+
+	for template in template_list: 
+#		if(len(search) >= 1):
+#			print("TEMPLATE: {}".format(template))
+#			print("LENGTH OF SEARCH: {}.".format(search))
 		for line in diff_config:
-			if(re.search('exit configuration-mode',line)):
-				element = diff_config.index(line) 
+			### SATISFY CONDITION WHEN THERE IS A DIFF AND CONFIGURATION STANZA EXIST ON DEVICE AND IN TEMPLATE
+			if(re.search('\[edit\s{}'.format(template.split('.')[0]),line)):
 				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#				print('ELEMENT: {}'.format(element))
-#				print("{}".format(line))
-				### THE BELOW STATEMENT IS TO CHECK IF THE INDEX OF 'exit configuration-mode' IS LESS THEN OR EQUAL TO THE INDEX OF THE LAST ELEMENT OF THE EDIT_LIST.
-				### THIS IS TO ENSURE THAT IT'S TAKING 'exit configuration-mode' FROM THE VERY END OF THE DIFF_CONFIG IN CASE 'exit configuration-mode' APPEARS IN THE 
-				### MIDDLE OF DIFF_CONFIG.
-				if(element<=edit_list[len(edit_list) - 1]):
-					continue
-				else:
-					### THE COUNTER 6 IS TO DECREMENT THE INDEX '6' TIMES FROM THE 'exit configuration-mode'. THIS WILL LAND THE PIVOT POINT AT THE END OF THE DIFF.
-					### THE LAST ELEMENT OF THE 'DIFF' IS NOW APPENDED TO THE EDIT_LIST, (ALL UNNECCESSARY INFO EX. SHOW | COMPARE, ROLLBACK 0 ETC... HAVE BEEN LEFT OUT
-					### AND THEREFORE WE ARE ABLE TO FILTER OUT THE DIFF OUTPUT.
-					element = element - 6 
-					edit_list.append(element)
-					break
-		###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#		print('EDIT_LIST 2nd: {}'.format(edit_list))
-		start = 0
-		end = 1
-		### THE LAST SECTION WILL PRINT THE APPROPREIATE DIFF BASED ON THE TEMPLATES FROM THE EDIT_LIST INFORMATION
-#		print('TEMPLATE_LIST_JUNIPER: {}'.format(template_list_juniper))
-#		print('DIFF_config: {}'.format(diff_config))
-		for template in template_list: 
-			RE = re.compile(r'\[edit\s({})\]'.format(template.split('.')[0]))
-			search = list(filter(RE.match,diff_config))
-			if(len(search) >= 1):
-#				print("TEMPLATE: {}".format(template))
-#				print("LENGTH OF SEARCH: {}.".format(search))
 				print("{}{}".format(directory,template))
-			for line in diff_config:
-				if(re.search('\[edit\s{}\]'.format(template.split('.')[0]),line)):
-					###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#					print "edit_list[start]: {}".format(edit_list[start])
-#					print "edit_list[end]: {}".format(edit_list[end])
-					diff_template = diff_config[edit_list[start]:edit_list[end]]  
-					###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-#					print('DIFF_TEMPLATE: {}'.format(diff_template))
-					for line in diff_template:
-						## THE BELOW IF STATEMENT IS TO CORRECT THE OUTPUT. AT RANDOM TIMES, THE DIFF-CONFIG MAY INCLUDE 'ROLLBACK 0' IN OUTPUT. IT WILL OMIT PRINTING THAT.
-						if line == 'rollback 0':
-							pass
-						else:
-							print("{}".format(line))
-					print
-				else:
-					continue
+#				print "edit_list[start]: {}".format(edit_list[start])
+#				print "edit_list[end]: {}".format(edit_list[end])
+				diff_template = diff_config[edit_list[start]:edit_list[end]]  
+				for line in diff_template:
+					## THE BELOW IF STATEMENT IS TO CORRECT THE OUTPUT. AT RANDOM TIMES, THE DIFF-CONFIG MAY INCLUDE 'ROLLBACK 0' IN OUTPUT. IT WILL OMIT PRINTING THAT.
+					if line == 'rollback 0' or line == '[edit]':
+						pass
+					else:
+						print("{}".format(line))
+						print
 				start = start + 1
 				end = end + 1
+				break
+				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
+#				print('DIFF_TEMPLATE: {}'.format(diff_template))
+			### SATISFY CONDITION WHEN CONFIGURATION DOESN'T CURRENTLY EXIST ON DEVICE BUT ONLY IN TEMPLATE
+			elif re.search('\+\s\s{}\s'.format(template.split('.')[0]),line):
+				print("{}{}".format(directory,template))
+				diff_template = diff_config[edit_list[start]:edit_list[end]]  
+				for line in diff_template:
+					## THE BELOW IF STATEMENT IS TO CORRECT THE OUTPUT. AT RANDOM TIMES, THE DIFF-CONFIG MAY INCLUDE 'ROLLBACK 0' IN OUTPUT. IT WILL OMIT PRINTING THAT.
+					if line == 'rollback 0' or line == '[edit]':
+						pass
+					else:
+						print("{}".format(line))
+						print
+				start = start + 1
+				end = end + 1
+				break
+			### SATISFY CONDITION WHEN THERE ARE NO DIFFS FOUND. LENGTH OF EDIT_LIST IS EQUAL TO 1 AS '' (BLANK) [MINUS 6 INDEX FROM 'exit configuration-mode' 
+			### WILL BE THE ONLY ELEMENT IN THE LIST.
+			elif len(edit_list) == 1:
+				print("{}{} (none)".format(directory,template))
+				break
+			### SATISFY CONDITION WHEN THERE ARE NO DIFFS FOUND AND THE LINE BEING EVALUATED REACHES THE END OF THE DIFF_CONFIG. IT THEN KNOWS THERE 
+			### ARE NO MATCHES. 
+			else:
+				if diff_config.index(line) == len(diff_config):
+					print("{}{} (none)".format(directory,template))
+				pass
+
+#			start = start + 1
+#			end = end + 1
