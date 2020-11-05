@@ -122,9 +122,6 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 		template_list = template_list_original[0]
 	### THIS FOR LOOP WILL LOOP THROUGH ALL THE MATCHED ELEMENTS FROM THE USER SEARCH AND AUDIT ON SPECIFIC TEMPLATE OR IF NO ARGUMENT IS GIVEN, ALL TEMPLATES
 	
-	if(node_object[index]['platform'] == 'juniper'):
-		### THIS WILL RETURN A SORTED JUNIPER TEMPLATE LIST BASED ON JUNIPER'S 'SHOW CONFIGURATION' OUTPUT
-		template_list = get_sorted_juniper_template_list(template_list)
 
 	for index in initialize.element:
 		### INITIALIZING 'edit_list' FOR EACH NEW NODE IT CYCLES THROUGH
@@ -132,8 +129,11 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 		### NODE_CONFIG IS THE FINALIZED CONFIG TO PUSH TO THE NODE FOR REMEDIATION
 		node_configs = []
 		ntw_device_pop = True 
-		### TEMPLATE_NAME IS SET TO TRUE IN ORDER TO PRINT OUT THE TEMPLATE HEADING WHEN RECURSING
-		template_name = True
+
+		if(node_object[index]['platform'] == 'juniper'):
+			### THIS WILL RETURN A SORTED JUNIPER TEMPLATE LIST BASED ON JUNIPER'S 'SHOW CONFIGURATION' OUTPUT
+			template_list = get_sorted_juniper_template_list(template_list)
+
 		if(not remediation):
 			print("Only in the device: -")
 			print("Only in the generated config: +")
@@ -141,7 +141,7 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 #		print('template_list: {}'.format(template_list))
 		### THIS WILL LOOP THROUGH ALL THE TEMPLATES SPECIFIED FOR THE PARTICULAR HOST IN TEMPLATES.YAML
-
+		print(template_list)
 		for template in template_list:
 
 			### THIS SECTION IS FOR CISCO SYSTEMS PLATFORM ###
@@ -185,9 +185,9 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 #				print("index_of_template_list: {}".format(index_of_template_list))
 #				print("length_template_list: {}".format(length_template_list))
 		if node_object[index]['platform'] == 'juniper':
+#			edit_list.sort()
 			juniper_audit_diff(directory,template,template_list,diff_config,edit_list)
-#					print("end_of_template_list: {}".format(end_of_template_list))
-					### UPON THE LAST TEMPLATE, IT WILL THEN FIND THE CLOSING CURLY BRACES INDEX NUMBER TO APPEND TO THE EDIT_LIST
+
 		if(auditcreeper):
 			initialize.configuration.append(node_configs)
 			if(ntw_device_pop == True):
