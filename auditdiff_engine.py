@@ -391,7 +391,7 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list):
 				diff_template = diff_config[edit_list[start]:edit_list[end]]  
 				for line in diff_template:
 					## THE BELOW IF STATEMENT IS TO CORRECT THE OUTPUT. AT RANDOM TIMES, THE DIFF-CONFIG MAY INCLUDE 'ROLLBACK 0' IN OUTPUT. IT WILL OMIT PRINTING THAT.
-					if line == 'rollback 0' or line == '[edit]':
+					if line == '[edit]':
 						pass
 					else:
 						print("{}".format(line))
