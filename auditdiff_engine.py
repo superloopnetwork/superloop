@@ -8,6 +8,7 @@ from ciscoconfparse import CiscoConfParse
 from collections import Counter
 from multithread import multithread_engine
 from get_property import get_template_directory
+from get_property import get_location_directory
 from get_property import get_updated_list
 from get_property import get_syntax
 from get_property import get_sorted_juniper_template_list 
@@ -52,8 +53,9 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 #			print("TEMPLATE_LIST FIRST PHASE: {}".format(template_list))
 		for template in template_list:
 			### THIS SECTION OF CODE WILL PROCESS THE TEMPLATE AND OUTPUT TO A *.CONF FILE
-			directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
-			env = Environment(loader=FileSystemLoader(['{}'.format(directory),'/root/templates/juniper/junos/common/','/root/templates/juniper/junos/router/wdc1/']))
+			get_platform_template_directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
+			get_location_template_directory = get_location_directory(node_object[index]['hostname'],node_object[index]['platform'],node_object[index]['type'])
+			env = Environment(loader=FileSystemLoader([get_platform_template_directory,get_location_template_directory]))
 			baseline = env.get_template(template)
 			f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.split('.')[0]) + ".conf", "w") 
 			### GENERATING TEMPLATE BASED ON NODE OBJECT

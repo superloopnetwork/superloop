@@ -129,3 +129,17 @@ def get_sorted_juniper_template_list(template_list):
 #	print("SORTED_JUNIPER_TEMPLATE_LIST: {}".format(sorted_juniper_template_list))
 
 	return sorted_juniper_template_list
+
+def get_location_directory(hostname,platform,type):
+	directory = ''
+	datacenter_location = ''
+	if type == 'firewall':
+		location_list = hostname.split('-')    
+		datacenter_location = location_list[3]
+	elif type == 'switch' or type == 'router' or type == 'vfirewall':
+		location_list = hostname.split('.')    
+		datacenter_location = location_list[3]
+
+	directory = '{}/templates/{}/common/{}/'.format(home_directory,platform,datacenter_location)
+
+	return directory 
