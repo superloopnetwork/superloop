@@ -122,7 +122,6 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 		template_list = template_list_original[0]
 	### THIS FOR LOOP WILL LOOP THROUGH ALL THE MATCHED ELEMENTS FROM THE USER SEARCH AND AUDIT ON SPECIFIC TEMPLATE OR IF NO ARGUMENT IS GIVEN, ALL TEMPLATES
 	
-
 	for index in initialize.element:
 		### INITIALIZING 'edit_list' FOR EACH NEW NODE IT CYCLES THROUGH
 		edit_list = []
@@ -141,7 +140,6 @@ def auditdiff_engine(template_list,node_object,auditcreeper,output,remediation):
 
 #		print('template_list: {}'.format(template_list))
 		### THIS WILL LOOP THROUGH ALL THE TEMPLATES SPECIFIED FOR THE PARTICULAR HOST IN TEMPLATES.YAML
-		print(template_list)
 		for template in template_list:
 
 			### THIS SECTION IS FOR CISCO SYSTEMS PLATFORM ###
@@ -385,19 +383,9 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list):
 #			print("LENGTH OF SEARCH: {}.".format(search))
 		for line in diff_config:
 			### SATISFY CONDITION WHEN THERE IS A DIFF AND CONFIGURATION STANZA EXIST ON DEVICE AND IN TEMPLATE
+			diff_template = diff_config[edit_list[start]:edit_list[end]]  
 			if(re.search('\[edit\s{}'.format(template.split('.')[0]),line)):
-				###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-				print("{}{}".format(directory,template))
-#				print "edit_list[start]: {}".format(edit_list[start])
-#				print "edit_list[end]: {}".format(edit_list[end])
-				diff_template = diff_config[edit_list[start]:edit_list[end]]  
-				for line in diff_template:
-					## THE BELOW IF STATEMENT IS TO CORRECT THE OUTPUT. AT RANDOM TIMES, THE DIFF-CONFIG MAY INCLUDE 'ROLLBACK 0' IN OUTPUT. IT WILL OMIT PRINTING THAT.
-					if line == '[edit]':
-						pass
-					else:
-						print("{}".format(line))
-						print
+				juniper_diff_output(diff_template,directory,template,edit_list,start,end)
 				start = start + 1
 				end = end + 1
 				break
@@ -405,15 +393,7 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list):
 #				print('DIFF_TEMPLATE: {}'.format(diff_template))
 			### SATISFY CONDITION WHEN CONFIGURATION DOESN'T CURRENTLY EXIST ON DEVICE BUT ONLY IN TEMPLATE
 			elif re.search('\+\s\s{}\s'.format(template.split('.')[0]),line):
-				print("{}{}".format(directory,template))
-				diff_template = diff_config[edit_list[start]:edit_list[end]]  
-				for line in diff_template:
-					## THE BELOW IF STATEMENT IS TO CORRECT THE OUTPUT. AT RANDOM TIMES, THE DIFF-CONFIG MAY INCLUDE 'ROLLBACK 0' IN OUTPUT. IT WILL OMIT PRINTING THAT.
-					if line == 'rollback 0' or line == '[edit]':
-						pass
-					else:
-						print("{}".format(line))
-						print
+				juniper_diff_output(diff_template,directory,template,edit_list,start,end)
 				start = start + 1
 				end = end + 1
 				break
@@ -431,3 +411,14 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list):
 
 #			start = start + 1
 #			end = end + 1
+
+def juniper_diff_output(diff_template,directory,template,edit_list,start,end):
+
+	print("{}{}".format(directory,template))
+	for line in diff_template:
+		## THE BELOW IF STATEMENT IS TO CORRECT THE OUTPUT. AT RANDOM TIMES, THE DIFF-CONFIG MAY INCLUDE 'ROLLBACK 0' IN OUTPUT. IT WILL OMIT PRINTING THAT.
+		if line == '[edit]':
+			pass
+		else:
+			print("{}".format(line))
+			print
