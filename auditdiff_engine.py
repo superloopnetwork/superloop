@@ -383,9 +383,8 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list):
 #			print("LENGTH OF SEARCH: {}.".format(search))
 		for line in diff_config:
 			### SATISFY CONDITION WHEN THERE IS A DIFF AND CONFIGURATION STANZA EXIST ON DEVICE AND IN TEMPLATE
-			diff_template = diff_config[edit_list[start]:edit_list[end]]  
 			if(re.search('\[edit\s{}'.format(template.split('.')[0]),line)):
-				juniper_diff_output(diff_template,directory,template,edit_list,start,end)
+				juniper_diff_output(diff_config,directory,template,edit_list,start,end)
 				start = start + 1
 				end = end + 1
 				break
@@ -393,7 +392,7 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list):
 #				print('DIFF_TEMPLATE: {}'.format(diff_template))
 			### SATISFY CONDITION WHEN CONFIGURATION DOESN'T CURRENTLY EXIST ON DEVICE BUT ONLY IN TEMPLATE
 			elif re.search('\+\s\s{}\s'.format(template.split('.')[0]),line):
-				juniper_diff_output(diff_template,directory,template,edit_list,start,end)
+				juniper_diff_output(diff_config,directory,template,edit_list,start,end)
 				start = start + 1
 				end = end + 1
 				break
@@ -412,8 +411,9 @@ def juniper_audit_diff(directory,template,template_list,diff_config,edit_list):
 #			start = start + 1
 #			end = end + 1
 
-def juniper_diff_output(diff_template,directory,template,edit_list,start,end):
+def juniper_diff_output(diff_config,directory,template,edit_list,start,end):
 
+	diff_template = diff_config[edit_list[start]:edit_list[end]]  
 	print("{}{}".format(directory,template))
 	for line in diff_template:
 		## THE BELOW IF STATEMENT IS TO CORRECT THE OUTPUT. AT RANDOM TIMES, THE DIFF-CONFIG MAY INCLUDE 'ROLLBACK 0' IN OUTPUT. IT WILL OMIT PRINTING THAT.
@@ -421,4 +421,4 @@ def juniper_diff_output(diff_template,directory,template,edit_list,start,end):
 			pass
 		else:
 			print("{}".format(line))
-			print
+	print()
