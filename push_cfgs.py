@@ -8,7 +8,7 @@ from processdb import process_nodes
 from processdb import process_templates
 from search import search_node
 from search import search_template
-from auditdiff_engine import auditdiff_engine
+from mediator import mediator 
 from render import render
 from node_create import node_create
 from confirm import confirm

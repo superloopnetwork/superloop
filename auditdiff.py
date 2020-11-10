@@ -8,7 +8,7 @@ from processdb import process_nodes
 from processdb import process_templates
 from search import search_node
 from search import search_template
-from auditdiff_engine import auditdiff_engine
+from mediator import mediator 
 from node_create import node_create
 from confirm import confirm
 import initialize
@@ -60,7 +60,7 @@ def auditdiff(args):
 
 	else:
 		node_create(match_node,node_object)
-		auditdiff_engine(template_list,node_object,auditcreeper_flag,output,remediation)
+		mediator(template_list,node_object,auditcreeper_flag,output,remediation)
 #		print ("THESE ARE THE COMMANDS: {}".format(commands))
 		if(len(initialize.configuration) == 0):
 			pass	

@@ -2,7 +2,7 @@ from processdb import process_nodes
 from processdb import process_templates
 from search import search_node
 from search import search_template
-from auditdiff_engine import auditdiff_engine
+from mediator import mediator
 from node_create import node_create
 from multithread import multithread_engine
 import threading
@@ -38,7 +38,7 @@ def auditcreeper():
 	### TO SEE IF THERE IS A TEMPLATE FOR THE SPECIFIC PLATFORM AND TYPE.
 	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper_flag)
 	node_create(match_node,node_object)
-	auditdiff_engine(template_list,node_object,auditcreeper_flag,output,remediation)
+	mediator(template_list,node_object,auditcreeper_flag,output,remediation)
 	for index in initialize.element:
 		redirect.append('push_cfgs')
 	multithread_engine(initialize.ntw_device,redirect,commands)
