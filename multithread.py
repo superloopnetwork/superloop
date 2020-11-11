@@ -1,8 +1,3 @@
-### MULTITHREAD_ENGINE FUNCTION ENABLES SIMULTANEOUSLY CONCURRENT TASKS TO OCCUR
-### DELAYED_DETECTION FUNCTION ACCOMDDATES SLOWER ENVIRONMENTS. FOR EXAMPLE, TACACS SERVER BEING HAMMERED
-### WITH AUTHENTICATION REQUESTS FROM NODES THAT IT CANNOT KEEP UP
-### ADJUST THE SLEEP TIME (IN SECONDS) TO CONFORM TO YOUR NETWORK
-
 ####################### ENGINE FUNCTIONS ########################
 
 import initialize
@@ -24,7 +19,7 @@ def multithread_engine(ntw_object,redirect,commands):
 		elif(redirect[index] == 'push_cfgs' or redirect[index] == 'get_config' or redirect[index] == 'get_diff'):
 			arguments = commands[index]
 			element = index
-		my_thread = threading.Thread(delayed_detection(), target=getattr(ntw_object[index], redirect[element]) , args=(arguments,))
+		my_thread = threading.Thread(target=getattr(ntw_object[index],redirect[element]) , args=(arguments,))
 		my_thread.start()
 
 		index = index + 1
@@ -35,9 +30,5 @@ def multithread_engine(ntw_object,redirect,commands):
 #			print(some_thread)
 			some_thread.join()
 
-	print('[\u2713] [complete] [{}]\n'.format(datetime.datetime.now() - start_time))
+	print('+ complete [{}]\n'.format(datetime.datetime.now() - start_time))
 
-def delayed_detection():
-#	time.sleep(0.500)
-	
-	return None
