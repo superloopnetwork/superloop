@@ -12,7 +12,7 @@ from get_property import get_sorted_juniper_template_list
 
 home_directory = os.environ.get('HOME')
 
-def cisco_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,output,remediation):
+def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,output,remediation):
 
 	for template in template_list:
 		### INDEX_LIST IS A LIST OF ALL THE POSITIONS COLLECTED FROM INDEX_POSITION VARIABLE

@@ -6,7 +6,7 @@
 from jinja2 import Environment, FileSystemLoader
 from ciscoconfparse import CiscoConfParse
 from multithread import multithread_engine
-from lib.mediators.cisco import cisco_audit_diff
+from lib.mediators.generic import generic_audit_diff
 from lib.mediators.juniper import juniper_mediator
 from lib.mediators.juniper import juniper_audit_diff
 from get_property import get_template_directory
@@ -64,7 +64,7 @@ def mediator(template_list,node_object,auditcreeper,output,remediation):
 			config = baseline.render(nodes = node_object[index])
 			f.write(config) 
 			f.close 
-			if(node_object[index]['platform'] == 'cisco'):
+			if(node_object[index]['platform'] == 'cisco' or node_object[index]['platform'] == 'f5'):
 				### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
 				f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
 				init_config = f.readlines()
@@ -95,7 +95,7 @@ def mediator(template_list,node_object,auditcreeper,output,remediation):
 		### THE BELOW STATEMENT WILL ONLY EXECUTE IF USER IS AUDITING AGAINST MULTIPLE TEMPLATES. IF ONLY ONE TEMPLATE IS BEING AUDITED, DO NO POP OFF ELEMENT.
 		if len(template_list) != 1:
 			template_list = get_updated_list(template_list_copy)
-		if(node_object[index]['platform'] == 'cisco'):
+		if(node_object[index]['platform'] == 'cisco' or node_object[index]['platform'] == 'f5'):
 			redirect.append('get_config')
 			command.append([''])
 		### JUNIPER DEVICES WILL RECEIVE A DIFFERENT REDIRECT THAN CISCO PLATFORM
@@ -140,8 +140,8 @@ def mediator(template_list,node_object,auditcreeper,output,remediation):
 		### THIS WILL LOOP THROUGH ALL THE TEMPLATES SPECIFIED FOR THE PARTICULAR HOST IN TEMPLATES.YAML
 
 		### THIS SECTION IS FOR CISCO SYSTEMS PLATFORM ###
-		if node_object[index]['platform'] == 'cisco':
-			cisco_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,output,remediation)
+		if node_object[index]['platform'] == 'cisco' or node_object[index]['platform'] == 'f5':
+			generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,output,remediation)
 
 		### THIS SECTION IS FOR JUNIPER NETWORKS PLATFORM ###
 		elif node_object[index]['platform'] == 'juniper':
