@@ -27,7 +27,7 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 			if(output):
 				print("{}".format(config))
 
-			f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.strip('jinja2')) + "conf", "r")
+			f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.replace('jinja2','')) + "conf", "r")
 			init_config = f.readlines()
 			### THE BELOW PARSE_COMMANDS FUNCTION WILL ONLY GET EXECUTED IF NEEDS TO STORE COMMANDS IN THE GLOBAL VARILABLE INITIALIZE.CONFIGURATION FOR PUSH
 			### PUSH_CFGS(OUTPUT = TRUE) VS RENDER_CONFIG(OUTPUT = FALSE) FUNCTIONS.
