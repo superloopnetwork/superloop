@@ -5,6 +5,7 @@
 ### INITIALIZE.CONFIGURATION.
 from jinja2 import Environment, FileSystemLoader
 from ciscoconfparse import CiscoConfParse
+from render import process_jinja2_template 
 from multithread import multithread_engine
 from lib.mediators.generic import generic_audit_diff
 from lib.mediators.juniper import juniper_mediator
@@ -20,7 +21,7 @@ import os
 
 home_directory = os.environ.get('HOME')
 
-def mediator(template_list,node_object,auditcreeper,output,remediation):
+def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 	redirect = [] 
 	command = [] 
 	no_diff = 0
@@ -54,16 +55,7 @@ def mediator(template_list,node_object,auditcreeper,output,remediation):
 			template_list = get_sorted_juniper_template_list(template_list)
 #			print("TEMPLATE_LIST FIRST PHASE: {}".format(template_list))
 		for template in template_list:
-			### THIS SECTION OF CODE WILL PROCESS THE TEMPLATE AND OUTPUT TO A *.CONF FILE
-			get_platform_template_directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
-			get_location_template_directory = get_location_directory(node_object[index]['hostname'],node_object[index]['platform'],node_object[index]['type'])
-			env = Environment(loader=FileSystemLoader([get_platform_template_directory,get_location_template_directory]))
-			baseline = env.get_template(template)
-			f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.split('.')[0]) + ".conf", "w") 
-			### GENERATING TEMPLATE BASED ON NODE OBJECT
-			config = baseline.render(nodes = node_object[index])
-			f.write(config) 
-			f.close 
+			process_jinja2_template(node_object,index,template,with_remediation)
 			if(node_object[index]['platform'] == 'cisco' or node_object[index]['platform'] == 'f5'):
 				### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
 				f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
@@ -131,7 +123,7 @@ def mediator(template_list,node_object,auditcreeper,output,remediation):
 		node_configs = []
 		ntw_device_pop = True 
 
-		if(not remediation):
+		if(not with_remediation):
 			print("Only in the device: -")
 			print("Only in the generated config: +")
 			print ("{}".format(node_object[index]['hostname']))
@@ -141,7 +133,7 @@ def mediator(template_list,node_object,auditcreeper,output,remediation):
 
 		### THIS SECTION IS FOR CISCO SYSTEMS PLATFORM ###
 		if node_object[index]['platform'] == 'cisco' or node_object[index]['platform'] == 'f5':
-			generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,output,remediation)
+			generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,output,with_remediation)
 
 		### THIS SECTION IS FOR JUNIPER NETWORKS PLATFORM ###
 		elif node_object[index]['platform'] == 'juniper':

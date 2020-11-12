@@ -59,3 +59,5 @@ def render_config(args):
 
 	else:
 		render(template_list,node_object,auditcreeper_flag,output,with_remediation)
+
+	return None

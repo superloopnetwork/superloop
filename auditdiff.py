@@ -23,7 +23,7 @@ def auditdiff(args):
 	output = True
 	commands = initialize.configuration	
 	argument_node = args.node
-	remediation = False 
+	with_remediation = False 
 
 	if(args.file is None):
 #		print("ARGS.FILE IS NONE")
@@ -60,7 +60,7 @@ def auditdiff(args):
 
 	else:
 		node_create(match_node,node_object)
-		mediator(template_list,node_object,auditcreeper_flag,output,remediation)
+		mediator(template_list,node_object,auditcreeper_flag,output,with_remediation)
 #		print ("THESE ARE THE COMMANDS: {}".format(commands))
 		if(len(initialize.configuration) == 0):
 			pass	

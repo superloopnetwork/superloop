@@ -19,19 +19,10 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 	    template_list = template_list_copy[0]
 #	print("[!] [THE FOLLOWING TEMPLATE(S) IS/ARE RENDERED:]")
 	for index in initialize.element:
-
+		get_platform_template_directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
 		print ("{}".format(node_object[index]['hostname']))
 		for template in template_list:
-		### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE PLATFORM, OS AND TYPE
-			get_platform_template_directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
-			get_location_template_directory = get_location_directory(node_object[index]['hostname'],node_object[index]['platform'],node_object[index]['type'])
-			env = Environment(loader=FileSystemLoader([get_platform_template_directory,get_location_template_directory]),lstrip_blocks = True,trim_blocks=True)
-			baseline = env.get_template(template)
-			f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.strip('jinja2')) + "conf", "w") 
-			config_list = []
-			config = baseline.render(nodes = node_object[index],with_remediation = with_remediation)
-			f.write(config) 
-			f.close 
+			config = process_jinja2_template(node_object,index,template,with_remediation)
 			print("{}{}".format(get_platform_template_directory,template))
 			if(output):
 				print("{}".format(config))
@@ -46,6 +37,25 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 
 		if(auditcreeper):
 			template_list = get_updated_list(template_list_copy)
-		print()
 
 	return None
+
+def process_jinja2_template(node_object,index,template,with_remediation):
+	### THIS CALLS THE DIRECTORY MODULE WHICH WILL RETURN THE CORRECT DIRECTORY PATH BASED ON DEVICE PLATFORM, OS AND TYPE
+	get_platform_template_directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
+	get_location_template_directory = get_location_directory(node_object[index]['hostname'],node_object[index]['platform'],node_object[index]['type'])
+	env = Environment(loader=FileSystemLoader([get_platform_template_directory,get_location_template_directory]),lstrip_blocks = True,trim_blocks=True)
+	baseline = env.get_template(template)
+	f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.strip('jinja2')) + "conf", "w") 
+	config = baseline.render(nodes = node_object[index],with_remediation = with_remediation)
+	f.write(config) 
+	f.close 
+
+	return config
+
+def remediate(input):
+	"""Custom filter"""
+	if with_remediate == True:
+		return input
+	else:
+		return ''
