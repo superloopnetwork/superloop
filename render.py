@@ -42,9 +42,10 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 			### PUSH_CFGS(OUTPUT = TRUE) VS RENDER_CONFIG(OUTPUT = FALSE) FUNCTIONS.
 			if(output!=True):
 				parse_commands(node_object[index],init_config)
+			print()
 
 		if(auditcreeper):
 			template_list = get_updated_list(template_list_copy)
-		print
+		print()
 
 	return None
