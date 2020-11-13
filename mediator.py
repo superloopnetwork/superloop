@@ -1,8 +1,10 @@
-### THIS MODULE RENDERS THE TEMPLATES FROM THE JINJA2 FILES
-### AND PACKAGES THEM INTO A LIST OF LISTS. IT ONLY LOOKS AT THE 
-### SELECTED INDEXES (INIITIALIZE.ELEMENT) OF THE NODE_OBJECT. 
-### THE CONFIGURATIONS ARE STORED IN THE GLOBAL VARIABLE CALL 
-### INITIALIZE.CONFIGURATION.
+"""
+	THIS MODULE RENDERS THE TEMPLATES FROM THE JINJA2 FILES
+	AND PACKAGES THEM INTO A LIST OF LISTS. IT ONLY LOOKS AT THE 
+	SELECTED INDEXES (INIITIALIZE.ELEMENT) OF THE NODE_OBJECT. 
+	THE CONFIGURATIONS ARE STORED IN THE GLOBAL VARIABLE CALL 
+	INITIALIZE.CONFIGURATION.
+"""
 from jinja2 import Environment, FileSystemLoader
 from ciscoconfparse import CiscoConfParse
 from render import process_jinja2_template 
@@ -24,51 +26,64 @@ home_directory = os.environ.get('HOME')
 def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 	redirect = [] 
 	command = [] 
-	no_diff = 0
-	###TEMPLATE_COUNTER IS TO KEEP TRACK OF WHEN THE LAST TEMPLATE ARRIVES IN THE LOOP
 	template_counter = 0
-	### PUSH_CONFIGS IS A LIST OF THE FINAL CONFIGS TO BE PUSHED
-#	push_configs = []
-	### INDEX_POSITION IS THE INDEX OF ALL THE MATCHED FILTER_CONFIG AGAINST THE BACKUP_CONFIGS. THE INDEX IS COMING FROM THE BACKUP_CONFIG
-	index_position = 0
-	### NODE_INDEX KEEPS TRACK OF THE INDEX IN INITIALIZE.NTW_DEVICE. IF REMEDIATION IS NOT REQUIRED (CONFIGS MATCHES TEMPLATE), THEN THE NODE IS POPPED OFF
-	### INITIALIZE.NTW_DEVICE AND NOTHING IS CHANGED ON THAT DEVICE
 	node_index = 0 
-	### AUDIT_FILTER_RE IS THE REGULAR EXPRESSION TO FILTER OUT THE AUDIT FILTER IN EVERY TEMPLATE
-	AUDIT_FILTER_RE = r"\[.*\]"
-	### TEMPLATE_LIST_COPY TAKE A COPY OF THE CURRENT TEMPLATE_LIST
+	AUDIT_FILTER_RE = r'\[.*\]'
 	template_list_original = template_list[:]
 	template_list_copy = template_list
-	if(auditcreeper):
+
+	"""
+	:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
+	:type alt_key_file: list
+	
+	:param command: A list within a list where each element represents per node of commands to execute.
+	:type command: list
+	
+	:param template_counter: Used to keep track of the number of templates it cycles through for Juniper.
+	:type template_counter: int
+	
+	:param node_index: Keeps track of the index in initialize.ntw_device. If remediation is not required (configs matches template), then the node is popped of       initialize.ntw_device and nothing is changed on that device.
+	:type node_index: int
+	
+	:param AUDIT_FILTER_RE: Regular expression to filter out the audit filter in every template.
+	:type AUDIT_FILTER_RE: str
+	
+	:param template_list_original: Take a duplicate copy of template_list
+	:type template_list_original: list
+	
+	:param template_list_copy: Memory reference to template_list
+	:type template_list_copy: list
+	
+	"""
+	"""
+	The mediator is broken up into two sections. The first section of code will gather all rendered configs first as it's required for all platforms 
+	(Cisco, Juniper & F5). Juniper does not require backup-configs in order to be diff'ed. The diff is server (node) side processed and the results 
+	are returned back to superloop. Cisco platforms will require backup-configs (get_config) where the diffs are processed locally.
+	"""
+	if auditcreeper:
 		template_list = template_list_copy[0]
-#	print "TEMPLATE_LIST: {}".format(template_list)
-	### THIS SECTION OF CODE WILL GATHER ALL RENDERED CONFIGS FIRST AS IT'S REQUIRED FOR ALL PLATFORMS (CISCO & JUNIPER)
-	### JUNIPER DOES NOT REQUIRE BACKUP-CONFIGS IN ORDER TO BE DIFFED SO INSTEAD IT WILL JUST PUSH (PUSH_CFGS) THE TEMPLATE AND PERFORM THE DIFF ON THE DEVICE ITSELF.
-	### CISCO WILL REQUIRE BACKUP-CONFIGS (GET_CONFIG)
 	for index in initialize.element:
-		### INITIALIZING RENDERED_CONFIG
 		rendered_config = []
-		if(node_object[index]['platform'] == 'juniper'):
-			### RENDERED_CONFIG IS TO ACCOMODATE JUNIPER PLATFORM BY APPENDING A 'LOAD REPLACE TERMINAL' TO GET THE DIFF OUTPUT
-			rendered_config.append('load replace terminal')
-			### THIS WILL RETURN A SORTED JUNIPER TEMPLATE LIST BASED ON JUNIPER'S 'SHOW CONFIGURATION' OUTPUT
+		if node_object[index]['platform'] == 'juniper':
+			"""
+                Juniper's diff output are always in a certain stanza order. 
+                The template_list ordered processed may very well not be in the 
+                same order as Juniper's. In order to keep it consistent, we must 
+                call the function get_sorted_juniper_template() and it will 
+                return a sorted Juniper's stanza list.
+			"""
 			template_list = get_sorted_juniper_template_list(template_list)
-#			print("TEMPLATE_LIST FIRST PHASE: {}".format(template_list))
+			rendered_config.append('load replace terminal')
 		for template in template_list:
 			process_jinja2_template(node_object,index,template,with_remediation)
-			if(node_object[index]['platform'] == 'cisco' or node_object[index]['platform'] == 'f5'):
-				### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
-				f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
-				init_config = f.readlines()
-				### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
+			"""
+				Compiling the rendered configs from template and preparing
+				for pushing to node.
+			"""
 			if(node_object[index]['platform'] == 'juniper'):
 				template_counter = template_counter + 1
-	
-				### THIS SECTION OF CODE WILL OPEN THE RENDERED-CONFIG *.CONF FILE AND STORE IN RENDERED_CONFIG AS A LIST
 				f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
 				init_config = f.readlines()
-				### RENDERED_CONFIG IS A LIST OF ALL THE CONFIGS THAT WAS RENDERED FROM THE TEMPLATES (SOURCE OF TRUTH)
-	
 				for config_line in init_config:
 					strip_config = config_line.strip('\n')
 					### THIS WILL REMOVE ANY LINES THAT ARE EMPTY OR HAS A '!' MARK
