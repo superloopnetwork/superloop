@@ -1,28 +1,26 @@
+""" 
+	Main executable file for superloop. A symbolic link should be created as a global command for ease of use.	
+"""
 #!/usr/bin/python3
-# VARIABLES LIKE "--node" OR "--file" ARE HOW IT'S BEING READ WHEN PASSED IN.
-# args.node OR args.file IS HOW YOU REFER TO THE USER INPUT
-
 #import sys
 #sys.path.append('/usr/local/lib/python3.x/dist-packages/superloop')
+import argparse
+import initialize
+import os
 from auditdiff import auditdiff
 from pull_cfgs import pull_cfgs
 from push_cfgs import push_cfgs
 from push_local import push_local
+from push_acl import push_acl
 from render_config import render_config
 from exec_cmd import exec_cmd 
 from ssh_connect import ssh_connect
 from modifydb import append
 from modifydb import remove 
 from node_list import node_list
-import argparse
-import os
-import initialize
 
 def main():
-
-	os.system('clear')
 	initialize.variables()
-
 	parser = argparse.ArgumentParser()
 	subparsers = parser.add_subparsers()
 
