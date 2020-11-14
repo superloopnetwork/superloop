@@ -7,7 +7,7 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
   3. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
   4. ciscoconfparse - A library to help parse out Cisco (or similiar) CLI configs (https://pypi.org/project/ciscoconfparse/).
   5. yaml - YAML is a human-readable data-serialization language (https://en.wikipedia.org/wiki/YAML).
-  6. f5-sdk - F5 Networks SDK to allow communication with F5 BigIP LTMs
+  6. jinja2 - template engine for Python (https://jinja.palletsprojects.com/en/2.11.x/)
 
 ## Support
 
@@ -17,7 +17,7 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
 | Cisco NXOS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |      -     |      x      |
 | Cisco ASA  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
 | Juniper OS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
-|F5 BigIP LTM|              |             |       x     |    x   |      x      |            |               |      -     |      x      |
+|F5 BigIP LTM|       x      |             |       x     |    x   |      x      |            |               |      -     |      x      |
 
 ## Install
 
