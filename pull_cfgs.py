@@ -1,8 +1,7 @@
-### THIS MODULE PULLS CONFIGS FROM ONE/MULTIPLE/ALL NODES BASED ON THE INPUTED ARGUMENT NODE.
-### NODE_OBJECT IS A LIST OF DICTIONARY COMPILED BY THE 
-### PROCESSDB MODULE. IT PROCESSES THE INFORMATION FROM THE
-### NODES.YAML FILE AND STORES IT INTO A LIST OF DICTIONARY.
-
+"""
+	This module controls the pulling of configs.
+"""
+import initialize
 from processdb import process_nodes
 from search import search_node
 from search import node_element 
@@ -10,19 +9,29 @@ from render import render
 from node_create import node_create
 from multithread import multithread_engine
 from confirm import confirm
-import initialize
 
 def pull_cfgs(args):
-
-	redirect = []
-	auditcreeper = False
-	commands = initialize.configuration
-	argument_node = args.node 
 	argument_confirm = args.confirm
+	argument_node = args.node 
+	commands = initialize.configuration
 	output = False
-	remediation = False
-	with_remediation = False
+	redirect = []
+	"""
+		:param argument_configm: Argument accepted as boolean
+		:type augument_confirm: bool
 
+		:param argument_node: Argument accepted as regular expression.
+		:type augument_node: str
+		
+		:param commands: Referenced to global variable commands which keeps track of all commands per node.
+		:type commands: list
+
+		:param output: Flag to output to stdout.  
+		:type ext: bool 
+		
+		:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
+		:type alt_key_file: list
+	"""
 	try:
 		if argument_confirm is None or argument_confirm.lower() == 'true':
 			confirm_flag = True 
@@ -30,30 +39,30 @@ def pull_cfgs(args):
 			confirm_flag = False
 		else:
 			raise argparse.ArgumentTypeError('Boolean value expected.')
-
-		### NODE_OBJECT IS A LIST OF ALL THE NODES IN THE DATABASE WITH ALL ATTRIBUTES
 		node_object = process_nodes()
-	
-		### MATCH_NODE IS A LIST OF NODES THAT MATCHES THE ARGUEMENTS PASSED IN BY USER
 		match_node = search_node(argument_node,node_object)
+		"""
+			:param node_object: All node(s) in the database with all attributes.
+			:type node_object: list
 	
+			:param match_node: Nodes that matches the arguements passed in by user.
+			:type match_node: list
+		"""
 		if len(match_node) == 0:
-			print("[+] [NO MATCHING NODES AGAINST DATABASE]")
-			print("")
-	
+			print('+ No matching node(s) found in database.')
+			print('')
 		else:
 			node_element(match_node,node_object)
 			node_create(match_node,node_object)	
 			for index in initialize.element:
 				redirect.append('pull_cfgs')
-	
-			if confirm_flag:
+			if(confirm_flag):
 				confirm(redirect,commands)
 			else:
 				multithread_engine(initialize.ntw_device,redirect,commands)
-			print("")
-
+			print('')
 	except Exception as error:
-		print("ExceptionError: an exception occured")
+		print('ExceptionError: an exception occured')
 		print(error)
 
+	return None

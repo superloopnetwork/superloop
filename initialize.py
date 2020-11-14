@@ -1,11 +1,9 @@
-
+"""
+	This module define the global variables.
+"""
 def variables():
-
 	### NTW_DEVICE IS A LIST OF THE MATCHED NODES
 	global ntw_device
-
-	### TYPE IS A LIST OF THE MATCH NODE'S TYPE (FIREWALL, SWITCH OR ROUTER)
-	global templates 
 
 	### ELEMENT IS A LIST OF THE INDEXES OF ALL THE MATCHED NODES
 	global element
@@ -29,3 +27,29 @@ def variables():
 	configuration = []
 	rendered_config = []
 	backup_config = []
+
+	"""
+		:param ntw_device: All matched nodes.
+		:type ntw_device: list
+		
+		:param element: All indexes of matched nodes.
+		:type element: int
+		
+		:param element_policy: All 
+		:type element_policy: int
+
+		:param commands: Referenced to global variable commands which keeps track of all commands per node.
+		:type commands: list
+		
+		:param ext: File extention
+		:type ext: str 
+		
+		:param output: Flag to output to stdout.  
+		:type ext: bool 
+		
+		:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
+		:type alt_key_file: list
+		
+		:param with_remediation: Current function to remediate or not remediate.  
+		:type ext: bool 
+	"""
