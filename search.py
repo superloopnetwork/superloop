@@ -1,3 +1,6 @@
+"""
+	This module controls the searching of nodes and templates.
+"""
 import re
 import initialize
 from processdb import process_json
