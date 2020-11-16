@@ -1,5 +1,5 @@
 """
-	This module controls the rendering of templates.
+	This module processes the rendering of templates.
 """
 import initialize
 import re
@@ -9,7 +9,11 @@ from get_property import get_location_directory
 from get_property import get_updated_list
 from parse_cmd import parse_commands
 
+home_directory = os.environ.get('HOME')
+
 def render(template_list,node_object,auditcreeper,output,with_remediation):
+	global with_remediate
+	with_remediate = with_remediation
 	template_list_copy = template_list
 	if auditcreeper:
 	    template_list = template_list_copy[0]
@@ -21,15 +25,13 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 			print("{}{}".format(get_platform_template_directory,template))
 			if(output):
 				print("{}".format(config))
-			f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.replace('jinja2','')) + "conf", "r")
+			f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.replace('jinja2','')) + "conf", "r")
 			init_config = f.readlines()
 			"""
 				The below parse_commands() function will only get executed if
 				it needs to store commands in the global variable initialize.configuration
 				for push. push_cfgs(output = True) vs render_config(output = False) functions.
 			"""
-			### THE BELOW PARSE_COMMANDS FUNCTION WILL ONLY GET EXECUTED IF NEEDS TO STORE COMMANDS IN THE GLOBAL VARILABLE INITIALIZE.CONFIGURATION FOR PUSH
-			### PUSH_CFGS(OUTPUT = TRUE) VS RENDER_CONFIG(OUTPUT = FALSE) FUNCTIONS.
 			if output!=True:
 				parse_commands(node_object[index],init_config)
 			print()
@@ -43,7 +45,7 @@ def process_jinja2_template(node_object,index,template,with_remediation):
 	get_location_template_directory = get_location_directory(node_object[index]['hostname'],node_object[index]['platform'],node_object[index]['type'])
 	env = Environment(loader=FileSystemLoader([get_platform_template_directory,get_location_template_directory]),lstrip_blocks = True,trim_blocks=True)
 	baseline = env.get_template(template)
-	f = open("/rendered-configs/{}.{}".format(node_object[index]['hostname'],template.strip('jinja2')) + "conf", "w") 
+	f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.strip('jinja2')) + "conf", "w") 
 	config = baseline.render(nodes = node_object[index],with_remediation = with_remediation)
 	f.write(config) 
 	f.close 

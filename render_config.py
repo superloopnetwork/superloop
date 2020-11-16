@@ -1,8 +1,6 @@
-### THIS MODULE CONTROLS THE RENDERING OF THE TEMPLATES.
-### NODE_OBJECT IS A LIST OF DICTIONARY COMPILED BY THE 
-### PROCESSDB MODULE. IT PROCESSES THE INFORMATION FROM THE
-### NODES.YAML FILE AND STORES IT INTO A LIST OF DICTIONARY.
-
+"""
+	This module controls the rendering of templates.
+"""
 from lib.objects.basenode import BaseNode
 from processdb import process_nodes
 from processdb import process_templates
