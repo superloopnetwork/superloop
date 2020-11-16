@@ -1,5 +1,5 @@
 # superloop
-Inspired by a wide array of toolsets (unamed) used and developed by a leading social media tech company in the Bay Area for network automation, I have attempted to create my own version.
+Inspired by a wide array of toolsets (unamed) used and developed by a leading social media tech company in the Bay Area for network automation, I have created my own version of framework.
 
 ## Prerequisites
   1. Python 3.6 or higher.
