@@ -85,6 +85,8 @@ def get_syntax(node_object,index):
 		syntax = 'ios'
 	elif node_object[index]['platform'] == 'juniper' and node_object[index]['type'] == 'switch':
 		syntax = 'junos'
+	elif node_object[index]['platform'] == 'f5' and node_object[index]['type'] == 'loadbalancer':
+		syntax = 'ios'
 
 	return syntax
 
