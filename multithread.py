@@ -21,7 +21,7 @@ def multithread_engine(ntw_object,redirect,commands):
 		elif(redirect[index] == 'push_cfgs' or redirect[index] == 'get_config' or redirect[index] == 'get_diff'):
 			arguments = commands[index]
 			element = index
-		my_thread = threading.Thread(target=getattr(delayed_detection(),ntw_object[index],redirect[element]) , args=(arguments,))
+		my_thread = threading.Thread(delayed_detection(),target=getattr(ntw_object[index],redirect[element]) , args=(arguments,))
 		my_thread.start()
 		index = index + 1
 	main_thread = threading.currentThread()
