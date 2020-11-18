@@ -2,6 +2,7 @@
 	This module processes the rendering of templates.
 """
 import initialize
+import os
 import re
 from jinja2 import Environment, FileSystemLoader
 from get_property import get_template_directory

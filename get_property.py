@@ -45,8 +45,8 @@ def get_template_directory(platform,opersys,device_type):
 		directory = '{}/templates/juniper/junos/vfirewall/'.format(home_directory)
 	elif platform == 'juniper' and opersys == 'junos' and device_type == 'router':
 		directory = '{}/templates/juniper/junos/router/'.format(home_directory)
-	elif platform == 'f5' and opersys == 'bigip' and device_type == 'loadbalancer':
-		directory = '{}/templates/f5/bigip/ltm/'.format(home_directory)
+	elif platform == 'f5' and opersys == 'tmsh' and device_type == 'loadbalancer':
+		directory = '{}/templates/f5/tmsh/ltm/'.format(home_directory)
 
 	return directory
 
