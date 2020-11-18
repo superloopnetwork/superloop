@@ -78,6 +78,7 @@ def get_syntax(node_object,index):
 		This will return the correct syntax used for CiscoConfParse
 		based on device platform.
 	"""
+	syntax = ''
 	if node_object[index]['platform'] == 'cisco' and node_object[index]['type'] == 'firewall':
 		syntax = 'asa'
 	elif node_object[index]['platform'] == 'cisco' and node_object[index]['type'] == 'switch':
