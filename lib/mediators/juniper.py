@@ -1,3 +1,6 @@
+"""
+	This mediator is a juniper audit diff supporting the Juniper platforms.
+"""
 import re
 import initialize
 import os
