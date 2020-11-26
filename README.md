@@ -186,6 +186,7 @@ root@devvm:~# tree ~/templates/
 |           |-- security.jinja2
 |           `-- system.jinja2
 
+```
 Let's look at a simple Cisco platform jinja2 template as an example.
 ```
 root@devvm:~/superloop# cat ~/templates/cisco/ios/switch/base.jinja2 
@@ -215,7 +216,95 @@ ip dhcp pool DATA
 ``` 
 Look at 'ip dhcp pool DATA'. The next line of config has an indentation. The parent is considered 'ip dhcp pool DATA' and the child are anything below that section. superloop is inteligent enough to render the remaining 3 lines of configs without having to include it into the audit_filter.
 
-Let's take a look at some Juniper templates. As discussed above, I have these templates in a hierarchy
+Let's take a look at some Juniper templates.
+```
+root@devvm:~# cat ~/templates/juniper/junos/router/interfaces.jinja2   
+{% import 'common.jinja2' as variable%}
+replace: interfaces {
+{%- for port in variable.INTERFACES %} 
+    {{ port }} { 
+        unit 0 { 
+            family inet { 
+                        {% if port == 'ge-0/0/1' %}
+                filter {
+                        input edge_inbound_softlayer;
+                        output edge_outbound_softlayer;
+                    }
+                    sampling {
+                        input;
+                    }
+            {%- endif -%} 
+            {% if 'er1' in nodes.hostname %} 
+                address {{ variable.INTERFACES[port]['er1_ip'] }}; 
+            {% elif 'er2' in nodes.hostname %} 
+                address {{ variable.INTERFACES[port]['er2_ip'] }}; 
+            {% endif %} 
+            } 
+        } 
+    }{% endfor %} 
+} 
+```
+In this example, you can see I imported a 'common.jinja2' file with the namespace as 'variable'. common.jinja2 is treated as a master variable file for a paricular region/data center. With this method, management is made simple and clean. Should you ever need to make a change on an existing value, you will only need to touch the common.jina2 file and the rest is taken care of.
+```
+{% set PRIVATE_NETWORK = '10.0.0.0' %}
+{% set PRIVATE_PREFIX = '10.136' %}
+{% set PUBLIC_PREFIX = '200.10.10' %}
+{% set PUBLIC_MASK = '23' %}
+{% set DEFAULT_ROUTE = '0.0.0.0/0' %}
+{% set SUPERLOOP_BGP_PEER_PREFIX = '182.94.24' %}
+{% set SUPERLOOP_BGP_PEER1 = '172.50.60.4' %}
+{% set SUPERLOOP_BGP_PEER1 = '182.94.24.58' %}
+{% set SUPERLOOP_BGP_PEER2 = '182.94.24.59' %}
+{% set SUPERLOOP_NETWORK_1 = '172.50.60.0' %}
+{% set SUPERLOOP_NETWORK_1_MASK = '28' %}
+{% set SUPERLOOP_NETWORK_1_NEXTHOP = '172.50.60.1' %}
+{% set AUTONOMOUS_SYSTEM = '65565' %}
+ 
+{% set INTERFACES = {
+  'ge-0/0/0': { 
+        'er1_ip': PUBLIC_PREFIX ~ '.17/28',
+        'er2_ip': PUBLIC_PREFIX ~ '.18/28'
+  },
+  'ge-0/0/1': { 
+        'er1_ip': SUPERLOOP_BGP_PEER_PREFIX ~ '.4/' ~ SUPERLOOP_NETWORK_1_MASK,
+        'er2_ip': SUPERLOOP_BGP_PEER_PREFIX ~ '.2/' ~ SUPERLOOP_NETWORK_1_MASK
+  },
+  'ge-0/0/2': { 
+        'er1_ip': PUBLIC_PREFIX ~ '.33/30',
+        'er2_ip': PUBLIC_PREFIX ~ '.34/30'
+  },
+  'fxp0': { 
+        'er1_ip': PRIVATE_PREFIX ~ '.33/30',
+        'er2_ip': PRIVATE_PREFIX ~ '.34/30'
+  }
+}
+%}
+
+{% set ROUTING_OPTIONS= {
+  'static_route_1': { 
+        'destination': PUBLIC_PREFIX ~ '.0/' ~ PUBLIC_MASK,
+        'next_hop': 'discard'
+  },
+  'static_route_2': { 
+        'destination': SUPERLOOP_BGP_PEER1 ~ '/32',
+        'next_hop': SUPERLOOP_NETWORK_1_NEXTHOP
+  },
+  'static_route_3': { 
+        'destination': SUPERLOOP_BGP_PEER2 ~ '/32',
+        'next_hop': SUPERLOOP_NETWORK_1_NEXTHOP
+  },
+  'static_route_4': { 
+        'destination': PRIVATE_NETWORK ~ '/8',
+        'next_hop': PRIVATE_PREFIX ~ '.0.1'
+  },
+  'static_route_5': { 
+        'destination': DEFAULT_ROUTE,
+        'next_hop': SUPERLOOP_NETWORK_1_NEXTHOP,
+                'preference': '175'
+  }
+}
+%}
+```
 
 Now that I have explained the basic operations, onto the fun stuff!
 
