@@ -244,7 +244,33 @@ replace: interfaces {
     }{% endfor %} 
 } 
 ```
-In this example, you can see I imported a 'common.jinja2' file with the namespace as 'variable'. common.jinja2 is treated as a master variable file for a paricular region/data center. With this method, management is made simple and clean. Should you ever need to make a change on an existing value, you will only need to touch the common.jina2 file and the rest is taken care of.
+```
+root@devvm:~# cat ~/templates/juniper/junos/router/routing-options.jinja2  
+{% import 'common.jinja2' as variable%}
+replace: routing-options {
+    static {
+    {% for route in variable.ROUTING_OPTIONS %}
+      {% if variable.ROUTING_OPTIONS[route]['next_hop'] == 'discard' %}
+        route {{ variable.ROUTING_OPTIONS[route]['destination'] }} {{ variable.ROUTING_OPTIONS[route]['next_hop'] }};
+      {% elif variable.ROUTING_OPTIONS[route]['destination'] == variable.DEFAULT_ROUTE %}
+        route {{ variable.ROUTING_OPTIONS[route]['destination'] }} {
+            next-hop {{ variable.ROUTING_OPTIONS[route]['next_hop'] }};
+            preference {{ variable.ROUTING_OPTIONS[route]['preference'] }};
+      {% else %}
+        route {{ variable.ROUTING_OPTIONS[route]['destination'] }} next-hop {{ variable.ROUTING_OPTIONS[route]['next_hop'] }};
+     {% endif %}
+    {% endfor %}
+        }
+    }
+{%- if 'er1' in nodes.hostname %}  
+    router-id {{ variable.SUPERLOOP_BGP_PEER1 }};
+{% elif 'er2' in nodes.hostname %}
+    router-id {{ variable.SUPERLOOP_BGP_PEER2 }};
+{% endif %}
+    autonomous-system {{ variable.AUTONOMOUS_SYSTEM }};
+}
+```
+In these examples, you can see I imported a 'common.jinja2' file with the namespace as 'variable'. common.jinja2 is treated as a master variable file for a paricular region/data center. With this method, management is made simple and clean. Should you ever need to make a change on an existing value, you will only need to touch the common.jina2 file and the rest is taken care of.
 ```
 {% set PRIVATE_NETWORK = '10.0.0.0' %}
 {% set PRIVATE_PREFIX = '10.136' %}
