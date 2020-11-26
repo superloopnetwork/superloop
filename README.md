@@ -143,9 +143,50 @@ root@devvm:~/database# cat templates.yaml
   - ~/templates/cisco/ios/switch/hostname.jinja2
   - ~/templates/cisco/ios/switch/dhcp.jinja2
 ```
-I've structured the hierarchy based on vendor, os and the type. You should do the same in order to keep your templates orderly. Whatever hierarchy you choose, you will need to update/modify in the directory.py file to reflect (default path /templates/).
+I've structured the hierarchy based on vendor, os and the type. You should do the same in order to keep your templates orderly. Whatever hierarchy you choose, you will need to update/modify in the directory.py file to reflect (default path /templates/). Below is an example of how it can be organized.
+```
+root@devvm:~# tree ~/templates/
+/root/templates/
+|-- cisco
+|   |-- ios
+|   |   |-- router
+|   |   |   |-- logging.jinja2
+|   |   |   |-- service.jinja2
+|   |   |   `-- snmp.jinja2
+|   |   `-- switch
+|   |       |-- base.jinja2
+|   |       |-- logging.jinja2
+|   |       |-- service.jinja2
+|   |       `-- snmp.jinja2
+|   `-- nxos
+|       |-- router
+|       |   |-- logging.jinja2
+|       |   |-- service.jinja2
+|       |   `-- snmp.jinja2
+|       `-- switch
+|           |-- base.jinja2
+|           |-- logging.jinja2
+|           |-- service.jinja2
+|           `-- snmp.jinja2
+|-- juniper
+|   `-- junos
+|       |-- router
+|       |   |-- interfaces.jinja2
+|       |   |-- policy-options.jinja2
+|       |   |-- protocols.jinja2
+|       |   |-- routing-options.jinja2
+|       |   |-- security.jinja2
+|       |   |-- snmp.jinja2
+|       |   `-- system.jinja2
+|       `-- vfirewall
+|           |-- interfaces.jinja2
+|           |-- policy-options.jinja2
+|           |-- routing-instances.jinja2
+|           |-- routing-options.jinja2
+|           |-- security.jinja2
+|           `-- system.jinja2
 
-Let's look at a simple jinja2 template as an example.
+Let's look at a simple Cisco platform jinja2 template as an example.
 ```
 root@devvm:~/superloop# cat ~/templates/cisco/ios/switch/base.jinja2 
 {# audit_filter = ['hostname.*'] #}
@@ -159,7 +200,7 @@ Notice there is a section called 'audit_filter' at the top of file. This audit f
 ['hostname.*','service.*','username.*']
 ```
 
-You may also have a template that consist of one or several levels deep like so.
+You may also have a template that consist of one or several levels deep like so...
 ```
 root@devvm:~/superloop# cat ~/templates/cisco/ios/switch/dhcp.jinja2
 {# audit_filter = ['ip dhcp.*'] #}
@@ -172,7 +213,9 @@ ip dhcp pool DATA
  default-router 10.10.20.1 
  dns-server 8.8.8.8 
 ``` 
-Look at 'ip dhcp pool DATA'. The next line of config has an indentation. superloop is inteligent enough to render the remaining 3 lines of configs without having to include it into the audit_filter.
+Look at 'ip dhcp pool DATA'. The next line of config has an indentation. The parent is considered 'ip dhcp pool DATA' and the child are anything below that section. superloop is inteligent enough to render the remaining 3 lines of configs without having to include it into the audit_filter.
+
+Let's take a look at some Juniper templates. As discussed above, I have these templates in a hierarchy
 
 Now that I have explained the basic operations, onto the fun stuff!
 
