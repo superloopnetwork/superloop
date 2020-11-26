@@ -212,7 +212,7 @@ ip dhcp pool DATA
  default-router 10.10.20.1 
  dns-server 8.8.8.8 
 ``` 
-Look at 'ip dhcp pool DATA'. The next line of config has an indentation. The parent is considered 'ip dhcp pool DATA' and the child are anything below that section. superloop is inteligent enough to render the remaining 3 lines of configs without having to include it into the audit_filter.
+Look at 'ip dhcp pool DATA'. The next line of config has an indentation. The parent is considered 'ip dhcp pool DATA' and the child are anything below that section. superloop is inteligent enough to parse the remaining 3 lines of configs without having to include it into the audit_filter.
 
 Let's take a look at some Juniper templates.
 ```
