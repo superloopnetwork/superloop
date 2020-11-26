@@ -29,9 +29,9 @@ This will install superloop along with all required dependencies to the director
 
 IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
 
-Move 'superloop.py' file to one of your $PATH directory and remove the *.py extention. Set the permission to 755. (replace python3.x with your correct python version)
+Create a symbolic link of 'superloop.py' and place it in '/usr/local/bin/'. Set the permission to 755. (replace python3.x with your correct python version)
 ```
-$ mv /usr/local/lib/python3.x/dist-packages/superloop/superloop.py /usr/local/bin/superloop
+$ ln -s /usr/local/lib/python3.x/dist-packages/superloop/superloop.py /usr/local/bin/superloop
 $ chmod 755 /usr/local/bin/superloop
 ```
 Now uncomment the following code within ```/usr/local/bin/superloop``` near the top:
@@ -41,9 +41,7 @@ Now uncomment the following code within ```/usr/local/bin/superloop``` near the 
 ```
 So it looks like this . . . . 
 ```
-#!/usr/bin/env python
-# VARIABLES LIKE "--node" OR "--file" ARE HOW IT'S BEING READ WHEN PASSED IN.
-# args.node OR args.file IS HOW YOU REFER TO THE USER INPUT
+#!/usr/bin/python3
 import sys
 sys.path.append('/usr/local/lib/python3.x/dist-packages/superloop')
 from auditdiff import auditdiff
