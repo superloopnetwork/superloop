@@ -54,69 +54,58 @@ class BaseNode(object):
 		return device_type['{}'.format(self.opersys)]
 
 	def push_cfgs(self,commands):
-
 		self.connect()
 		output = self.net_connect.enable()
-
 		if self.platform == 'cisco' and self.opersys == 'ios':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
 			save = self.net_connect.send_command('write memory')
 			print(output)
 			print(save)
-
 		elif self.platform == 'cisco' and self.opersys == 'nxos':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
 			save = self.net_connect.send_command('copy running-config startup-config')
 			print(output)
 			print(save)
-
 		elif self.platform == 'juniper':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
 			self.net_connect.commit(and_quit=True)
 			print(output)
-
 		elif self.platform == 'vyatta':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
 			self.net_connect.commit()
 			print(output)
-
 		elif self.platform == 'f5':
 			output = self.net_connect.send_config_set(commands,enter_config_mode=False,exit_config_mode=False)
 			save = self.net_connect.send_command('save sys config')
 			print(output)
 			print(save)
-
 		self.net_connect.disconnect()
 
 	def pull_cfgs(self,command):
-
-		if self.platform == 'cisco':
-			command = 'show running-config'
-
+		scp_flag = False
+		method = 'pull_cfgs'
+		if self.platform == 'cisco' and self.opersys == 'ios':
+			command = 'show running-config | exclude ntp clock-period'
 		elif self.platform == 'cisco' and self.opersys == 'nxos':
 			command = 'show running-config | exclude Time'
-
 		elif self.platform == 'juniper':
 			command = 'show configuration'
-
 		elif(self.platform == 'vyatta'):
 			command = 'show configuration commands'
-
 		elif self.platform == 'f5':
 			command = 'list ltm one-line'
 			self.scpconnect()
 			self.write_to_file(command)
+			scp_flag = True
 			self.scp_connect.scp_get_file('/var/local/ucs/config.ucs', '{}/backup-configs/{}'.format(self.get_home_directory(),self.hostname))
 			self.scp_connect.close()
 			self.net_connect.disconnect()
-
-		if self.platform != 'f5':
+		if self.platform != 'juniper' or self.platform != 'f5':
 			self.connect()
-			self.write_to_file(command)
+			self.write_to_file(command,scp_flag,method)
 			self.net_connect.disconnect()
 
 	def exec_cmd(self,command):
-
 		self.connect()
 		output = self.net_connect.send_command(command)
 		output = output.replace('\n','\n{}: '.format(self.hostname))
@@ -131,30 +120,59 @@ class BaseNode(object):
 		return home_directory
 
 	def get_config(self,command):
-
-		command = 'show running-config'
-		f = open("{}/backup-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w")
+		scp_flag = False
+		method = 'get_config'
+		if self.platform == 'cisco':
+			command = 'show running-config'
+		elif self.platform == 'f5':
+			command = 'list one-line'
 		self.connect()
-		output = self.net_connect.send_command_expect(command)
-		f.write(output)
-		f.close()
+		self.write_to_file(command,scp_flag,method)
 		self.net_connect.disconnect()
 
 	def get_diff(self,commands):
-
-		f = open("{}/diff-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w")
+		scp_flag = False
+		method = 'get_diff'
 		self.connect()
-		output = self.net_connect.send_config_set(commands)
-#		print(output)
-		f.write(output)
-		f.close()
+		self.write_to_file(command,scp_flag,method)
 		self.net_connect.disconnect()
 
-	def write_to_file(self,command):
+	def get_subdir(self,scp_flag):
+		if self.platform == 'f5' and scp_flag:
+			sub_dir = 'ucs'
+		else:
+			sub_dir = 'configs'
+		return sub_dir
 
-		if(not os.path.isdir('{}/backup-configs/'.format(self.get_home_directory()))):
-			os.makedirs('{}/backup-configs/'.format(self.get_home_directory()))
-		with open("{}/backup-configs/{}".format(self.get_home_directory(),self.hostname) + ".conf", "w") as file:
-			output = self.net_connect.send_command_expect(command)
-			file.write(output)
-			file.close()
+	def write_to_file(self,command,scp_flag,method):
+		if method == 'pull_cfgs':
+			extention = ''
+			if self.platform == 'juniper' and 'display set' in command:
+				extention = '.set'
+			else:
+				extention = '.conf'
+			self.check_and_mkdir(scp_flag,method)
+			with open('{}/backup-configs/{}/{}{}'.format(self.get_home_directory(),self.get_subdir(scp_flag),self.hostname,extention), "w") as file:
+				output = self.net_connect.send_command(command)
+				file.write(output)
+				file.close()
+		elif method == 'get_config':
+			self.check_and_mkdir(scp_flag,method)
+			with open('{}/backup-configs/{}'.format(self.get_home_directory(),self.hostname) + ".conf", "w") as file:
+				output = self.net_connect.send_command(command)
+				file.write(output)
+				file.close()
+		elif method == 'get_diff':
+			self.check_and_mkdir(scp_flag,method)
+			with open('{}/diff-configs/{}'.format(self.get_home_directory(),self.hostname) + ".conf", "w") as file:
+				output = self.net_connect.send_command(command)
+				file.write(output)
+				file.close()
+
+	def check_and_mkdir(self,scp_flag,method):
+		if method == 'pull_cfgs':
+			os.makedirs('{}/backup-configs/{}/'.format(self.get_home_directory(),self.get_subdir(scp_flag)),exist_ok=True)
+		elif method == 'get_config':
+			os.makedirs('{}/backup-configs/{}'.format(self.get_home_directory(),self.hostname),exist_ok=True)	
+		elif method == 'get_diff':
+			os.makedirs('{}/diff-configs/{}'.format(self.get_home_directory(),self.hostname),exist_ok=True)

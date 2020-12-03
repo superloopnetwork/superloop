@@ -13,10 +13,12 @@ def parse_commands(node_object,init_config):
 	config_list = []
 	if node_object['platform'] == 'juniper':
 		config_list.append('load replace terminal')
+	elif node_object['platform'] == 'f5':
+		config_list.append('load sys config merge from-terminal')
 	for config_line in init_config:
 		strip_config = config_line.strip('\n')
 		config_list.append(strip_config)
-	if node_object['platform'] == 'juniper':
+	if node_object['platform'] == 'juniper' or node_object['platform'] == 'f5':
 		config_list.append('\x04')
 	commands.append(config_list)
 

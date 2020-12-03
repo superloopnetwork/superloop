@@ -1,9 +1,9 @@
+#!/usr/bin/python3
 """ 
 	Main executable file for superloop. A symbolic link should be created as a global command for ease of use.	
 """
-#!/usr/bin/python3
-#import sys
-#sys.path.append('/usr/local/lib/python3.x/dist-packages/superloop')
+import sys
+sys.path.append('/root/superloop/')
 import argparse
 import initialize
 import os
