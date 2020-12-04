@@ -134,7 +134,7 @@ class BaseNode(object):
 		scp_flag = False
 		method = 'get_diff'
 		self.connect()
-		self.write_to_file(command,scp_flag,method)
+		self.write_to_file(commands,scp_flag,method)
 		self.net_connect.disconnect()
 
 	def get_subdir(self,scp_flag):
@@ -165,7 +165,7 @@ class BaseNode(object):
 		elif method == 'get_diff':
 			self.check_and_mkdir(scp_flag,method)
 			with open('{}/diff-configs/{}'.format(self.get_home_directory(),self.hostname) + ".conf", "w") as file:
-				output = self.net_connect.send_command(command)
+				output = self.net_connect.send_config_set(command)
 				file.write(output)
 				file.close()
 

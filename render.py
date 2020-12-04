@@ -46,7 +46,8 @@ def process_jinja2_template(node_object,index,template,with_remediation):
 	get_location_template_directory = get_location_directory(node_object[index]['hostname'],node_object[index]['platform'],node_object[index]['type'])
 	env = Environment(loader=FileSystemLoader([get_platform_template_directory,get_location_template_directory]),lstrip_blocks = True,trim_blocks=True)
 	baseline = env.get_template(template)
-	f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.strip('jinja2')) + "conf", "w") 
+	os.makedirs('{}/rendered-configs/'.format(home_directory),exist_ok=True)
+	f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.replace('jinja2','')) + "conf", "w") 
 	config = baseline.render(nodes = node_object[index],with_remediation = with_remediation)
 	f.write(config) 
 	f.close 
