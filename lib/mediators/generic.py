@@ -70,6 +70,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				remove_lines=True, 
 				debug=False
 		)
+		print(push_configs)
 		if(len(push_configs) == 0):
 			if(output):
 				print("{}{} (none)".format(directory,template))
@@ -79,7 +80,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				print("{}{}".format(directory,template))
 			for line in push_configs:
 				search = parse_backup_configs.find_objects(r"^{}".format(line))
-				if re.search(r'^no',line):
+				if re.search(r'^no',line) or re.search(r'\sno',line):
 					line = re.sub("no","",line)
 					print("-{}".format(line))
 				elif(len(search) == 0):
