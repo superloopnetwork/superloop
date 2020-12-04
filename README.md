@@ -29,9 +29,9 @@ This will install superloop along with all required dependencies to the director
 
 IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
 
-Move 'superloop.py' file to one of your $PATH directory and remove the *.py extention. Set the permission to 755. (replace python3.x with your correct python version)
+Create a symbolic link of 'superloop.py' and place it in '/usr/local/bin/'. Set the permission to 755. (replace python3.x with your correct python version)
 ```
-$ mv /usr/local/lib/python3.x/dist-packages/superloop/superloop.py /usr/local/bin/superloop
+$ ln -s /usr/local/lib/python3.x/dist-packages/superloop/superloop.py /usr/local/bin/superloop
 $ chmod 755 /usr/local/bin/superloop
 ```
 Now uncomment the following code within ```/usr/local/bin/superloop``` near the top:
@@ -41,9 +41,7 @@ Now uncomment the following code within ```/usr/local/bin/superloop``` near the 
 ```
 So it looks like this . . . . 
 ```
-#!/usr/bin/env python
-# VARIABLES LIKE "--node" OR "--file" ARE HOW IT'S BEING READ WHEN PASSED IN.
-# args.node OR args.file IS HOW YOU REFER TO THE USER INPUT
+#!/usr/bin/python3
 import sys
 sys.path.append('/usr/local/lib/python3.x/dist-packages/superloop')
 from auditdiff import auditdiff
@@ -143,9 +141,51 @@ root@devvm:~/database# cat templates.yaml
   - ~/templates/cisco/ios/switch/hostname.jinja2
   - ~/templates/cisco/ios/switch/dhcp.jinja2
 ```
-I've structured the hierarchy based on vendor, os and the type. You should do the same in order to keep your templates orderly. Whatever hierarchy you choose, you will need to update/modify in the directory.py file to reflect (default path /templates/).
+I've structured the hierarchy based on vendor, os and the type. You should do the same in order to keep your templates orderly. Whatever hierarchy you choose, you will need to update/modify in the directory.py file to reflect (default path /templates/). Below is an example of how it can be organized.
+```
+root@devvm:~# tree ~/templates/
+/root/templates/
+|-- cisco
+|   |-- ios
+|   |   |-- router
+|   |   |   |-- logging.jinja2
+|   |   |   |-- service.jinja2
+|   |   |   `-- snmp.jinja2
+|   |   `-- switch
+|   |       |-- base.jinja2
+|   |       |-- logging.jinja2
+|   |       |-- service.jinja2
+|   |       `-- snmp.jinja2
+|   `-- nxos
+|       |-- router
+|       |   |-- logging.jinja2
+|       |   |-- service.jinja2
+|       |   `-- snmp.jinja2
+|       `-- switch
+|           |-- base.jinja2
+|           |-- logging.jinja2
+|           |-- service.jinja2
+|           `-- snmp.jinja2
+|-- juniper
+|   `-- junos
+|       |-- router
+|       |   |-- interfaces.jinja2
+|       |   |-- policy-options.jinja2
+|       |   |-- protocols.jinja2
+|       |   |-- routing-options.jinja2
+|       |   |-- security.jinja2
+|       |   |-- snmp.jinja2
+|       |   `-- system.jinja2
+|       `-- vfirewall
+|           |-- interfaces.jinja2
+|           |-- policy-options.jinja2
+|           |-- routing-instances.jinja2
+|           |-- routing-options.jinja2
+|           |-- security.jinja2
+|           `-- system.jinja2
 
-Let's look at a simple jinja2 template as an example.
+```
+Let's look at a simple Cisco platform jinja2 template as an example.
 ```
 root@devvm:~/superloop# cat ~/templates/cisco/ios/switch/base.jinja2 
 {# audit_filter = ['hostname.*'] #}
@@ -154,12 +194,12 @@ no hostname
 {% endif %}
 hostname {{ nodes.hostname }}
 ```
-Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'hostname'. If you have additional lines that you want superloop to look at, simply append strings seperated by a comma like so... 
+Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates of Cisco and F5 platform. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'hostname'. If you have additional lines that you want superloop to look at, simply append strings seperated by a comma like so... 
 ```
 ['hostname.*','service.*','username.*']
 ```
 
-You may also have a template that consist of one or several levels deep like so.
+You may also have a template that consist of one or several levels deep like so...
 ```
 root@devvm:~/superloop# cat ~/templates/cisco/ios/switch/dhcp.jinja2
 {# audit_filter = ['ip dhcp.*'] #}
@@ -172,7 +212,123 @@ ip dhcp pool DATA
  default-router 10.10.20.1 
  dns-server 8.8.8.8 
 ``` 
-Look at 'ip dhcp pool DATA'. The next line of config has an indentation. superloop is inteligent enough to render the remaining 3 lines of configs without having to include it into the audit_filter.
+Look at 'ip dhcp pool DATA'. The next line of config has an indentation. The parent is considered 'ip dhcp pool DATA' and the child are anything below that section. superloop is inteligent enough to parse the remaining 3 lines of configs without having to include it into the audit_filter.
+
+Let's take a look at some Juniper templates.
+```
+root@devvm:~# cat ~/templates/juniper/junos/router/interfaces.jinja2   
+{% import 'common.jinja2' as variable%}
+replace: interfaces {
+{%- for port in variable.INTERFACES %} 
+    {{ port }} { 
+        unit 0 { 
+            family inet { 
+                        {% if port == 'ge-0/0/1' %}
+                filter {
+                        input edge_inbound_softlayer;
+                        output edge_outbound_softlayer;
+                    }
+                    sampling {
+                        input;
+                    }
+            {%- endif -%} 
+            {% if 'er1' in nodes.hostname %} 
+                address {{ variable.INTERFACES[port]['er1_ip'] }}; 
+            {% elif 'er2' in nodes.hostname %} 
+                address {{ variable.INTERFACES[port]['er2_ip'] }}; 
+            {% endif %} 
+            } 
+        } 
+    }{% endfor %} 
+} 
+```
+```
+root@devvm:~# cat ~/templates/juniper/junos/router/routing-options.jinja2  
+{% import 'common.jinja2' as variable%}
+replace: routing-options {
+    static {
+    {% for route in variable.ROUTING_OPTIONS %}
+      {% if variable.ROUTING_OPTIONS[route]['next_hop'] == 'discard' %}
+        route {{ variable.ROUTING_OPTIONS[route]['destination'] }} {{ variable.ROUTING_OPTIONS[route]['next_hop'] }};
+      {% elif variable.ROUTING_OPTIONS[route]['destination'] == variable.DEFAULT_ROUTE %}
+        route {{ variable.ROUTING_OPTIONS[route]['destination'] }} {
+            next-hop {{ variable.ROUTING_OPTIONS[route]['next_hop'] }};
+            preference {{ variable.ROUTING_OPTIONS[route]['preference'] }};
+      {% else %}
+        route {{ variable.ROUTING_OPTIONS[route]['destination'] }} next-hop {{ variable.ROUTING_OPTIONS[route]['next_hop'] }};
+     {% endif %}
+    {% endfor %}
+        }
+    }
+{%- if 'er1' in nodes.hostname %}  
+    router-id {{ variable.SUPERLOOP_BGP_PEER1 }};
+{% elif 'er2' in nodes.hostname %}
+    router-id {{ variable.SUPERLOOP_BGP_PEER2 }};
+{% endif %}
+    autonomous-system {{ variable.AUTONOMOUS_SYSTEM }};
+}
+```
+In these examples, you can see I imported a 'common.jinja2' file with the namespace as 'variable'. common.jinja2 is treated as a master variable file for a paricular region/data center. With this method, management is made simple and clean. Should you ever need to make a change on an existing value, you will only need to touch the common.jina2 file and the rest is taken care of.
+```
+{% set PRIVATE_NETWORK = '10.0.0.0' %}
+{% set PRIVATE_PREFIX = '10.136' %}
+{% set PUBLIC_PREFIX = '200.10.10' %}
+{% set PUBLIC_MASK = '23' %}
+{% set DEFAULT_ROUTE = '0.0.0.0/0' %}
+{% set SUPERLOOP_BGP_PEER_PREFIX = '182.94.24' %}
+{% set SUPERLOOP_BGP_PEER1 = '172.50.60.4' %}
+{% set SUPERLOOP_BGP_PEER1 = '182.94.24.58' %}
+{% set SUPERLOOP_BGP_PEER2 = '182.94.24.59' %}
+{% set SUPERLOOP_NETWORK_1 = '172.50.60.0' %}
+{% set SUPERLOOP_NETWORK_1_MASK = '28' %}
+{% set SUPERLOOP_NETWORK_1_NEXTHOP = '172.50.60.1' %}
+{% set AUTONOMOUS_SYSTEM = '65565' %}
+ 
+{% set INTERFACES = {
+  'ge-0/0/0': { 
+        'er1_ip': PUBLIC_PREFIX ~ '.17/28',
+        'er2_ip': PUBLIC_PREFIX ~ '.18/28'
+  },
+  'ge-0/0/1': { 
+        'er1_ip': SUPERLOOP_BGP_PEER_PREFIX ~ '.4/' ~ SUPERLOOP_NETWORK_1_MASK,
+        'er2_ip': SUPERLOOP_BGP_PEER_PREFIX ~ '.2/' ~ SUPERLOOP_NETWORK_1_MASK
+  },
+  'ge-0/0/2': { 
+        'er1_ip': PUBLIC_PREFIX ~ '.33/30',
+        'er2_ip': PUBLIC_PREFIX ~ '.34/30'
+  },
+  'fxp0': { 
+        'er1_ip': PRIVATE_PREFIX ~ '.33/30',
+        'er2_ip': PRIVATE_PREFIX ~ '.34/30'
+  }
+}
+%}
+
+{% set ROUTING_OPTIONS= {
+  'static_route_1': { 
+        'destination': PUBLIC_PREFIX ~ '.0/' ~ PUBLIC_MASK,
+        'next_hop': 'discard'
+  },
+  'static_route_2': { 
+        'destination': SUPERLOOP_BGP_PEER1 ~ '/32',
+        'next_hop': SUPERLOOP_NETWORK_1_NEXTHOP
+  },
+  'static_route_3': { 
+        'destination': SUPERLOOP_BGP_PEER2 ~ '/32',
+        'next_hop': SUPERLOOP_NETWORK_1_NEXTHOP
+  },
+  'static_route_4': { 
+        'destination': PRIVATE_NETWORK ~ '/8',
+        'next_hop': PRIVATE_PREFIX ~ '.0.1'
+  },
+  'static_route_5': { 
+        'destination': DEFAULT_ROUTE,
+        'next_hop': SUPERLOOP_NETWORK_1_NEXTHOP,
+                'preference': '175'
+  }
+}
+%}
+```
 
 Now that I have explained the basic operations, onto the fun stuff!
 
