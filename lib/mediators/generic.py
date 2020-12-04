@@ -70,7 +70,6 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				remove_lines=True, 
 				debug=False
 		)
-		print(push_configs)
 		if(len(push_configs) == 0):
 			if(output):
 				print("{}{} (none)".format(directory,template))
