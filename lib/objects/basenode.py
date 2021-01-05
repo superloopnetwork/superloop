@@ -88,6 +88,8 @@ class BaseNode(object):
 			command = 'show running-config | exclude ntp clock-period'
 		elif self.platform == 'cisco' and self.opersys == 'nxos':
 			command = 'show running-config | exclude Time'
+		elif self.platform == 'cisco' and self.opersys == 'asa':
+			command = 'show running-config'
 		elif self.platform == 'juniper':
 			command = 'show configuration'
 		elif(self.platform == 'vyatta'):
