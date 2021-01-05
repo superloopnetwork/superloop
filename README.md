@@ -17,7 +17,7 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
 | Cisco NXOS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |      -     |      x      |
 | Cisco ASA  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
 | Juniper OS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
-|F5 BigIP LTM|       x      |             |       x     |    x   |      x      |            |               |      -     |      x      |
+|F5 BigIP LTM|       x      |      x      |       x     |    x   |      x      |            |               |      -     |      x      |
 
 ## Install
 
