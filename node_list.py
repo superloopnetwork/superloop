@@ -61,9 +61,10 @@ def node_list(args):
 			print('    {')
 			print("\t\"hostname\": \"{}\"\n" \
 				  "\t\"mgmt_ip\": \"{}\"\n" \
-				  "\t\"os\": \"{}\"\n" \
 				  "\t\"platform\": \"{}\"\n" \
-				  "\t\"type\": \"{}\"".format(node_object[index]['hostname'],node_object[index]['ip'],node_object[index]['opersys'],node_object[index]['platform'],node_object[index]['type']) + "\n" \
+				  "\t\"os\": \"{}\"\n" \
+				  "\t\"type\": \"{}\"\n" \
+				  "\t\"role\": \"{}\"".format(node_object[index]['hostname'],node_object[index]['ip'],node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'],node_object[index]['role']) + "\n" \
 				  "\t\"data\": {\n" \
 				  "\t    \"managed_configs\": {" \
 			)
