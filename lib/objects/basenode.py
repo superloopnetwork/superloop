@@ -5,7 +5,7 @@ import os
 
 class BaseNode(object):
 
-	def __init__(self,ip,hostname,platform,opersys,type):
+	def __init__(self,ip,hostname,platform,opersys,type,role):
 
 		self.ip = ip
 		self.hostname = hostname
@@ -14,6 +14,7 @@ class BaseNode(object):
 		self.platform = platform
 		self.opersys = opersys
 		self.type = type
+		self.role = role 
 
 	def connect(self):
 
