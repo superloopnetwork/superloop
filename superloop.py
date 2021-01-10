@@ -63,10 +63,10 @@ def main():
 
 	host_cmd= subparsers.add_parser('host')
 	host_subparsers = host_cmd.add_subparsers(dest='parser_host')
-	host_add_cmd = host_subparsers.add_parser('add')
+	host_add_cmd = host_subparsers.add_parser('add', help='Add node to database')
 	host_add_cmd.set_defaults(func=append)
 	host_add_cmd.add_argument('ip', help='Specify IP address of host')
-	host_remove_cmd = host_subparsers.add_parser('remove')
+	host_remove_cmd = host_subparsers.add_parser('remove', help='Remove node from database')
 	host_remove_cmd.set_defaults(func=remove)
 	host_remove_cmd.add_argument('argument')
 	host_exec_cmd = host_subparsers.add_parser('exec')
