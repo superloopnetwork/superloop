@@ -22,12 +22,14 @@ def snmp(argument_node):
 	platform = snmp_parse_platform(snmp_platform)
 	operating_system = snmp_parse_opersys(platform)
 	type = snmp_parse_type(snmp_platform)
+	role = snmp_parse_role(snmp_hostname)
 	data = [{
 		'hostname': '{}'.format(snmp_hostname),
 		'ip': "{}".format(ip),
 		'platform':'{}'.format(platform),
 		'opersys':'{}'.format(operating_system),
-		'type':'{}'.format(type)
+		'type':'{}'.format(type),
+		'role':'{}'.format(role)
 		}
 	]
 
@@ -46,7 +48,7 @@ def snmp_ip(snmp_hostname):
 
 def snmp_parse_platform(snmp_platform):
 	platform = snmp_platform.split(' ')[0].lower() 
-	if(platform == 'big-ip'):
+	if platform == 'big-ip':
 		platform = 'f5'
 	
 	return platform
@@ -55,7 +57,7 @@ def snmp_parse_opersys(platform):
 	opersys = ''
 
 	if platform == 'cisco':
-		opersys = 'nxos'
+		opersys = 'ios'
 	elif platform == 'juniper':
 		opersys = 'junos'
 	elif platform == 'vyatta':
@@ -78,3 +80,17 @@ def snmp_parse_type(snmp_platform):
             device_type = 'invalid'
 
     return device_type
+
+def snmp_parse_role(snmp_hostname):
+	if 'fw' in snmp_hostname:
+		role = 'fw'
+	elif 'rt' in snmp_hostname:
+		role = 'rt'
+	elif 'sw' in snmp_hostname:
+		role = 'sw'
+	elif 'SRV' in snmp_hostname:
+		role = 'server'
+	elif 'NAS' in snmp_hostname:
+		role = 'storage'
+
+	return role
