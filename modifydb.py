@@ -36,7 +36,7 @@ def append(args):
 			with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
 				file.write('---\n')
 				file.write(updated_database)
-			print('\u2713 SNMP discovery successful.')
+			print('+ SNMP discovery successful.')
 			print('+ New node appended to database.')
 	except FileNotFoundError as error:
 		print('FileNotFoundError: file cannot be found')
