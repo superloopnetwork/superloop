@@ -31,12 +31,11 @@ def append(args):
 			with open('{}/database/nodes.yaml'.format(home_directory),'a') as file:
 				file.write(new_node)
 			database = process_nodes()
-			database.sort(key=sorted)
-			updated_database = yaml.dump(database,default_flow_style = False)
+			sorted_database = sortdb(database)
+			updated_database = yaml.dump(sorted_database,default_flow_style = False)
 			with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
 				file.write('---\n')
 				file.write(updated_database)
-		
 			print('\u2713 SNMP discovery successful.')
 			print('+ New node appended to database.')
 	except FileNotFoundError as error:
@@ -71,3 +70,19 @@ def remove(args):
 		print('+ Node does not exist in database.')
 	
 	return None
+
+def sortdb(database):
+	sorted_database = []
+	hostnames = []
+
+	for node in database:
+		hostnames.append(node['hostname'])
+	hostnames.sort()
+	for hostname in hostnames:
+		for node in database:
+			if hostname == node['hostname']:
+				sorted_database.append(node)
+			else:
+				continue
+
+	return sorted_database 
