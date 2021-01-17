@@ -59,12 +59,14 @@ def node_list(args):
 		template_list = template_list_copy[0]
 		for index in initialize.element:
 			print('    {')
-			print("\t\"hostname\": \"{}\"\n" \
+			print("\t\"created_at\": \"{}\"\n" \
+				  "\t\"created_by\": \"{}\"\n" \
+				  "\t\"hostname\": \"{}\"\n" \
 				  "\t\"mgmt_ip\": \"{}\"\n" \
 				  "\t\"platform\": \"{}\"\n" \
 				  "\t\"os\": \"{}\"\n" \
 				  "\t\"type\": \"{}\"\n" \
-				  "\t\"role\": \"{}\"".format(node_object[index]['hostname'],node_object[index]['ip'],node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'],node_object[index]['role']) + "\n" \
+				  "\t\"role\": \"{}\"".format(node_object[index]['created_at'],node_object[index]['created_by'],node_object[index]['hostname'],node_object[index]['ip'],node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'],node_object[index]['role']) + "\n" \
 				  "\t\"data\": {\n" \
 				  "\t    \"managed_configs\": {" \
 			)

@@ -5,8 +5,10 @@ import os
 
 class BaseNode(object):
 
-	def __init__(self,ip,hostname,platform,opersys,type,role):
+	def __init__(self,created_at,created_by,ip,hostname,platform,opersys,type,role):
 
+		self.created_at = created_at
+		self.created_by = created_by
 		self.ip = ip
 		self.hostname = hostname
 		self.username = os.environ.get('USERNAME') 

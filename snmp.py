@@ -4,9 +4,11 @@
 from snmp_helper import snmp_get_oid
 from snmp_helper import snmp_extract 
 from processdb import process_models
+import datetime
 import re
 import subprocess
 import socket
+import time
 import os
 
 def snmp(argument_node):
@@ -24,6 +26,9 @@ def snmp(argument_node):
 	type = snmp_parse_type(snmp_platform)
 	role = snmp_parse_role(snmp_hostname)
 	data = [{
+		'created_at': '{}'.format(timestamp()),
+		'created_by': '{}'.format(os.environ.get('USER')),
+		'hostname': '{}'.format(snmp_hostname),
 		'hostname': '{}'.format(snmp_hostname),
 		'ip': "{}".format(ip),
 		'platform':'{}'.format(platform),
@@ -95,3 +100,9 @@ def snmp_parse_role(snmp_hostname):
 		role = 'storage'
 
 	return role
+
+def timestamp():
+	time_stamp =time.time()
+	date_time = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
+
+	return date_time
