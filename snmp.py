@@ -82,6 +82,7 @@ def snmp_parse_type(snmp_platform):
     return device_type
 
 def snmp_parse_role(snmp_hostname):
+	role = ''
 	if 'fw' in snmp_hostname:
 		role = 'fw'
 	elif 'rt' in snmp_hostname:
