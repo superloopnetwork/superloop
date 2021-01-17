@@ -58,10 +58,14 @@ def ssh_connect(args):
 				if(len(initialize.element) == 1):
 			 		subprocess.call('ssh {}@{} -p {}'.format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
 				else:
-					ssh_id = int(input('Enter ID to SSH to: '))
-					ssh_id = ssh_id - 1
-					if ssh_id + 1 < 1:
-						print('IndexError: incorrect connection id')
+					try:
+						ssh_id = int(input('Enter ID to SSH to: '))
+						ssh_id = ssh_id - 1
+						if ssh_id + 1 < 1:
+							print('IndexError: incorrect connection id')
+					except KeyboardInterrupt as error:
+						print('')
+						print('Terminating...')
 					else:
 						port = get_port(node_object,initialize.element,ssh_id)
 						subprocess.call('ssh {}@{} -p {}'.format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
