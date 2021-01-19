@@ -17,6 +17,7 @@ from exec_cmd import exec_cmd
 from ssh_connect import ssh_connect
 from modifydb import append
 from modifydb import remove 
+from modifydb import update 
 from node_list import node_list
 
 def main():
@@ -66,10 +67,14 @@ def main():
 		host_subparsers = host_cmd.add_subparsers(dest='parser_host')
 		host_add_cmd = host_subparsers.add_parser('add', help='Add node to database')
 		host_add_cmd.set_defaults(func=append)
-		host_add_cmd.add_argument('ip', help='Specify IP address of host')
+		host_add_cmd.add_argument('argument', help='Specify IP address of host')
 		host_remove_cmd = host_subparsers.add_parser('remove', help='Remove node from database')
 		host_remove_cmd.set_defaults(func=remove)
 		host_remove_cmd.add_argument('argument')
+		host_update_cmd = host_subparsers.add_parser('update', help='Update node attribute in database')
+		host_update_cmd.set_defaults(func=update)
+		host_update_cmd.add_argument('argument')
+		host_update_cmd.add_argument('-a','--attribute', dest='attribute', help='Specify the attribute that you would like to update')
 		host_exec_cmd = host_subparsers.add_parser('exec')
 		host_exec_cmd.set_defaults(func=exec_cmd)
 		host_exec_cmd.add_argument('command', help='Specify command to execute on device')

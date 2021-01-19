@@ -17,14 +17,21 @@ def snmp(argument_node):
 	SNMP_PORT = 161
 	HOSTNAME_OID = '1.3.6.1.2.1.1.5.0'
 	PLATFORM_OID = '1.3.6.1.2.1.1.1.0' 
+	SERIAL_OID = {
+			'JUNIPER_OID':'1.3.6.1.4.1.2636.3.1.3.0',
+			'CISCO_OID':'1.3.6.1.4.1.9.5.1.2.19.0',
+			'CISCO_ASA_OID':'1.3.6.1.2.1.47.1.1.1.1.11.1'
+		}
 	device = (argument_node,SNMP_COMMUNITY_STRING,SNMP_PORT)
 	snmp_hostname = snmp_data(device,HOSTNAME_OID,SNMP_PORT)
 	snmp_platform = snmp_data(device,PLATFORM_OID,SNMP_PORT)
 	ip = snmp_ip(snmp_hostname)
 	platform = snmp_parse_platform(snmp_platform)
-	operating_system = snmp_parse_opersys(platform)
-	type = snmp_parse_type(snmp_platform)
+	operating_system = snmp_parse_opersys(platform,snmp_hostname)
+	type = snmp_parse_type(platform,snmp_hostname)
 	role = snmp_parse_role(snmp_hostname)
+	SERIAL_NUM_OID = get_serial_oid(platform,type,SERIAL_OID)
+	serial_num = snmp_data(device,SERIAL_NUM_OID,SNMP_PORT)
 	data = [{
 		'created_at': '{}'.format(timestamp()),
 		'created_by': '{}'.format(os.environ.get('USER')),
@@ -34,7 +41,8 @@ def snmp(argument_node):
 		'platform':'{}'.format(platform),
 		'opersys':'{}'.format(operating_system),
 		'type':'{}'.format(type),
-		'role':'{}'.format(role)
+		'role':'{}'.format(role),
+		'serial_num':'{}'.format(serial_num)
 		}
 	]
 
@@ -58,48 +66,72 @@ def snmp_parse_platform(snmp_platform):
 	
 	return platform
 
-def snmp_parse_opersys(platform):
-	opersys = ''
+def snmp_parse_opersys(platform,snmp_hostname):
+	device_opersys = ''
+	operating_systems = {
+			'juniper':'junos',
+			'cisco':'nxos',
+			'vyatta':'vyos',
+			'f5':'tmsh'
+		}
+	for vendor in operating_systems:
+		if vendor == platform and 'fw' in snmp_hostname:
+			device_opersys = 'asa' 
+			break
+		elif vendor == platform:
+			device_opersys = operating_systems[vendor]
+			break
+		else:
+			device_opersys = 'invalid'
 
-	if platform == 'cisco':
-		opersys = 'ios'
-	elif platform == 'juniper':
-		opersys = 'junos'
-	elif platform == 'vyatta':
-		opersys = 'vyos'
-	elif(platform == 'f5'):
-		opersys = 'tmsh'
+	return device_opersys
 
-	return opersys
+def snmp_parse_type(snmp_platform,snmp_hostname):
+	models = {
+			'juniper':'vfirewall',
+			'cisco':'switch',
+			'f5':'loadbalancer'
+		}
+	for model in models:
+		if model == snmp_platform and 'fw' in snmp_hostname:
+			device_type = 'firewall'
+			break
+		elif model in snmp_platform:
+			device_type = models[model]
+			break
+		else:
+			device_type = 'invalid'
 
-def snmp_parse_type(snmp_platform):
-    snmp_platform = snmp_platform.lower()
-    models = process_models()
-    models_list = models.keys()
-
-    for model in models_list:
-        if model in snmp_platform:
-            device_type = models[model]
-            break
-        else:
-            device_type = 'invalid'
-
-    return device_type
+	return device_type
 
 def snmp_parse_role(snmp_hostname):
-	role = ''
-	if 'fw' in snmp_hostname:
-		role = 'fw'
-	elif 'rt' in snmp_hostname:
-		role = 'rt'
-	elif 'sw' in snmp_hostname:
-		role = 'sw'
-	elif 'SRV' in snmp_hostname:
-		role = 'server'
-	elif 'NAS' in snmp_hostname:
-		role = 'storage'
+	device_role = ''
+	roles = {
+	'fw':'fw',
+	'sw':'sw',
+	'vsrx':'vsrx',
+	'NAS':'NAS',
+	'SRV':'SRV'
+	}
+	for role in roles:
+		if role in snmp_hostname:
+			device_role = roles[role]
+			break
+		else:
+			device_role = 'invalid'
 
-	return role
+	return device_role
+
+def get_serial_oid(platform,type,SERIAL_OID):
+	serial_oid = ''
+	if platform == 'juniper':
+		serial_oid = SERIAL_OID['JUNIPER_OID']
+	elif platform == 'cisco' and type == 'switch':
+		serial_oid = SERIAL_OID['CISCO_OID']
+	elif platform == 'cisco' and type == 'firewall':
+		serial_oid = SERIAL_OID['CISCO_ASA_OID']
+
+	return serial_oid
 
 def timestamp():
 	time_stamp =time.time()

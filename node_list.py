@@ -72,6 +72,8 @@ def node_list(args):
 			)
 			for template in template_list:
 				print ("\t\t   \"{}\"".format(template))
+			print("\t\"serial_num\": \"{}\"" \
+			.format(node_object[index]['serial_num']))
 			print('\t     }')
 			print('\t }')
 			template_list = get_updated_list(template_list_copy)

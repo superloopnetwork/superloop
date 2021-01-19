@@ -9,7 +9,7 @@ import yaml
 home_directory = os.environ.get('HOME')
 
 def append(args):
-	argument_node = args.ip
+	argument_node = args.argument
 	database = process_nodes()
 	device = snmp(argument_node)
 	index = 0
@@ -71,6 +71,24 @@ def remove(args):
 	
 	return None
 
+def update(args):
+	attribute = args.attribute
+	database = process_nodes()
+	index = 0
+	try:
+		for element in database:
+			if element['hostname'] == args.argument or element['ip'] == args.argument:
+				break
+			else:
+				index = index + 1
+		"""
+			Identified node from list.
+		"""
+		print(database[index][attribute])
+	except IndexError as error:
+		print('+ Node does not exist in database.')
+
+	
 def sortdb(database):
 	sorted_database = []
 	hostnames = []
