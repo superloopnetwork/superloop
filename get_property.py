@@ -1,7 +1,9 @@
 """
 	This module holds properties that superloop is required to retrieve.
 """
+import datetime
 import os
+import time
 
 home_directory = os.environ.get('HOME')
 
@@ -141,3 +143,10 @@ def get_location_directory(hostname,platform,type):
 	directory = '{}/templates/{}/common/{}/'.format(home_directory,platform,datacenter_location)
 
 	return directory 
+
+def timestamp():
+    time_stamp =time.time()
+    date_time = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
+
+    return date_time
+

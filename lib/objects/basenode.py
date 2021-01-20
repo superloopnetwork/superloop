@@ -5,7 +5,7 @@ import os
 
 class BaseNode(object):
 
-	def __init__(self,created_at,created_by,ip,hostname,platform,opersys,type,role):
+	def __init__(self,created_at,created_by,ip,hostname,platform,opersys,type,role,serial_num,status,updated_at,updated_by):
 
 		self.created_at = created_at
 		self.created_by = created_by
@@ -17,6 +17,10 @@ class BaseNode(object):
 		self.opersys = opersys
 		self.type = type
 		self.role = role 
+		self.serial_num = serial_num
+		self.status = status
+		self.updated_at = updated_at
+		self.updated_by = updated_by
 
 	def connect(self):
 

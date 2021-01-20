@@ -2,6 +2,7 @@
 	This module allows modification to be made to the database.
 """
 import os
+from get_property import timestamp
 from processdb import process_nodes
 from snmp import snmp
 import yaml
@@ -87,11 +88,13 @@ def update(args):
 		"""
 		try:
 			if attribute == 'data':
-				return print('Attribute \'data\' cannot be modified via host update.')
+				return print('+ Attribute \'data\' cannot be modified via host update.')
 			else:
 				check = str(input('Please confirm you would like to change the value from {} : {} : {} to {} : {} : {}. [y/N]: '.format(database[index]['hostname'],attribute,database[index][attribute],database[index]['hostname'],attribute,amend))) 
 				if check[0] == 'y':
 					database[index][attribute] = amend
+					database[index]['updated_at'] = timestamp()
+					database[index]['updated_by'] = '{}'.format(os.environ.get('USER'))
 					updated_database = yaml.dump(database,default_flow_style = False)
 					try:
 						with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:

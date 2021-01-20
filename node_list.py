@@ -72,13 +72,16 @@ def node_list(args):
 			)
 			for template in template_list:
 				print ("\t\t   \"{}\"".format(template))
-			print("\t\"serial_num\": \"{}\"" \
-			.format(node_object[index]['serial_num']))
 			print('\t     }')
-			print('\t }')
+			print('         }')
+			print("\t\"serial_num\": \"{}\"\n" \
+                  "\t\"status\": \"{}\"\n" \
+                  "\t\"updated_at\": \"{}\"\n" \
+                  "\t\"updated_by\": \"{}\"\n" \
+			.format(node_object[index]['serial_num'],node_object[index]['status'],node_object[index]['updated_at'],node_object[index]['updated_by']))
 			template_list = get_updated_list(template_list_copy)
 			if element_position == len(initialize.element):
-				print('    }')
+				print('        }')
 			else:
 				print('    },')
 			element_position = element_position + 1

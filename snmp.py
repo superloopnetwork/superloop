@@ -42,7 +42,10 @@ def snmp(argument_node):
 		'opersys':'{}'.format(operating_system),
 		'type':'{}'.format(type),
 		'role':'{}'.format(role),
-		'serial_num':'{}'.format(serial_num)
+		'serial_num':'{}'.format(serial_num),
+		'status':'online',
+		'updated_at':'null',
+		'updated_by': 'null'
 		}
 	]
 
