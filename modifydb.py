@@ -73,6 +73,7 @@ def remove(args):
 
 def update(args):
 	attribute = args.attribute
+	amend = args.amend
 	database = process_nodes()
 	index = 0
 	try:
@@ -84,10 +85,27 @@ def update(args):
 		"""
 			Identified node from list.
 		"""
-		print(database[index][attribute])
+		try:
+			check = str(input('Please confirm you would like to change the value from {} : {} : {} to {} : {} : {}. [y/N]: '.format(database[index]['hostname'],attribute,database[index][attribute],database[index]['hostname'],attribute,amend))) 
+			if check[0] == 'y':
+				database[index][attribute] = amend
+				updated_database = yaml.dump(database,default_flow_style = False)
+				try:
+					with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
+						file.write('---\n')
+						file.write(updated_database)
+						print('+ Amendment to database was successful.')
+				except FileNotFoundError as error:
+					print("FileNotFoundError: file cannot be found")
+					print(error)
+			elif check[0] == 'N':
+				return False
+			else:
+				print("RuntimeError: aborted at user request")
+		except Exception as error:
+				print('+ Invalid attribute \'{}\' for \'{}\'. Please check node details via \'superloop node list {}\''.format(attribute,database[index]['hostname'],database[index]['hostname']))
 	except IndexError as error:
 		print('+ Node does not exist in database.')
-
 	
 def sortdb(database):
 	sorted_database = []
