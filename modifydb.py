@@ -50,7 +50,7 @@ def remove(args):
 	index = 0
 	try:
 		for element in database:
-			if element['hostname'] == args.argument or element['ip'] == args.argument:
+			if element['name'] == args.argument or element['ip'] == args.argument:
 				break
 			else:
 				index = index + 1
@@ -79,7 +79,7 @@ def update(args):
 	index = 0
 	try:
 		for element in database:
-			if element['hostname'] == args.argument or element['ip'] == args.argument:
+			if element['name'] == args.argument or element['ip'] == args.argument:
 				break
 			else:
 				index = index + 1
@@ -90,7 +90,7 @@ def update(args):
 			if attribute == 'data':
 				return print('+ Attribute \'data\' cannot be modified via host update.')
 			else:
-				check = str(input('Please confirm you would like to change the value from {} : {} : {} to {} : {} : {}. [y/N]: '.format(database[index]['hostname'],attribute,database[index][attribute],database[index]['hostname'],attribute,amend))) 
+				check = str(input('Please confirm you would like to change the value from {} : {} : {} to {} : {} : {}. [y/N]: '.format(database[index]['name'],attribute,database[index][attribute],database[index]['name'],attribute,amend))) 
 				if check[0] == 'y':
 					database[index][attribute] = amend
 					database[index]['updated_at'] = timestamp()
@@ -109,20 +109,20 @@ def update(args):
 				else:
 					print("RuntimeError: aborted at user request")
 		except Exception as error:
-				print('+ Invalid attribute \'{}\' for \'{}\'. Please check node details via \'superloop node list {}\''.format(attribute,database[index]['hostname'],database[index]['hostname']))
+				print('+ Invalid attribute \'{}\' for \'{}\'. Please check node details via \'superloop node list {}\''.format(attribute,database[index]['name'],database[index]['name']))
 	except IndexError as error:
 		print('+ Node does not exist in database.')
 	
 def sortdb(database):
 	sorted_database = []
-	hostnames = []
+	names = []
 
 	for node in database:
-		hostnames.append(node['hostname'])
-	hostnames.sort()
-	for hostname in hostnames:
+		names.append(node['name'])
+	names.sort()
+	for name in names:
 		for node in database:
-			if hostname == node['hostname']:
+			if name == node['name']:
 				sorted_database.append(node)
 			else:
 				continue

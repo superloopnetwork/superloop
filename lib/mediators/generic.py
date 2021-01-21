@@ -28,7 +28,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 		:param backup_config: Backup configs from the 'show run', 'list ltm' etc...
 		:type backup_config: list
 		"""
-		f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
+		f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['name'],template.split('.')[0]) + ".conf", "r")
 		init_config = f.readlines()
 		for config_line in init_config:
 			strip_config = config_line.strip('\n')
@@ -36,7 +36,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				continue	
 			else:
 				rendered_config.append(strip_config)	
-		f = open("{}/backup-configs/{}".format(home_directory,node_object[index]['hostname']) + ".conf", "r")
+		f = open("{}/backup-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", "r")
 		init_config = f.readlines()
 		for config_line in init_config:
 			strip_config = config_line.strip('\n')
@@ -48,7 +48,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			This will take each element from the audit_filter list and search for the matched lines in backup_config.
 		"""
 		audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
-		parse_backup_configs = CiscoConfParse("{}/backup-configs/{}".format(home_directory,node_object[index]['hostname']) + ".conf", syntax=get_syntax(node_object,index))
+		parse_backup_configs = CiscoConfParse("{}/backup-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", syntax=get_syntax(node_object,index))
 		"""
 			Matched entries are then appended to the filter_backup_config variable. parse_audit_filter() call will find all parent/child.
 		"""

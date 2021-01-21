@@ -12,7 +12,7 @@ from node_create import node_create
 from get_property import get_updated_list
 
 def node_list(args):
-	argument_node = args.hostname
+	argument_node = args.name
 	auditcreeper = True
 	element_position = 1
 	template_list = []
@@ -61,12 +61,12 @@ def node_list(args):
 			print('    {')
 			print("\t\"created_at\": \"{}\"\n" \
 				  "\t\"created_by\": \"{}\"\n" \
-				  "\t\"hostname\": \"{}\"\n" \
+				  "\t\"name\": \"{}\"\n" \
 				  "\t\"mgmt_ip\": \"{}\"\n" \
 				  "\t\"platform\": \"{}\"\n" \
-				  "\t\"os\": \"{}\"\n" \
+				  "\t\"opersys\": \"{}\"\n" \
 				  "\t\"type\": \"{}\"\n" \
-				  "\t\"role\": \"{}\"".format(node_object[index]['created_at'],node_object[index]['created_by'],node_object[index]['hostname'],node_object[index]['ip'],node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'],node_object[index]['role']) + "\n" \
+				  "\t\"role\": \"{}\"".format(node_object[index]['created_at'],node_object[index]['created_by'],node_object[index]['name'],node_object[index]['ip'],node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'],node_object[index]['role']) + "\n" \
 				  "\t\"data\": {\n" \
 				  "\t    \"managed_configs\": {" \
 			)

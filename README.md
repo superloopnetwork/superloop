@@ -83,17 +83,17 @@ nodes.yaml acts as the inventory for all network devices. It must follow the for
 ```
 root@devvm:~/database# cat nodes.yaml 
 ---
-- hostname: core-fw-superloop-toron
+- name: core-fw-superloop-toron
   ip: 10.10.10.10
   platform: cisco
   opersys: ios
   type: firewall
-- hostname: core.sw.superloop.sfran
+- name: core.sw.superloop.sfran
   ip: 20.20.20.20  
   platform: cisco
   opersys: ios
   type: switch 
-- hostname: core.rt.superloop.sjose 
+- name: core.rt.superloop.sjose 
   ip: 30.30.30.30 
   platform: cisco
   opersys: ios
@@ -188,15 +188,15 @@ root@devvm:~# tree ~/templates/
 Let's look at a simple Cisco platform jinja2 template as an example.
 ```
 root@devvm:~/superloop# cat ~/templates/cisco/ios/switch/base.jinja2 
-{# audit_filter = ['hostname.*'] #}
+{# audit_filter = ['name.*'] #}
 {% if with_remediation %}
-no hostname
+no name
 {% endif %}
-hostname {{ nodes.hostname }}
+name {{ nodes.name }}
 ```
-Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates of Cisco and F5 platform. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'hostname'. If you have additional lines that you want superloop to look at, simply append strings seperated by a comma like so... 
+Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates of Cisco and F5 platform. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'name'. If you have additional lines that you want superloop to look at, simply append strings seperated by a comma like so... 
 ```
-['hostname.*','service.*','username.*']
+['name.*','service.*','username.*']
 ```
 
 You may also have a template that consist of one or several levels deep like so...
@@ -232,9 +232,9 @@ replace: interfaces {
                         input;
                     }
             {%- endif -%} 
-            {% if 'er1' in nodes.hostname %} 
+            {% if 'er1' in nodes.name %} 
                 address {{ variable.INTERFACES[port]['er1_ip'] }}; 
-            {% elif 'er2' in nodes.hostname %} 
+            {% elif 'er2' in nodes.name %} 
                 address {{ variable.INTERFACES[port]['er2_ip'] }}; 
             {% endif %} 
             } 
@@ -260,9 +260,9 @@ replace: routing-options {
     {% endfor %}
         }
     }
-{%- if 'er1' in nodes.hostname %}  
+{%- if 'er1' in nodes.name %}  
     router-id {{ variable.SUPERLOOP_BGP_PEER1 }};
-{% elif 'er2' in nodes.hostname %}
+{% elif 'er2' in nodes.name %}
     router-id {{ variable.SUPERLOOP_BGP_PEER2 }};
 {% endif %}
     autonomous-system {{ variable.AUTONOMOUS_SYSTEM }};
@@ -366,7 +366,7 @@ If there are no discrepancies for a specific template, you should see something 
 
 ```
 /templates/cisco/ios/switch/service.jinja2 (none)
-/templates/cisco/ios/switch/hostname.jinja2 (none)
+/templates/cisco/ios/switch/name.jinja2 (none)
 /templates/cisco/ios/switch/dhcp.jinja2 (none)
 /templates/cisco/ios/switch/snmp.jinja2 (none)
 ```
@@ -418,7 +418,7 @@ In this demo, I'm doing a 'show version' for all the devices I have in my databa
 
 ## superloop ssh
 
-Users are now able to take advantage of the 'ssh' menu screen. This feature allows users to quickly search up a device via hostname (doesn't have to be a complete or exactly matched string) and establish a SSH session. It's a very powerful tool in the sense that it support regular expression to filter out certain desired hosts from a lare scale network.
+Users are now able to take advantage of the 'ssh' menu screen. This feature allows users to quickly search up a device via name (doesn't have to be a complete or exactly matched string) and establish a SSH session. It's a very powerful tool in the sense that it support regular expression to filter out certain desired hosts from a lare scale network.
 
 Here is an example of how you would use it:
 ```
@@ -442,35 +442,35 @@ ID      name                    address         platform
 1       core.sw.superloop.sfran 20.20.20.20     cisco
 Password: 
 ```
-* Notice after 'ssh' it expects a positional argument(hostname).
+* Notice after 'ssh' it expects a positional argument(name).
 
 If the search result returns one host, superloop automatically establishes a SSH session.
 
 ## superloop host add/remove
 
-When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is invoked, superloop will connect to the device via snmp. It will pull the neccessary information such as it's hostname and platform to populate it into nodes.yaml.
+When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is invoked, superloop will connect to the device via snmp. It will pull the neccessary information such as it's name and platform to populate it into nodes.yaml.
 
 Let's now look at 'host remove' feature. Just like 'add', 'remove' allows you to remove a node from the database without having to manually edit the nodes.yaml file. Here is how you use it:
 ```
 root@devvm:~/superloop# cat nodes.yaml
 ---
-- hostname: core-fw-superloop-toron
+- name: core-fw-superloop-toron
   ip: 10.10.10.10
   platform: cisco
   opersys: ios
   type: firewall
-- hostname: core.sw.superloop.sfran
+- name: core.sw.superloop.sfran
   ip: 20.20.20.20  
   platform: cisco
   opersys: ios
   type: switch 
-- hostname: core.rt.superloop.sjose 
+- name: core.rt.superloop.sjose 
   ip: 30.30.30.30 
   platform: cisco
   opersys: ios
   type: router
   ```
-Say we wanted to blow out the node 'core.sw.superloop.sfran'. Simply use the following command 'superloop host remove core.sw.superloop.sfran' or 'superloop host remove 20.20.20.20'. It supports both hostname and IP address.
+Say we wanted to blow out the node 'core.sw.superloop.sfran'. Simply use the following command 'superloop host remove core.sw.superloop.sfran' or 'superloop host remove 20.20.20.20'. It supports both name and IP address.
 ```
 root@devvm:~/superloop# superloop host remove core.sw.superloop.sfran
 [-] NODE SUCCESSFULLY REMOVED FROM DATABASE
@@ -478,12 +478,12 @@ root@devvm:~/superloop# superloop host remove core.sw.superloop.sfran
 ```
 root@devvm:~/superloop# cat nodes.yaml
 ---
-- hostname: core-fw-superloop-toron
+- name: core-fw-superloop-toron
   ip: 10.10.10.10
   opersys: ios
   platform: cisco
   type: firewall
-- hostname: core.rt.superloop.sjose
+- name: core.rt.superloop.sjose
   ip: 30.30.30.30
   opersys: ios
   platform: cisco
@@ -493,12 +493,12 @@ root@devvm:~/superloop# cat nodes.yaml
 
 ## superloop node list
 
-We can now leverage the power of 'superloop host add' by having snmp poll more attributes on the node(s) such as the software version, location, serial number etc. Once we have these details in our database file, we are then able list them in cli. This will give us all the details about a particular node. To use this, simply type 'superloop node list <hostname>'. Regular expressions is supported for this feature so if you have multiple hosts you would like to view, you can match it via regex.
+We can now leverage the power of 'superloop host add' by having snmp poll more attributes on the node(s) such as the software version, location, serial number etc. Once we have these details in our database file, we are then able list them in cli. This will give us all the details about a particular node. To use this, simply type 'superloop node list <name>'. Regular expressions is supported for this feature so if you have multiple hosts you would like to view, you can match it via regex.
 ```  
 root@devvm:~/superloop# superloop node list core.*
 [
     {
-        "hostname": "core-fw-superloop-toron"
+        "name": "core-fw-superloop-toron"
         "os": "ios"
         "platform": "cisco"
         "type": "firewall"
@@ -510,7 +510,7 @@ root@devvm:~/superloop# superloop node list core.*
          }
     },
     {
-        "hostname": "core.sw.superloop.sfran"
+        "name": "core.sw.superloop.sfran"
         "os": "ios"
         "platform": "cisco"
         "type": "switch"
@@ -524,7 +524,7 @@ root@devvm:~/superloop# superloop node list core.*
          }
     },
     {
-        "hostname": "core.rt.superloop.sjose"
+        "name": "core.rt.superloop.sjose"
         "os": "ios"
         "platform": "cisco"
         "type": "router"
@@ -541,7 +541,7 @@ Or a particular node...
 root@devvm:~/superloop# superloop node list .*sfran  
 [
     {
-        "hostname": "core.sw.superloop.sfran"
+        "name": "core.sw.superloop.sfran"
         "os": "ios"
         "platform": "cisco"
         "type": "switch"

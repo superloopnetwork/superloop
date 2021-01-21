@@ -5,12 +5,12 @@ import os
 
 class BaseNode(object):
 
-	def __init__(self,created_at,created_by,ip,hostname,platform,opersys,type,role,serial_num,status,updated_at,updated_by):
+	def __init__(self,created_at,created_by,ip,name,platform,opersys,type,role,serial_num,status,updated_at,updated_by):
 
 		self.created_at = created_at
 		self.created_by = created_by
 		self.ip = ip
-		self.hostname = hostname
+		self.name = name
 		self.username = os.environ.get('USERNAME') 
 		self.password = os.environ.get('PASSWORD')
 		self.platform = platform
@@ -24,7 +24,7 @@ class BaseNode(object):
 
 	def connect(self):
 
-		self.net_connect = ConnectHandler(self.ip,self.hostname,self.username,self.password,self.password,device_type=self.get_device_type())
+		self.net_connect = ConnectHandler(self.ip,self.name,self.username,self.password,self.password,device_type=self.get_device_type())
 			
 	def scpconnect(self):
 		self.connect()
@@ -34,11 +34,11 @@ class BaseNode(object):
 
 		datacenter_location = ''
 		if (self.type == 'firewall'):
-			location_list = self.hostname.split('-')	
+			location_list = self.name.split('-')	
 			datacenter_location = location_list[3]
 
 		elif (self.type == 'switch' or self.type == 'router'):
-			location_list = self.hostname.split('.')	
+			location_list = self.name.split('.')	
 			datacenter_location = location_list[3]
 
 		return datacenter_location
@@ -106,7 +106,7 @@ class BaseNode(object):
 			self.scpconnect()
 			self.write_to_file(command)
 			scp_flag = True
-			self.scp_connect.scp_get_file('/var/local/ucs/config.ucs', '{}/backup-configs/{}'.format(self.get_home_directory(),self.hostname))
+			self.scp_connect.scp_get_file('/var/local/ucs/config.ucs', '{}/backup-configs/{}'.format(self.get_home_directory(),self.name))
 			self.scp_connect.close()
 			self.net_connect.disconnect()
 		if self.platform != 'juniper' or self.platform != 'f5':
@@ -117,8 +117,8 @@ class BaseNode(object):
 	def exec_cmd(self,command):
 		self.connect()
 		output = self.net_connect.send_command(command)
-		output = output.replace('\n','\n{}: '.format(self.hostname))
-		output = re.sub(r'^','{}: '.format(self.hostname),output)
+		output = output.replace('\n','\n{}: '.format(self.name))
+		output = re.sub(r'^','{}: '.format(self.name),output)
 		print ("{}".format(output))
 		print("")
 		self.net_connect.disconnect()
@@ -161,19 +161,19 @@ class BaseNode(object):
 			else:
 				extention = '.conf'
 			self.check_and_mkdir(scp_flag,method)
-			with open('{}/backup-configs/{}/{}{}'.format(self.get_home_directory(),self.get_subdir(scp_flag),self.hostname,extention), "w") as file:
+			with open('{}/backup-configs/{}/{}{}'.format(self.get_home_directory(),self.get_subdir(scp_flag),self.name,extention), "w") as file:
 				output = self.net_connect.send_command(command)
 				file.write(output)
 				file.close()
 		elif method == 'get_config':
 			self.check_and_mkdir(scp_flag,method)
-			with open('{}/backup-configs/{}'.format(self.get_home_directory(),self.hostname) + ".conf", "w") as file:
+			with open('{}/backup-configs/{}'.format(self.get_home_directory(),self.name) + ".conf", "w") as file:
 				output = self.net_connect.send_command(command)
 				file.write(output)
 				file.close()
 		elif method == 'get_diff':
 			self.check_and_mkdir(scp_flag,method)
-			with open('{}/diff-configs/{}'.format(self.get_home_directory(),self.hostname) + ".conf", "w") as file:
+			with open('{}/diff-configs/{}'.format(self.get_home_directory(),self.name) + ".conf", "w") as file:
 				output = self.net_connect.send_config_set(command)
 				file.write(output)
 				file.close()
@@ -182,6 +182,6 @@ class BaseNode(object):
 		if method == 'pull_cfgs':
 			os.makedirs('{}/backup-configs/{}/'.format(self.get_home_directory(),self.get_subdir(scp_flag)),exist_ok=True)
 		elif method == 'get_config':
-			os.makedirs('{}/backup-configs/{}'.format(self.get_home_directory(),self.hostname),exist_ok=True)	
+			os.makedirs('{}/backup-configs/{}'.format(self.get_home_directory(),self.name),exist_ok=True)	
 		elif method == 'get_diff':
-			os.makedirs('{}/diff-configs/{}'.format(self.get_home_directory(),self.hostname),exist_ok=True)
+			os.makedirs('{}/diff-configs/{}'.format(self.get_home_directory(),self.name),exist_ok=True)

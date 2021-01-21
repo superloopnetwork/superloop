@@ -15,7 +15,7 @@ import subprocess
 import os
 
 def ssh_connect(args):
-	argument_node = args.hostname
+	argument_node = args.name
 	auditcreeper = False
 	commands = initialize.configuration
 	username = os.environ.get('USERNAME')
@@ -51,7 +51,7 @@ def ssh_connect(args):
 			ssh_id = 0
 			print('{} {: >27} {: >28} {: >26}'.format('id','name','address','platform'))
 			for index in initialize.element:
-				print('{id: {align}{space}} {hostname: {align}{space}} {ip: {align}{space}} {platform: {align}{space}}'.format(id = id,hostname = node_object[index]['hostname'],ip = node_object[index]['ip'],platform = node_object[index]['platform'],align = '<',space = 25))
+				print('{id: {align}{space}} {name: {align}{space}} {ip: {align}{space}} {platform: {align}{space}}'.format(id = id,name = node_object[index]['name'],ip = node_object[index]['ip'],platform = node_object[index]['platform'],align = '<',space = 25))
 				id = id + 1
 			port = get_port(node_object,initialize.element,ssh_id)
 			try:

@@ -20,13 +20,13 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 	    template_list = template_list_copy[0]
 	for index in initialize.element:
 		get_platform_template_directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
-		print ("{}".format(node_object[index]['hostname']))
+		print ("{}".format(node_object[index]['name']))
 		for template in template_list:
 			config = process_jinja2_template(node_object,index,template,with_remediation)
 			print("{}{}".format(get_platform_template_directory,template))
 			if(output):
 				print("{}".format(config))
-			f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.replace('jinja2','')) + "conf", "r")
+			f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['name'],template.replace('jinja2','')) + "conf", "r")
 			init_config = f.readlines()
 			"""
 				The below parse_commands() function will only get executed if
@@ -43,11 +43,11 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 
 def process_jinja2_template(node_object,index,template,with_remediation):
 	get_platform_template_directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
-	get_location_template_directory = get_location_directory(node_object[index]['hostname'],node_object[index]['platform'],node_object[index]['type'])
+	get_location_template_directory = get_location_directory(node_object[index]['name'],node_object[index]['platform'],node_object[index]['type'])
 	env = Environment(loader=FileSystemLoader([get_platform_template_directory,get_location_template_directory]),lstrip_blocks = True,trim_blocks=True)
 	baseline = env.get_template(template)
 	os.makedirs('{}/rendered-configs/'.format(home_directory),exist_ok=True)
-	f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.replace('jinja2','')) + "conf", "w") 
+	f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['name'],template.replace('jinja2','')) + "conf", "w") 
 	config = baseline.render(nodes = node_object[index],with_remediation = with_remediation)
 	f.write(config) 
 	f.close 

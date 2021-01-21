@@ -61,7 +61,7 @@ def main():
 		
 		ssh_cmd = subparsers.add_parser('ssh')
 		ssh_cmd.set_defaults(func=ssh_connect)
-		ssh_cmd.add_argument('hostname', help='Specify hostname(s) to match against. Accepts regular expressions.')
+		ssh_cmd.add_argument('name', help='Specify name(s) to match against. Accepts regular expressions.')
 	
 		host_cmd= subparsers.add_parser('host')
 		host_subparsers = host_cmd.add_subparsers(dest='parser_host')
@@ -85,7 +85,7 @@ def main():
 		node_subparsers = node_cmd.add_subparsers(dest='parser_node')
 		node_list_cmd = node_subparsers.add_parser('list')
 		node_list_cmd.set_defaults(func=node_list)
-		node_list_cmd.add_argument('hostname', help='Specify hostname(s) to match again. Accepts regular expressions.')
+		node_list_cmd.add_argument('name', help='Specify name(s) to match again. Accepts regular expressions.')
 	
 		args = parser.parse_args()
 		args.func(args)

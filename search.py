@@ -28,8 +28,8 @@ def extract_nodes(node_object):
 	node_list = []
 	index = 0
 	for node in node_object:
-		hostname = node_object[index]['hostname']
-		node_list.append(hostname)
+		name = node_object[index]['name']
+		node_list.append(name)
 		index = index + 1
 
 	return node_list	
@@ -46,7 +46,7 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 	element = 0
 	for node in match_node:
 		for node_obj in node_object:
-			if node == node_obj['hostname']:
+			if node == node_obj['name']:
 				"""
 					index variable gets the position in the list and appends it to the global variable 'element'.
 				"""
@@ -92,13 +92,13 @@ def search_policy(policy_list,match_node,node_policy,node_object,auditcreeper):
 	search_result = []
 	for node in match_node:
 		for node_obj in node_object:
-			if node == node_obj['hostname']:
+			if node == node_obj['name']:
 				"""
 					This section will pull out all the templates belonging to the specific
 					platform, operating system and type from the template database.
 				"""
 				for node_pol in node_policy:
-					if node == node_pol['hostname']:
+					if node == node_pol['name']:
 						index = node_object.index(node_obj)
 						initialize.element.append(index)
 						policy_index = node_policy.index(node_pol)
@@ -133,7 +133,7 @@ def node_element(match_node,node_object):
 	index = 0
 	for node in match_node:
 		for node_obj in node_object:
-			if(node in node_obj['hostname']):
+			if(node in node_obj['name']):
 				index = node_object.index(node_obj)
 				initialize.element.append(index)
 

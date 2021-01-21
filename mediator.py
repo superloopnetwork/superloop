@@ -78,7 +78,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 			"""
 			if node_object[index]['platform'] == 'juniper':
 				template_counter = template_counter + 1
-				f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['hostname'],template.split('.')[0]) + ".conf", "r")
+				f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['name'],template.split('.')[0]) + ".conf", "r")
 				init_config = f.readlines()
 				for config_line in init_config:
 					strip_config = config_line.strip('\n')
@@ -149,13 +149,13 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 		if not with_remediation:
 			print("Only in the device: -")
 			print("Only in the generated config: +")
-			print ("{}".format(node_object[index]['hostname']))
+			print ("{}".format(node_object[index]['name']))
 		if node_object[index]['platform'] == 'cisco' or node_object[index]['platform'] == 'f5':
 			generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,output,with_remediation)
 		elif node_object[index]['platform'] == 'juniper':
 			template_list = get_sorted_juniper_template_list(template_list)
 			directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
-			f = open("{}/diff-configs/{}".format(home_directory,node_object[index]['hostname']) + ".conf", "r")
+			f = open("{}/diff-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", "r")
 			init_config = f.readlines()
 			for config_line in init_config:
 				strip_config = config_line.strip('\n')
