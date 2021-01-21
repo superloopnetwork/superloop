@@ -17,12 +17,12 @@ def get_port(node_object,element,ssh_id):
 
 	return port
 
-def get_type(hostname):
-	if('fw' in hostname):
+def get_type(name):
+	if('fw' in name):
 		device_type = 'firewall'
-	elif('rt' in hostname):
+	elif('rt' in name):
 		device_type = 'router'
-	elif('sw' in hostname):
+	elif('sw' in name):
 		device_type = 'switch'
 
 	return device_type
@@ -130,14 +130,14 @@ def get_sorted_juniper_template_list(template_list):
 
 	return sorted_juniper_template_list
 
-def get_location_directory(hostname,platform,type):
+def get_location_directory(name,platform,type):
 	directory = ''
 	datacenter_location = ''
 	if type == 'firewall':
-		location_list = hostname.split('-')    
+		location_list = name.split('-')    
 		datacenter_location = location_list[3]
 	elif type == 'switch' or type == 'router' or type == 'vfirewall':
-		location_list = hostname.split('.')    
+		location_list = name.split('.')    
 		datacenter_location = location_list[3]
 
 	directory = '{}/templates/{}/common/{}/'.format(home_directory,platform,datacenter_location)
@@ -149,4 +149,3 @@ def timestamp():
     date_time = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
 
     return date_time
-
