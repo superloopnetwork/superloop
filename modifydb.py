@@ -10,38 +10,41 @@ import yaml
 home_directory = os.environ.get('HOME')
 
 def append(args):
-	argument_node = args.argument
+	argument_node = args.node
 	database = process_nodes()
-	device = snmp(argument_node)
 	index = 0
 	match_node = []
-	new_node = yaml.dump(device,default_flow_style = False)
-	"""
-		Check if new node currently exist in database.
-	"""
-	for node in database:
-		if device[index]['ip'] == node['ip']:
-			match_node.append('MATCH')	
-			break
-		else:
-			continue
 	try:
-		if 'MATCH' in match_node:
-			print('+ Node currently present in database.')
-		else:
-			with open('{}/database/nodes.yaml'.format(home_directory),'a') as file:
-				file.write(new_node)
-			database = process_nodes()
-			sorted_database = sortdb(database)
-			updated_database = yaml.dump(sorted_database,default_flow_style = False)
-			with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
-				file.write('---\n')
-				file.write(updated_database)
-			print('+ SNMP discovery successful.')
-			print('+ New node appended to database.')
-	except FileNotFoundError as error:
-		print('FileNotFoundError: file cannot be found')
-		print(error)
+		device = snmp(argument_node)
+		new_node = yaml.dump(device,default_flow_style = False)
+		"""
+			Check if new node currently exist in database.
+		"""
+		for node in database:
+			if device[index]['ip'] == node['ip']:
+				match_node.append('MATCH')	
+				break
+			else:
+				continue
+		try:
+			if 'MATCH' in match_node:
+				print('+ Node currently present in database.')
+			else:
+				with open('{}/database/nodes.yaml'.format(home_directory),'a') as file:
+					file.write(new_node)
+				database = process_nodes()
+				sorted_database = sortdb(database)
+				updated_database = yaml.dump(sorted_database,default_flow_style = False)
+				with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
+					file.write('---\n')
+					file.write(updated_database)
+				print('+ SNMP discovery successful.')
+				print('+ New node appended to database.')
+		except FileNotFoundError as error:
+			print('FileNotFoundError: file cannot be found')
+			print(error)
+	except Exception as error:
+		print('SNMP query timeout. Please ensure that FQDN or IP address is reachable via SNMP.')
 
 	return None
 
@@ -50,7 +53,7 @@ def remove(args):
 	index = 0
 	try:
 		for element in database:
-			if element['name'] == args.argument or element['ip'] == args.argument:
+			if element['name'] == args.node or element['ip'] == args.node:
 				break
 			else:
 				index = index + 1
@@ -73,13 +76,14 @@ def remove(args):
 	return None
 
 def update(args):
-	attribute = args.attribute
-	amend = args.amend
+	argument_node = args.node
+	argument_attribute = args.attribute
+	argument_amend = args.amend
 	database = process_nodes()
 	index = 0
 	try:
 		for element in database:
-			if element['name'] == args.argument or element['ip'] == args.argument:
+			if element['name'] == argument_node or element['ip'] == argument_node:
 				break
 			else:
 				index = index + 1
@@ -87,12 +91,12 @@ def update(args):
 			Identified node from list.
 		"""
 		try:
-			if attribute == 'data':
+			if argument_attribute == 'data':
 				return print('+ Attribute \'data\' cannot be modified via host update.')
 			else:
-				check = str(input('Please confirm you would like to change the value from {} : {} : {} to {} : {} : {}. [y/N]: '.format(database[index]['name'],attribute,database[index][attribute],database[index]['name'],attribute,amend))) 
+				check = str(input('Please confirm you would like to change the value from {} : {} : {} to {} : {} : {}. [y/N]: '.format(database[index]['name'],argument_attribute,database[index][argument_attribute],database[index]['name'],argument_attribute,argument_amend))) 
 				if check[0] == 'y':
-					database[index][attribute] = amend
+					database[index][argument_attribute] = argument_amend
 					database[index]['updated_at'] = timestamp()
 					database[index]['updated_by'] = '{}'.format(os.environ.get('USER'))
 					updated_database = yaml.dump(database,default_flow_style = False)
@@ -109,10 +113,42 @@ def update(args):
 				else:
 					print("RuntimeError: aborted at user request")
 		except Exception as error:
-				print('+ Invalid attribute \'{}\' for \'{}\'. Please check node details via \'superloop node list {}\''.format(attribute,database[index]['name'],database[index]['name']))
+				print('+ Invalid attribute \'{}\' for \'{}\'. Please check node details via \'superloop node list {}\''.format(argument_attribute,database[index]['name'],database[index]['name']))
+	except IndexError as error:
+		print('+ Node does not exist in database.')	
+
+def discover(args):
+	argument_node = args.node
+	database = process_nodes()
+	index = 0
+	try:
+		for element in database:
+			if element['name'] == argument_node or element['ip'] == argument_node:
+				break
+			else:
+				index = index + 1
+		"""
+			Identified node from list.
+		"""
+		try:
+			device = snmp(argument_node)
+		except Exception as error:
+			print('SNMP query timeout. Please ensure that FQDN or IP address is reachable via SNMP.')
+		for attribute in database[index]:
+			if 'created_at' == attribute or 'created_by' == attribute:
+				continue
+			else:
+				database[index][attribute] = device[0][attribute]
+		database[index]['updated_at'] = timestamp()
+		database[index]['updated_by'] = '{}'.format(os.environ.get('USER'))
+		updated_database = yaml.dump(database,default_flow_style = False)
+		with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
+			file.write('---\n')
+			file.write(updated_database)
+		print('+ SNMP discovery successful.')
 	except IndexError as error:
 		print('+ Node does not exist in database.')
-	
+
 def sortdb(database):
 	sorted_database = []
 	names = []

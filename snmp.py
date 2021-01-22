@@ -73,7 +73,7 @@ def snmp_parse_opersys(platform,snmp_name):
 	device_opersys = ''
 	operating_systems = {
 			'juniper':'junos',
-			'cisco':'nxos',
+			'cisco':'ios',
 			'vyatta':'vyos',
 			'f5':'tmsh'
 		}
