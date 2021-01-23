@@ -49,14 +49,14 @@ def ssh_connect(args):
 			node_element(match_node,node_object)
 			id = 1
 			ssh_id = 0
-			print('{} {: >27} {: >28} {: >26}'.format('id','name','address','platform'))
+			print('{} {: >27} {: >28} {: >26}'.format('id','name','address','platform name'))
 			for index in initialize.element:
-				print('{id: {align}{space}} {name: {align}{space}} {ip: {align}{space}} {platform: {align}{space}}'.format(id = id,name = node_object[index]['name'],ip = node_object[index]['ip'],platform = node_object[index]['platform'],align = '<',space = 25))
+				print('{id: {align}{space}} {name: {align}{space}} {mgmt_ip4: {align}{space}} {platform_name: {align}{space}}'.format(id = id,name = node_object[index]['name'],mgmt_ip4 = node_object[index]['mgmt_ip4'],platform_name = node_object[index]['platform_name'],align = '<',space = 25))
 				id = id + 1
 			port = get_port(node_object,initialize.element,ssh_id)
 			try:
 				if(len(initialize.element) == 1):
-			 		subprocess.call('ssh {}@{} -p {}'.format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
+			 		subprocess.call('ssh {}@{} -p {}'.format(username,node_object[initialize.element[ssh_id]]['mgmt_ip4'],port), shell=True)
 				else:
 					try:
 						ssh_id = int(input('Enter ID to SSH to: '))
@@ -68,7 +68,7 @@ def ssh_connect(args):
 						print('Terminating...')
 					else:
 						port = get_port(node_object,initialize.element,ssh_id)
-						subprocess.call('ssh {}@{} -p {}'.format(username,node_object[initialize.element[ssh_id]]['ip'],port), shell=True)
+						subprocess.call('ssh {}@{} -p {}'.format(username,node_object[initialize.element[ssh_id]]['mgmt_ip4'],port), shell=True)
 			except IndexError:
 				print('IndexError: incorrect connection id')
 	except ValueError as error:

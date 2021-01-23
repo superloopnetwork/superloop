@@ -42,7 +42,7 @@ def node_list(args):
 		:param node_object: All node(s) in the database with all attributes.
 		:type node_object: list
 
-		:param node_template: All templates based on platforms and device type.
+		:param node_template: All templates based on platform_names and device type.
 		:type node_template: list
 
 		:param match_node: Nodes that matches the arguements passed in by user.
@@ -62,11 +62,11 @@ def node_list(args):
 			print("\t\"created_at\": \"{}\"\n" \
 				  "\t\"created_by\": \"{}\"\n" \
 				  "\t\"name\": \"{}\"\n" \
-				  "\t\"mgmt_ip\": \"{}\"\n" \
-				  "\t\"platform\": \"{}\"\n" \
+				  "\t\"mgmt_ip4\": \"{}\"\n" \
+				  "\t\"platform_name\": \"{}\"\n" \
 				  "\t\"opersys\": \"{}\"\n" \
 				  "\t\"type\": \"{}\"\n" \
-				  "\t\"role\": \"{}\"".format(node_object[index]['created_at'],node_object[index]['created_by'],node_object[index]['name'],node_object[index]['ip'],node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'],node_object[index]['role']) + "\n" \
+				  "\t\"role_name\": \"{}\"".format(node_object[index]['created_at'],node_object[index]['created_by'],node_object[index]['name'],node_object[index]['mgmt_ip4'],node_object[index]['platform_name'],node_object[index]['opersys'],node_object[index]['type'],node_object[index]['role_name']) + "\n" \
 				  "\t\"data\": {\n" \
 				  "\t    \"managed_configs\": {" \
 			)

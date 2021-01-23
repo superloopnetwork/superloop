@@ -1,5 +1,5 @@
 """
-This module allows auditing to occur for different platforms.
+This module allows auditing to occur for different platform.
 """
 from jinja2 import Environment, FileSystemLoader
 from ciscoconfparse import CiscoConfParse
@@ -54,13 +54,13 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 	"""
 	The mediator is broken up into two sections. The first section of code will gather all rendered configs first as it's required for all platforms 
 	(Cisco, Juniper & F5). Juniper does not require backup-configs in order to be diff'ed. The diff is server (node) side processed and the results 
-	are returned back to superloop. Cisco platforms will require backup-configs (get_config) where the diffs are processed locally.
+	are returned back to superloop. Cisco platform will require backup-configs (get_config) where the diffs are processed locally.
 	"""
 	if auditcreeper:
 		template_list = template_list_copy[0]
 	for index in initialize.element:
 		rendered_config = []
-		if node_object[index]['platform'] == 'juniper':
+		if node_object[index]['platform_name'] == 'juniper':
 			"""
                 Juniper's diff output are always in a certain stanza order. 
                 The template_list ordered processed may very well not be in the 
@@ -76,7 +76,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 				Compiling the rendered configs from template and preparing
 				for pushing to node.
 			"""
-			if node_object[index]['platform'] == 'juniper':
+			if node_object[index]['platform_name'] == 'juniper':
 				template_counter = template_counter + 1
 				f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['name'],template.split('.')[0]) + ".conf", "r")
 				init_config = f.readlines()
@@ -105,7 +105,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 		"""
 		if len(template_list) != 1:
 			template_list = get_updated_list(template_list_copy)
-		if node_object[index]['platform'] == 'cisco' or node_object[index]['platform'] == 'f5':
+		if node_object[index]['platform_name'] == 'cisco' or node_object[index]['platform_name'] == 'f5':
 			redirect.append('get_config')
 			command.append([''])
 			"""
@@ -114,7 +114,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 			at the end, ^d, show | compare and rollback 0.  All templates 
 			matching are executed at once per device
 		"""
-		elif node_object[index]['platform'] == 'juniper':
+		elif node_object[index]['platform_name'] == 'juniper':
 			redirect.append('get_diff')
 			command.append(rendered_config)
 			template_counter = 0
@@ -150,11 +150,11 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 			print("Only in the device: -")
 			print("Only in the generated config: +")
 			print ("{}".format(node_object[index]['name']))
-		if node_object[index]['platform'] == 'cisco' or node_object[index]['platform'] == 'f5':
+		if node_object[index]['platform_name'] == 'cisco' or node_object[index]['platform_name'] == 'f5':
 			generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,output,with_remediation)
-		elif node_object[index]['platform'] == 'juniper':
+		elif node_object[index]['platform_name'] == 'juniper':
 			template_list = get_sorted_juniper_template_list(template_list)
-			directory = get_template_directory(node_object[index]['platform'],node_object[index]['opersys'],node_object[index]['type'])
+			directory = get_template_directory(node_object[index]['platform_name'],node_object[index]['opersys'],node_object[index]['type'])
 			f = open("{}/diff-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", "r")
 			init_config = f.readlines()
 			for config_line in init_config:

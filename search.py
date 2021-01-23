@@ -57,7 +57,7 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 					platform, operating system and type from the template database.
 				"""
 				for node_temp in node_template:
-					if node_obj['platform'] == node_temp['platform'] and node_obj['opersys'] == node_temp['opersys'] and node_obj['type'] == node_temp['type']:
+					if node_obj['platform_name'] == node_temp['platform_name'] and node_obj['opersys'] == node_temp['opersys'] and node_obj['type'] == node_temp['type']:
 						if auditcreeper:
 							template_node_list = []
 							for template_dir_name in node_temp['templates']:
@@ -65,7 +65,7 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 								template_node_list.append(template_name)
 							template_list.append(template_node_list)
 						else:
-							directory = get_template_directory(node_obj['platform'],node_obj['opersys'],node_obj['type'])
+							directory = get_template_directory(node_obj['platform_name'],node_obj['opersys'],node_obj['type'])
 							file = directory + template_list[element]
 							if file in node_temp['templates']:
 								search_result.append("MATCH")	
@@ -111,7 +111,7 @@ def search_policy(policy_list,match_node,node_policy,node_object,auditcreeper):
 							policy_list.append(policy_node_list)
 							search_result.append("MATCH")	
 						else:
-							directory = get_policy_directory(node_pol['platform'],node_obj['opersys'],node_obj['type'])
+							directory = get_policy_directory(node_pol['platform_name'],node_obj['opersys'],node_obj['type'])
 							file = directory + policy_list[element]
 							if file in node_pol['policy']:
 								search_result.append("MATCH")	

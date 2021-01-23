@@ -11,14 +11,14 @@ def parse_commands(node_object,init_config):
 	"""
 	commands = initialize.configuration
 	config_list = []
-	if node_object['platform'] == 'juniper':
+	if node_object['platform_name'] == 'juniper':
 		config_list.append('load replace terminal')
-	elif node_object['platform'] == 'f5':
+	elif node_object['platform_name'] == 'f5':
 		config_list.append('load sys config merge from-terminal')
 	for config_line in init_config:
 		strip_config = config_line.strip('\n')
 		config_list.append(strip_config)
-	if node_object['platform'] == 'juniper' or node_object['platform'] == 'f5':
+	if node_object['platform_name'] == 'juniper' or node_object['platform_name'] == 'f5':
 		config_list.append('\x04')
 	commands.append(config_list)
 
@@ -26,7 +26,7 @@ def parse_commands(node_object,init_config):
 
 def parse_firewall_acl(node_policy,policy):
 	"""
-		This function will generate firewall acls based on the platform and os.
+		This function will generate firewall acls based on the platform_name and os.
 	"""
 	config_list = []
 	PATH_FILTER_RE = r"\'.+\'"
@@ -41,8 +41,8 @@ def parse_firewall_acl(node_policy,policy):
 		Open the JSON policy file and parse out the audit_filter section via 
 		regular expression.
 	"""
-	directory = get_policy_directory(node_policy['platform'],node_policy['opersys'],node_policy['type'])
-	acl_list = process_json(node_policy['platform'],node_policy['opersys'],node_policy['type'],policy)
+	directory = get_policy_directory(node_policy['platform_name'],node_policy['opersys'],node_policy['type'])
+	acl_list = process_json(node_policy['platform_name'],node_policy['opersys'],node_policy['type'],policy)
 	f = open("{}".format(directory) + policy, "r")
 	parse_include = f.readline()
 	path = eval(re.findall(PATH_FILTER_RE, parse_include)[0])
@@ -63,7 +63,7 @@ def parse_firewall_acl(node_policy,policy):
 		action = acl['action']
 		source_object_group = object_group(path,source_address)
 		destination_object_group = object_group(path,destination_address)
-		if node_policy['platform'] == 'cisco' or node_policy['platform'] == 'juniper':
+		if node_policy['platform_name'] == 'cisco' or node_policy['platform_name'] == 'juniper':
 			print("{} {} {} {} {} {}".format(term,source_address,destination_address,protocol,destination_port,action))
 			config_list = "{} {} {} {} {} {}".format(term,source_address,destination_address,protocol,destination_port,action) 
 	print

@@ -5,7 +5,7 @@ import os
 
 class BaseNode(object):
 
-	def __init__(self,created_at,created_by,ip,name,platform,opersys,type,role,serial_num,status,updated_at,updated_by):
+	def __init__(self,created_at,created_by,ip,name,platform_name,opersys,type,role_name,serial_num,status,updated_at,updated_by):
 
 		self.created_at = created_at
 		self.created_by = created_by
@@ -13,10 +13,10 @@ class BaseNode(object):
 		self.name = name
 		self.username = os.environ.get('USERNAME') 
 		self.password = os.environ.get('PASSWORD')
-		self.platform = platform
+		self.platform_name = platform_name
 		self.opersys = opersys
 		self.type = type
-		self.role = role 
+		self.role_name = role_name 
 		self.serial_num = serial_num
 		self.status = status
 		self.updated_at = updated_at
@@ -63,25 +63,25 @@ class BaseNode(object):
 	def push_cfgs(self,commands):
 		self.connect()
 		output = self.net_connect.enable()
-		if self.platform == 'cisco' and self.opersys == 'ios':
+		if self.platform_name == 'cisco' and self.opersys == 'ios':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
 			save = self.net_connect.send_command('write memory')
 			print(output)
 			print(save)
-		elif self.platform == 'cisco' and self.opersys == 'nxos':
+		elif self.platform_name == 'cisco' and self.opersys == 'nxos':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
 			save = self.net_connect.send_command('copy running-config startup-config')
 			print(output)
 			print(save)
-		elif self.platform == 'juniper':
+		elif self.platform_name == 'juniper':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
 			self.net_connect.commit(and_quit=True)
 			print(output)
-		elif self.platform == 'vyatta':
+		elif self.platform_name == 'vyatta':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
 			self.net_connect.commit()
 			print(output)
-		elif self.platform == 'f5':
+		elif self.platform_name == 'f5':
 			output = self.net_connect.send_config_set(commands,enter_config_mode=False,exit_config_mode=False)
 			save = self.net_connect.send_command('save sys config')
 			print(output)
@@ -91,17 +91,17 @@ class BaseNode(object):
 	def pull_cfgs(self,command):
 		scp_flag = False
 		method = 'pull_cfgs'
-		if self.platform == 'cisco' and self.opersys == 'ios':
+		if self.platform_name == 'cisco' and self.opersys == 'ios':
 			command = 'show running-config | exclude ntp clock-period'
-		elif self.platform == 'cisco' and self.opersys == 'nxos':
+		elif self.platform_name == 'cisco' and self.opersys == 'nxos':
 			command = 'show running-config | exclude Time'
-		elif self.platform == 'cisco' and self.opersys == 'asa':
+		elif self.platform_name == 'cisco' and self.opersys == 'asa':
 			command = 'show running-config'
-		elif self.platform == 'juniper':
+		elif self.platform_name == 'juniper':
 			command = 'show configuration'
-		elif(self.platform == 'vyatta'):
+		elif(self.platform_name == 'vyatta'):
 			command = 'show configuration commands'
-		elif self.platform == 'f5':
+		elif self.platform_name == 'f5':
 			command = 'list ltm one-line'
 			self.scpconnect()
 			self.write_to_file(command)
@@ -109,7 +109,7 @@ class BaseNode(object):
 			self.scp_connect.scp_get_file('/var/local/ucs/config.ucs', '{}/backup-configs/{}'.format(self.get_home_directory(),self.name))
 			self.scp_connect.close()
 			self.net_connect.disconnect()
-		if self.platform != 'juniper' or self.platform != 'f5':
+		if self.platform_name != 'juniper' or self.platform_name != 'f5':
 			self.connect()
 			self.write_to_file(command,scp_flag,method)
 			self.net_connect.disconnect()
@@ -131,9 +131,9 @@ class BaseNode(object):
 	def get_config(self,command):
 		scp_flag = False
 		method = 'get_config'
-		if self.platform == 'cisco':
+		if self.platform_name == 'cisco':
 			command = 'show running-config'
-		elif self.platform == 'f5':
+		elif self.platform_name == 'f5':
 			command = 'list one-line'
 		self.connect()
 		self.write_to_file(command,scp_flag,method)
@@ -147,7 +147,7 @@ class BaseNode(object):
 		self.net_connect.disconnect()
 
 	def get_subdir(self,scp_flag):
-		if self.platform == 'f5' and scp_flag:
+		if self.platform_name == 'f5' and scp_flag:
 			sub_dir = 'ucs'
 		else:
 			sub_dir = 'configs'
@@ -156,7 +156,7 @@ class BaseNode(object):
 	def write_to_file(self,command,scp_flag,method):
 		if method == 'pull_cfgs':
 			extention = ''
-			if self.platform == 'juniper' and 'display set' in command:
+			if self.platform_name == 'juniper' and 'display set' in command:
 				extention = '.set'
 			else:
 				extention = '.conf'

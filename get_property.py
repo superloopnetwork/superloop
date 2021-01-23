@@ -81,13 +81,13 @@ def get_syntax(node_object,index):
 		based on device platform.
 	"""
 	syntax = ''
-	if node_object[index]['platform'] == 'cisco' and node_object[index]['type'] == 'firewall':
+	if node_object[index]['platform_name'] == 'cisco' and node_object[index]['type'] == 'firewall':
 		syntax = 'asa'
-	elif node_object[index]['platform'] == 'cisco' and node_object[index]['type'] == 'switch':
+	elif node_object[index]['platform_name'] == 'cisco' and node_object[index]['type'] == 'switch':
 		syntax = 'ios'
-	elif node_object[index]['platform'] == 'juniper' and node_object[index]['type'] == 'switch':
+	elif node_object[index]['platform_name'] == 'juniper' and node_object[index]['type'] == 'switch':
 		syntax = 'junos'
-	elif node_object[index]['platform'] == 'f5' and node_object[index]['type'] == 'loadbalancer':
+	elif node_object[index]['platform_name'] == 'f5' and node_object[index]['type'] == 'loadbalancer':
 		syntax = 'ios'
 
 	return syntax

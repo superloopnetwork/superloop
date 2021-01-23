@@ -21,7 +21,7 @@ def append(args):
 			Check if new node currently exist in database.
 		"""
 		for node in database:
-			if device[index]['ip'] == node['ip']:
+			if device[index]['mgmt_ip4'] == node['mgmt_ip4']:
 				match_node.append('MATCH')	
 				break
 			else:
@@ -53,7 +53,7 @@ def remove(args):
 	index = 0
 	try:
 		for element in database:
-			if element['name'] == args.node or element['ip'] == args.node:
+			if element['name'] == args.node or element['mgmt_ip4'] == args.node:
 				break
 			else:
 				index = index + 1
@@ -83,7 +83,7 @@ def update(args):
 	index = 0
 	try:
 		for element in database:
-			if element['name'] == argument_node or element['ip'] == argument_node:
+			if element['name'] == argument_node or element['mgmt_ip4'] == argument_node:
 				break
 			else:
 				index = index + 1
@@ -123,7 +123,7 @@ def discover(args):
 	index = 0
 	try:
 		for element in database:
-			if element['name'] == argument_node or element['ip'] == argument_node:
+			if element['name'] == argument_node or element['mgmt_ip4'] == argument_node:
 				break
 			else:
 				index = index + 1

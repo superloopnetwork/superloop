@@ -1,5 +1,5 @@
 """
-	This mediator is a juniper audit diff supporting the Juniper platforms.
+	This mediator is a juniper audit diff supporting the Juniper platform_names.
 """
 import re
 import initialize

@@ -57,7 +57,7 @@ def push_cfgs(args):
 		:param node_object: All node(s) in the database with all attributes.
 		:type node_object: list
 
-		:param node_template: All templates based on platforms and device type.
+		:param node_template: All templates based on platform and device type.
 		:type node_template: list
 
 		:param match_node: Nodes that matches the arguements passed in by user.
