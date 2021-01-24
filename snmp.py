@@ -24,9 +24,9 @@ def snmp(argument_node):
 		}
 	device = (argument_node,SNMP_COMMUNITY_STRING,SNMP_PORT)
 	snmp_name = snmp_data(device,HOSTNAME_OID,SNMP_PORT)
-	snmp_platform = snmp_data(device,PLATFORM_OID,SNMP_PORT)
+	snmp_platform_name = snmp_data(device,PLATFORM_OID,SNMP_PORT)
 	mgmt_ip4 = snmp_ip(snmp_name)
-	platform_name = snmp_parse_platform_name(snmp_platform)
+	platform_name = snmp_parse_platform_name(snmp_platform_name)
 	operating_system = snmp_parse_opersys(platform_name,snmp_name)
 	type = snmp_parse_type(platform_name,snmp_name)
 	role_name = snmp_parse_role_name(snmp_name)
@@ -35,14 +35,22 @@ def snmp(argument_node):
 	data = [{
 		'created_at': '{}'.format(timestamp()),
 		'created_by': '{}'.format(os.environ.get('USER')),
-		'name': '{}'.format(snmp_name),
+		'domain_name': 'null',
+		'location_name': 'null',
+		'lifecycle_status': 'null',
+		'mgmt_con_ip4': 'null',
 		'mgmt_ip4': "{}".format(mgmt_ip4),
-		'platform_name':'{}'.format(platform_name),
+		'mgmt_oob_ip4': 'null',
+		'mgmt_snmp_community4': 'null',
+		'name': '{}'.format(snmp_name),
 		'opersys':'{}'.format(operating_system),
-		'type':'{}'.format(type),
+		'platform_name':'{}'.format(platform_name),
 		'role_name':'{}'.format(role_name),
 		'serial_num':'{}'.format(serial_num),
+		'software_image':'null',
+		'software_version':'null',
 		'status':'online',
+		'type':'{}'.format(type),
 		'updated_at':'null',
 		'updated_by': 'null'
 		}
@@ -61,8 +69,8 @@ def snmp_ip(snmp_name):
 
 	return mgmt_ip4
 
-def snmp_parse_platform_name(snmp_platform):
-	platform_name = snmp_platform.split(' ')[0].lower() 
+def snmp_parse_platform_name(snmp_platform_name):
+	platform_name = snmp_platform_name.split(' ')[0].lower() 
 	if platform_name == 'big-ip':
 		platform_name = 'f5'
 	
@@ -88,17 +96,17 @@ def snmp_parse_opersys(platform_name,snmp_name):
 
 	return device_opersys
 
-def snmp_parse_type(snmp_platform,snmp_name):
+def snmp_parse_type(snmp_platform_name,snmp_name):
 	models = {
 			'juniper':'vfirewall',
 			'cisco':'switch',
 			'f5':'loadbalancer'
 		}
 	for model in models:
-		if model == snmp_platform and 'fw' in snmp_name:
+		if model == snmp_platform_name and 'fw' in snmp_name:
 			device_type = 'firewall'
 			break
-		elif model in snmp_platform:
+		elif model in snmp_platform_name:
 			device_type = models[model]
 			break
 		else:
