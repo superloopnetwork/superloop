@@ -5,22 +5,30 @@ import os
 
 class BaseNode(object):
 
-	def __init__(self,created_at,created_by,ip,name,platform_name,opersys,type,role_name,serial_num,status,updated_at,updated_by):
+	def __init__(self,created_at,created_by,domain_name,lifecycle_status,location_name,mgmt_ip4,mgmt_con_ip4,mgmt_oob_ip4,name,platform_name,oncall_team,opersys,software_image,software_version,type,role_name,serial_num,status,updated_at,updated_by):
 
 		self.created_at = created_at
 		self.created_by = created_by
-		self.ip = ip
+		self.domain_name = domain_name
+		self.lifecycle_status = lifecycle_status
+		self.location_name = location_name
+		self.mgmt_ip4 = mgmt_ip4
+		self.mgmt_con_ip4 = mgmt_con_ip4
+		self.mgmt_oob_ip4 = mgmt_oob_ip4
 		self.name = name
-		self.username = os.environ.get('USERNAME') 
+		self.oncall_team = oncall_team
 		self.password = os.environ.get('PASSWORD')
 		self.platform_name = platform_name
 		self.opersys = opersys
-		self.type = type
 		self.role_name = role_name 
 		self.serial_num = serial_num
+		self.software_image = software_image
+		self.software_version = software_version
 		self.status = status
+		self.type = type
 		self.updated_at = updated_at
 		self.updated_by = updated_by
+		self.username = os.environ.get('USERNAME') 
 
 	def connect(self):
 

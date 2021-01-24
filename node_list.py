@@ -60,25 +60,36 @@ def node_list(args):
 		for index in initialize.element:
 			print('    {')
 			print("\t\"created_at\": \"{}\"\n" \
-				  "\t\"created_by\": \"{}\"\n" \
-				  "\t\"name\": \"{}\"\n" \
-				  "\t\"mgmt_ip4\": \"{}\"\n" \
-				  "\t\"platform_name\": \"{}\"\n" \
-				  "\t\"opersys\": \"{}\"\n" \
-				  "\t\"type\": \"{}\"\n" \
-				  "\t\"role_name\": \"{}\"".format(node_object[index]['created_at'],node_object[index]['created_by'],node_object[index]['name'],node_object[index]['mgmt_ip4'],node_object[index]['platform_name'],node_object[index]['opersys'],node_object[index]['type'],node_object[index]['role_name']) + "\n" \
-				  "\t\"data\": {\n" \
+				  "\t\"created_by\": \"{}\"" \
+					.format(node_object[index]['created_at'],node_object[index]['created_by'])
+					)
+			print("\t\"data\": {\n" \
 				  "\t    \"managed_configs\": {" \
-			)
+					)
 			for template in template_list:
 				print ("\t\t   \"{}\"".format(template))
 			print('\t     }')
 			print('         }')
-			print("\t\"serial_num\": \"{}\"\n" \
+			print("\t\"domain_name\": \"{}\"\n" \
+				  "\t\"lifecycle_status\": \"{}\"\n" \
+				  "\t\"location_name\": \"{}\"\n" \
+				  "\t\"mgmt_con_ip4\": \"{}\"\n" \
+				  "\t\"mgmt_ip4\": \"{}\"\n" \
+				  "\t\"mgmt_oob_ip4\": \"{}\"\n" \
+				  "\t\"mgmt_snmp_community4\": \"{}\"\n" \
+				  "\t\"name\": \"{}\"\n" \
+				  "\t\"opersys\": \"{}\"\n" \
+				  "\t\"platform_name\": \"{}\"\n" \
+				  "\t\"role_name\": \"{}\"\n" \
+				  "\t\"serial_num\": \"{}\"\n" \
+				  "\t\"software_image\": \"{}\"\n" \
+				  "\t\"software_version\": \"{}\"\n" \
                   "\t\"status\": \"{}\"\n" \
+				  "\t\"type\": \"{}\"\n" \
                   "\t\"updated_at\": \"{}\"\n" \
                   "\t\"updated_by\": \"{}\"" \
-			.format(node_object[index]['serial_num'],node_object[index]['status'],node_object[index]['updated_at'],node_object[index]['updated_by']))
+					.format(node_object[index]['domain_name'],node_object[index]['lifecycle_status'],node_object[index]['location_name'],node_object[index]['mgmt_con_ip4'],node_object[index]['mgmt_ip4'],node_object[index]['mgmt_oob_ip4'],node_object[index]['mgmt_snmp_community4'],node_object[index]['name'],node_object[index]['opersys'],node_object[index]['platform_name'],node_object[index]['role_name'],node_object[index]['serial_num'],node_object[index]['software_image'],node_object[index]['software_version'],node_object[index]['status'],node_object[index]['type'],node_object[index]['updated_at'],node_object[index]['updated_by'])
+					)
 			template_list = get_updated_list(template_list_copy)
 			if element_position == len(initialize.element):
 				print('    }')
