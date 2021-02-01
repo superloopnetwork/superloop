@@ -42,7 +42,7 @@ def node_list(args):
 		:param node_object: All node(s) in the database with all attributes.
 		:type node_object: list
 
-		:param node_template: All templates based on platform_names and device type.
+		:param node_template: All templates based on hardware_vendor and device type.
 		:type node_template: list
 
 		:param match_node: Nodes that matches the arguements passed in by user.
@@ -71,6 +71,7 @@ def node_list(args):
 			print('\t     }')
 			print('         }')
 			print("\t\"domain_name\": \"{}\"\n" \
+				  "\t\"hardware_vendor\": \"{}\"\n" \
 				  "\t\"lifecycle_status\": \"{}\"\n" \
 				  "\t\"location_name\": \"{}\"\n" \
 				  "\t\"mgmt_con_ip4\": \"{}\"\n" \
@@ -88,7 +89,7 @@ def node_list(args):
 				  "\t\"type\": \"{}\"\n" \
                   "\t\"updated_at\": \"{}\"\n" \
                   "\t\"updated_by\": \"{}\"" \
-					.format(node_object[index]['domain_name'],node_object[index]['lifecycle_status'],node_object[index]['location_name'],node_object[index]['mgmt_con_ip4'],node_object[index]['mgmt_ip4'],node_object[index]['mgmt_oob_ip4'],node_object[index]['mgmt_snmp_community4'],node_object[index]['name'],node_object[index]['opersys'],node_object[index]['platform_name'],node_object[index]['role_name'],node_object[index]['serial_num'],node_object[index]['software_image'],node_object[index]['software_version'],node_object[index]['status'],node_object[index]['type'],node_object[index]['updated_at'],node_object[index]['updated_by'])
+					.format(node_object[index]['domain_name'],node_object[index]['hardware_vendor'],node_object[index]['lifecycle_status'],node_object[index]['location_name'],node_object[index]['mgmt_con_ip4'],node_object[index]['mgmt_ip4'],node_object[index]['mgmt_oob_ip4'],node_object[index]['mgmt_snmp_community4'],node_object[index]['name'],node_object[index]['opersys'],node_object[index]['platform_name'],node_object[index]['role_name'],node_object[index]['serial_num'],node_object[index]['software_image'],node_object[index]['software_version'],node_object[index]['status'],node_object[index]['type'],node_object[index]['updated_at'],node_object[index]['updated_by'])
 					)
 			template_list = get_updated_list(template_list_copy)
 			if element_position == len(initialize.element):

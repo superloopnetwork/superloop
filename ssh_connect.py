@@ -49,9 +49,9 @@ def ssh_connect(args):
 			node_element(match_node,node_object)
 			id = 1
 			ssh_id = 0
-			print('{} {: >27} {: >28} {: >26}'.format('id','name','address','platform name'))
+			print('{} {: >27} {: >28} {: >26}'.format('id','name','address','platform'))
 			for index in initialize.element:
-				print('{id: {align}{space}} {name: {align}{space}} {mgmt_ip4: {align}{space}} {platform_name: {align}{space}}'.format(id = id,name = node_object[index]['name'],mgmt_ip4 = node_object[index]['mgmt_ip4'],platform_name = node_object[index]['platform_name'],align = '<',space = 25))
+				print('{id: {align}{space}} {name: {align}{space}} {mgmt_ip4: {align}{space}} {platform_name: {align}{space}}'.format(id = id,name = node_object[index]['name'],mgmt_ip4 = node_object[index]['mgmt_ip4'],platform_name = node_object[index]['hardware_vendor'],align = '<',space = 25))
 				id = id + 1
 			port = get_port(node_object,initialize.element,ssh_id)
 			try:

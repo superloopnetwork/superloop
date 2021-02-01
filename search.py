@@ -37,7 +37,7 @@ def extract_nodes(node_object):
 def search_template(template_list,match_node,node_template,node_object,auditcreeper):
 	"""
 		This function will take the search results from the list of nodes 
-		and run it against node_object to determine the platform and type 
+		and run it against node_object to determine the hardware vendor and type 
 		and compare with the node_template database to match. Once matched, 
 		it will check to verify an existing template is available.
 	"""
@@ -54,10 +54,10 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 				initialize.element.append(index)
 				"""
 					This section will pull out all the templates belonging to the specific
-					platform, operating system and type from the template database.
+					hardware vendor, operating system and type from the template database.
 				"""
 				for node_temp in node_template:
-					if node_obj['platform_name'] == node_temp['platform_name'] and node_obj['opersys'] == node_temp['opersys'] and node_obj['type'] == node_temp['type']:
+					if node_obj['hardware_vendor'] == node_temp['hardware_vendor'] and node_obj['opersys'] == node_temp['opersys'] and node_obj['type'] == node_temp['type']:
 						if auditcreeper:
 							template_node_list = []
 							for template_dir_name in node_temp['templates']:
@@ -65,12 +65,12 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 								template_node_list.append(template_name)
 							template_list.append(template_node_list)
 						else:
-							directory = get_template_directory(node_obj['platform_name'],node_obj['opersys'],node_obj['type'])
+							directory = get_template_directory(node_obj['hardware_vendor'],node_obj['opersys'],node_obj['type'])
 							file = directory + template_list[element]
 							if file in node_temp['templates']:
 								search_result.append("MATCH")	
 							else:
-								print('+ No associating template {}'.format(template_list[element]) + ' for node {}]'.format(node))
+								print('+ No associating template {}'.format(template_list[element]) + ' for node {}'.format(node))
 								search_result.append("NO MATCH")
 					else:
 						continue	
@@ -82,7 +82,7 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 def search_policy(policy_list,match_node,node_policy,node_object,auditcreeper):
 	"""
 		This function will take the search results from the list of nodes 
-		and run it against node_object to determine the platform, operating system and type 
+		and run it against node_object to determine the hardware vendor, operating system and type 
 		and compare with the node_policy database to match. If a node is not 
 		deemed as a firewall, it will not allow a policy push.
 	"""
@@ -95,7 +95,7 @@ def search_policy(policy_list,match_node,node_policy,node_object,auditcreeper):
 			if node == node_obj['name']:
 				"""
 					This section will pull out all the templates belonging to the specific
-					platform, operating system and type from the template database.
+					hardware vendor, operating system and type from the template database.
 				"""
 				for node_pol in node_policy:
 					if node == node_pol['name']:
@@ -111,7 +111,7 @@ def search_policy(policy_list,match_node,node_policy,node_object,auditcreeper):
 							policy_list.append(policy_node_list)
 							search_result.append("MATCH")	
 						else:
-							directory = get_policy_directory(node_pol['platform_name'],node_obj['opersys'],node_obj['type'])
+							directory = get_policy_directory(node_pol['hardware_vendor'],node_obj['opersys'],node_obj['type'])
 							file = directory + policy_list[element]
 							if file in node_pol['policy']:
 								search_result.append("MATCH")	

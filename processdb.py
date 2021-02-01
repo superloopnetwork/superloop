@@ -37,12 +37,12 @@ def process_policies():
 
 	return policy_object 
 
-def process_json(platform_name,os,device_type,policy_file):
-	if platform_name == 'cisco' and os == 'ios' and device_type == 'firewall':
+def process_json(hardware_vendor,opersys,device_type,policy_file):
+	if hardware_vendor == 'cisco' and  opersys == 'ios' and device_type == 'firewall':
 		with open("{}/policy/cisco/ios/firewall/{}".format(home_directory,policy_file)) as json_file:
 			data = commentjson.load(json_file)
 
-	elif platform_name == 'juniper' and os == 'junos' and device_type == 'vfirewall':
+	elif hardware_vendor == 'juniper' and opersys == 'junos' and device_type == 'vfirewall':
 		with open("{}/policy/juniper/junos/firewall/{}".format(home_directory,policy_file)) as json_file:
 			data = commentjson.load(json_file)
 

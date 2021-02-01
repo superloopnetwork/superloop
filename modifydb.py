@@ -121,33 +121,33 @@ def discover(args):
 	argument_node = args.node
 	database = process_nodes()
 	index = 0
-	try:
-		for element in database:
-			if element['name'] == argument_node or element['mgmt_ip4'] == argument_node:
-				break
-			else:
-				index = index + 1
-		"""
-			Identified node from list.
-		"""
-		try:
-			device = snmp(argument_node)
-		except Exception as error:
-			print('SNMP query timeout. Please ensure that FQDN or IP address is reachable via SNMP.')
-		for attribute in database[index]:
-			if 'created_at' == attribute or 'created_by' == attribute:
-				continue
-			else:
-				database[index][attribute] = device[0][attribute]
-		database[index]['updated_at'] = timestamp()
-		database[index]['updated_by'] = '{}'.format(os.environ.get('USER'))
-		updated_database = yaml.dump(database,default_flow_style = False)
-		with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
-			file.write('---\n')
-			file.write(updated_database)
-		print('+ SNMP discovery successful.')
-	except IndexError as error:
-		print('+ Node does not exist in database.')
+#	try:
+	for element in database:
+		if element['name'] == argument_node or element['mgmt_ip4'] == argument_node:
+			break
+		else:
+			index = index + 1
+	"""
+		Identified node from list.
+	"""
+#		try:
+	device = snmp(argument_node)
+#		except Exception as error:
+#			print('SNMP query timeout. Please ensure that FQDN or IP address is reachable via SNMP.')
+	for attribute in database[index]:
+		if 'created_at' == attribute or 'created_by' == attribute:
+			continue
+		else:
+			database[index][attribute] = device[0][attribute]
+	database[index]['updated_at'] = timestamp()
+	database[index]['updated_by'] = '{}'.format(os.environ.get('USER'))
+	updated_database = yaml.dump(database,default_flow_style = False)
+	with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
+		file.write('---\n')
+		file.write(updated_database)
+	print('+ SNMP discovery successful.')
+#	except IndexError as error:
+#		print('+ Node does not exist in database.')
 
 def sortdb(database):
 	sorted_database = []

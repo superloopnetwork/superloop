@@ -27,36 +27,36 @@ def get_type(name):
 
 	return device_type
 
-def get_template_directory(platform,opersys,device_type):
+def get_template_directory(hardware_vendor,opersys,device_type):
 	"""
 		This will return the appropreiate directory based on the device
-		platform, operating system and type
+		hardware_vendor, operating system and type
 	"""
 	directory = ''
-	if platform == 'cisco' and opersys == 'asa' and device_type == 'firewall':
+	if hardware_vendor == 'cisco' and opersys == 'asa' and device_type == 'firewall':
 		directory = '{}/templates/cisco/asa/firewall/'.format(home_directory)
-	elif platform == 'cisco' and opersys == 'ios'and device_type == 'router':
+	elif hardware_vendor == 'cisco' and opersys == 'ios'and device_type == 'router':
 		directory = '{}/templates/cisco/ios/router'.format(home_directory)
-	elif platform == 'cisco' and opersys == 'ios'and device_type == 'switch':
+	elif hardware_vendor == 'cisco' and opersys == 'ios'and device_type == 'switch':
 		directory = '{}/templates/cisco/ios/switch/'.format(home_directory)
-	elif platform == 'cisco' and opersys == 'nxos'and device_type == 'switch':
+	elif hardware_vendor == 'cisco' and opersys == 'nxos'and device_type == 'switch':
 		directory = '{}/templates/cisco/nxos/switch/'.format(home_directory)
-	elif platform == 'cisco' and opersys == 'nxos'and device_type == 'router':
+	elif hardware_vendor == 'cisco' and opersys == 'nxos'and device_type == 'router':
 		directory = '{}/templates/cisco/nxos/router/'.format(home_directory)
-	elif platform == 'juniper' and opersys == 'junos' and device_type == 'vfirewall':
+	elif hardware_vendor == 'juniper' and opersys == 'junos' and device_type == 'vfirewall':
 		directory = '{}/templates/juniper/junos/vfirewall/'.format(home_directory)
-	elif platform == 'juniper' and opersys == 'junos' and device_type == 'router':
+	elif hardware_vendor == 'juniper' and opersys == 'junos' and device_type == 'router':
 		directory = '{}/templates/juniper/junos/router/'.format(home_directory)
-	elif platform == 'f5' and opersys == 'tmsh' and device_type == 'loadbalancer':
+	elif hardware_vendor == 'f5' and opersys == 'tmsh' and device_type == 'loadbalancer':
 		directory = '{}/templates/f5/tmsh/ltm/'.format(home_directory)
 
 	return directory
 
-def get_policy_directory(platform,opersys,device_type):
+def get_policy_directory(hardware_vendor,opersys,device_type):
 	directory = ''
-	if platform == 'cisco' and os == 'ios' and device_type == 'firewall':
+	if hardware_vendor == 'cisco' and os == 'ios' and device_type == 'firewall':
 		directory = '{}/policy/cisco/ios/firewall/'.format(home_directory)
-	elif platform == 'juniper' and os == 'junos' and device_type == 'vfirewall':
+	elif hardware_vendor == 'juniper' and os == 'junos' and device_type == 'vfirewall':
 		directory = '{}/policy/juniper/junos/firewall/'.format(home_directory)
 
 	return directory
@@ -78,16 +78,16 @@ def get_updated_list(list_copy):
 def get_syntax(node_object,index):
 	"""
 		This will return the correct syntax used for CiscoConfParse
-		based on device platform.
+		based on device hardware vendor.
 	"""
 	syntax = ''
-	if node_object[index]['platform_name'] == 'cisco' and node_object[index]['type'] == 'firewall':
+	if node_object[index]['hardware_vendor'] == 'cisco' and node_object[index]['type'] == 'firewall':
 		syntax = 'asa'
-	elif node_object[index]['platform_name'] == 'cisco' and node_object[index]['type'] == 'switch':
+	elif node_object[index]['hardware_vendor'] == 'cisco' and node_object[index]['type'] == 'switch':
 		syntax = 'ios'
-	elif node_object[index]['platform_name'] == 'juniper' and node_object[index]['type'] == 'switch':
+	elif node_object[index]['hardware_vendor'] == 'juniper' and node_object[index]['type'] == 'switch':
 		syntax = 'junos'
-	elif node_object[index]['platform_name'] == 'f5' and node_object[index]['type'] == 'loadbalancer':
+	elif node_object[index]['hardware_vendor'] == 'f5' and node_object[index]['type'] == 'loadbalancer':
 		syntax = 'ios'
 
 	return syntax
@@ -130,7 +130,7 @@ def get_sorted_juniper_template_list(template_list):
 
 	return sorted_juniper_template_list
 
-def get_location_directory(name,platform,type):
+def get_location_directory(name,hardware_vendor,type):
 	directory = ''
 	datacenter_location = ''
 	if type == 'firewall':
@@ -140,7 +140,7 @@ def get_location_directory(name,platform,type):
 		location_list = name.split('.')    
 		datacenter_location = location_list[3]
 
-	directory = '{}/templates/{}/common/{}/'.format(home_directory,platform,datacenter_location)
+	directory = '{}/templates/{}/common/{}/'.format(home_directory,hardware_vendor,datacenter_location)
 
 	return directory 
 

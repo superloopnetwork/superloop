@@ -1,5 +1,5 @@
 """
-	This mediator is a generic audit diff for various platform_names including Cisco and F5.
+	This mediator is a generic audit diff for various hardware vendors including Cisco and F5.
 """
 import re
 import initialize
@@ -41,7 +41,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 		for config_line in init_config:
 			strip_config = config_line.strip('\n')
 			backup_config.append(strip_config)	
-		directory = get_template_directory(node_object[index]['platform_name'],node_object[index]['opersys'],node_object[index]['type'])
+		directory = get_template_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
 		f = open("{}".format(directory) + template, "r")
 		parse_audit = f.readline()
 		"""

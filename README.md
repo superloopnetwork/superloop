@@ -11,13 +11,13 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
 
 ## Support
 
-|__Platform__|__audit diff__|__push cfgs__|__host exec__|__ssh__ |__node list__|__host add__|__host discover__|__host remove__|__push acl__|__pull cfgs__|
-|------------|:------------:|:-----------:|:-----------:|:------:|:-----------:|:----------:|:---------------:|:-------------:|:----------:|:------------|
-| Cisco IOS  |       x      |      x      |       x     |    x   |      x      |      x     |        x        |       x       |      -     |      x      |
-| Cisco NXOS |       x      |      x      |       x     |    x   |      x      |      x     |        x        |       x       |      -     |      x      |
-| Cisco ASA  |       x      |      x      |       x     |    x   |      x      |      x     |        x        |       x       |            |      x      |
-| Juniper OS |       x      |      x      |       x     |    x   |      x      |      x     |        x        |       x       |            |      x      |
-|F5 BigIP LTM|       x      |      x      |       x     |    x   |      x      |      x     |        x        |       x       |      -     |      x      |
+|__Platform__|__audit diff__|__push cfgs__|__host exec__|__ssh__ |__node list__|__host add__|__host remove__|__push acl__|__pull cfgs__|
+|------------|:------------:|:-----------:|:-----------:|:------:|:-----------:|:----------:|:-------------:|:----------:|:------------|
+| Cisco IOS  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |      -     |      x      |
+| Cisco NXOS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |      -     |      x      |
+| Cisco ASA  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
+| Juniper OS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
+|F5 BigIP LTM|       x      |      x      |       x     |    x   |      x      |            |               |      -     |      x      |
 
 ## Install
 
@@ -85,17 +85,17 @@ root@devvm:~/database# cat nodes.yaml
 ---
 - name: core-fw-superloop-toron
   ip: 10.10.10.10
-  platform: cisco
+  platform_name: cisco
   opersys: ios
   type: firewall
 - name: core.sw.superloop.sfran
   ip: 20.20.20.20  
-  platform: cisco
+  platform_name: cisco
   opersys: ios
   type: switch 
 - name: core.rt.superloop.sjose 
   ip: 30.30.30.30 
-  platform: cisco
+  platform_name: cisco
   opersys: ios
   type: router
 ```  
@@ -120,18 +120,18 @@ templates.yaml is a database file that consist of all the jinja2 templates. You 
 ```
 root@devvm:~/database# cat templates.yaml 
 ---
-- platform: cisco
+- platform_name: cisco
   type: firewall
   opersys: ios
   templates:
   - ~/templates/cisco/ios/firewall/snmp.jinja2
   - ~/templates/cisco/ios/firewall/base.jinja2
-- platform: cisco
+- platform_name: cisco
   type: router 
   opersys: ios
   templates:
   - ~/templates/cisco/ios/router/base.jinja2
-- platform: cisco
+- platform_name: cisco
   type: switch 
   opersys: ios
   templates:
@@ -185,7 +185,7 @@ root@devvm:~# tree ~/templates/
 |           `-- system.jinja2
 
 ```
-Let's look at a simple Cisco platform jinja2 template as an example.
+Let's look at a simple Cisco platform_name jinja2 template as an example.
 ```
 root@devvm:~/superloop# cat ~/templates/cisco/ios/switch/base.jinja2 
 {# audit_filter = ['name.*'] #}
@@ -194,7 +194,7 @@ no name
 {% endif %}
 name {{ nodes.name }}
 ```
-Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates of Cisco and F5 platform. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'name'. If you have additional lines that you want superloop to look at, simply append strings seperated by a comma like so... 
+Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates of Cisco and F5 platform_name. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'name'. If you have additional lines that you want superloop to look at, simply append strings seperated by a comma like so... 
 ```
 ['name.*','service.*','username.*']
 ```
@@ -396,7 +396,7 @@ The 'push local' command allows you to push configs that are stored in a text fi
 
 ## superloop pull cfgs
 
-The 'pull cfgs' feature allows you to pull configs from one or multiple nodes. It's a function used to backup your configs manually when the command is invoked. To use it, simply type 'superloop pull cfgs -n core.*'. This will backup all node configurations that matches the regex. For F5 platforms, this will download the *.ucs file from the appliance.
+The 'pull cfgs' feature allows you to pull configs from one or multiple nodes. It's a function used to backup your configs manually when the command is invoked. To use it, simply type 'superloop pull cfgs -n core.*'. This will backup all node configurations that matches the regex. For F5 platform_names, this will download the *.ucs file from the appliance.
 
 ## superloop host exec
 
@@ -412,7 +412,7 @@ core.sw.superloop.sfran: Vlan130                 10.130.30.1      YES NVRAM  up 
 core.sw.superloop.sfran: Vlan140                 10.140.40.1      YES NVRAM  up                    up      
 core.sw.superloop.sfran: Vlan150                 10.150.50.1      YES NVRAM  up                    up      
 ```
-In this demo, I'm doing a 'show version' for all the devices I have in my database (3 - a mix of Cisco and Juniper platform) and it's displaying all the information in 9.6 seconds. You can imagine how powerful this feature would be if you have hundreds, if not thousands of devices that you need to pull information from without the need of logging in, one by one and capturing the output.
+In this demo, I'm doing a 'show version' for all the devices I have in my database (3 - a mix of Cisco and Juniper platform_name) and it's displaying all the information in 9.6 seconds. You can imagine how powerful this feature would be if you have hundreds, if not thousands of devices that you need to pull information from without the need of logging in, one by one and capturing the output.
 
 ![superloop host_exec_demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_host_exec_demo.gif)
 
@@ -423,7 +423,7 @@ Users are now able to take advantage of the 'ssh' menu screen. This feature allo
 Here is an example of how you would use it:
 ```
 root@devvm:~/superloop# superloop ssh core.*
-ID      name                    address         platform
+ID      name                    address         platform_name
 1       core-fw-superloop-toron 10.10.10.10     cisco
 2       core.sw.superloop.sfran 20.20.20.20     cisco
 3       core.rt.superloop.sjose 30.30.30.30     cisco
@@ -431,14 +431,14 @@ Enter ID to SSH to:
 ```
 ```
 root@devvm:~/superloop# python superloop ssh core.*(fw|rt)
-ID      name                    address         platform
+ID      name                    address         platform_name
 1       core-fw-superloop-toron 10.10.10.10     cisco
 2       core.rt.superloop.sjose 30.30.30.30     cisco
 Enter ID to SSH to: 
 ```
 ```
 root@devvm:~/superloop# superloop ssh .*sfran
-ID      name                    address         platform
+ID      name                    address         platform_name
 1       core.sw.superloop.sfran 20.20.20.20     cisco
 Password: 
 ```
@@ -448,7 +448,7 @@ If the search result returns one host, superloop automatically establishes a SSH
 
 ## superloop host add/remove
 
-When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is invoked, superloop will connect to the device via snmp. It will pull the neccessary information such as it's name and platform to populate it into nodes.yaml.
+When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is invoked, superloop will connect to the device via snmp. It will pull the neccessary information such as it's name and platform_name to populate it into nodes.yaml.
 
 Let's now look at 'host remove' feature. Just like 'add', 'remove' allows you to remove a node from the database without having to manually edit the nodes.yaml file. Here is how you use it:
 ```
@@ -456,17 +456,17 @@ root@devvm:~/superloop# cat nodes.yaml
 ---
 - name: core-fw-superloop-toron
   ip: 10.10.10.10
-  platform: cisco
+  platform_name: cisco
   opersys: ios
   type: firewall
 - name: core.sw.superloop.sfran
   ip: 20.20.20.20  
-  platform: cisco
+  platform_name: cisco
   opersys: ios
   type: switch 
 - name: core.rt.superloop.sjose 
   ip: 30.30.30.30 
-  platform: cisco
+  platform_name: cisco
   opersys: ios
   type: router
   ```
@@ -481,12 +481,12 @@ root@devvm:~/superloop# cat nodes.yaml
 - name: core-fw-superloop-toron
   ip: 10.10.10.10
   opersys: ios
-  platform: cisco
+  platform_name: cisco
   type: firewall
 - name: core.rt.superloop.sjose
   ip: 30.30.30.30
   opersys: ios
-  platform: cisco
+  platform_name: cisco
   type: router
 ```
 * Noticed how the node 'core.sw.superloop.sfran' has been removed from the database.
@@ -500,7 +500,7 @@ root@devvm:~/superloop# superloop node list core.*
     {
         "name": "core-fw-superloop-toron"
         "os": "ios"
-        "platform": "cisco"
+        "platform_name": "cisco"
         "type": "firewall"
         "data": {
             "managed_configs": {
@@ -512,7 +512,7 @@ root@devvm:~/superloop# superloop node list core.*
     {
         "name": "core.sw.superloop.sfran"
         "os": "ios"
-        "platform": "cisco"
+        "platform_name": "cisco"
         "type": "switch"
         "data": {
             "managed_configs": {
@@ -526,7 +526,7 @@ root@devvm:~/superloop# superloop node list core.*
     {
         "name": "core.rt.superloop.sjose"
         "os": "ios"
-        "platform": "cisco"
+        "platform_name": "cisco"
         "type": "router"
         "data": {
             "managed_configs": {
@@ -543,7 +543,7 @@ root@devvm:~/superloop# superloop node list .*sfran
     {
         "name": "core.sw.superloop.sfran"
         "os": "ios"
-        "platform": "cisco"
+        "platform_name": "cisco"
         "type": "switch"
         "data": {
             "managed_configs": {
