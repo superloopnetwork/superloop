@@ -13,8 +13,8 @@ class BaseNode(object):
 		self.hardware_vendor = hardware_vendor 
 		self.lifecycle_status = lifecycle_status
 		self.location_name = location_name
-		self.mgmt_ip4 = mgmt_ip4
 		self.mgmt_con_ip4 = mgmt_con_ip4
+		self.mgmt_ip4 = mgmt_ip4
 		self.mgmt_oob_ip4 = mgmt_oob_ip4
 		self.mgmt_snmp_community4 = mgmt_snmp_community4
 		self.name = name
@@ -32,30 +32,6 @@ class BaseNode(object):
 		self.updated_at = updated_at
 		self.updated_by = updated_by
 		self.username = os.environ.get('USERNAME') 
-
-#		print(self.created_at)
-#		print(self.created_by)
-#		print(self.domain_name)
-#		print('hardware_vendor : {}'.format(self.hardware_vendor))
-#		print(self.lifecycle_status)
-#		print(self.location_name)
-#		print('mgmt_ip4 : {}'.format(self.mgmt_ip4))
-#		print(self.mgmt_con_ip4)
-#		print(self.mgmt_oob_ip4)
-#		print('name : {}'.format(self.name))
-#		print(self.oncall_team)
-#		print(self.password)
-#		print(self.platform_name)
-#		print(self.opersys)
-#		print(self.role_name)
-#		print('serial_num : {}'.format(self.serial_num))
-#		print(self.software_image)
-#		print(self.software_version)
-#		print(self.status)
-#		print(self.type)
-#		print(self.updated_at)
-#		print(self.updated_by)
-#		print(self.username)
 
 	def connect(self):
 		self.net_connect = ConnectHandler(self.mgmt_ip4,self.name,self.username,self.password,self.password,device_type=self.get_device_type())
@@ -77,6 +53,7 @@ class BaseNode(object):
 		return datacenter_location
 
 	def get_device_type(self):
+
 
 		device_type = {
 				'ASA5510' : 'cisco_asa',
