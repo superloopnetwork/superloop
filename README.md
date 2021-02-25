@@ -11,39 +11,44 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
 
 ## Support
 
-|__Platform__|__audit diff__|__push cfgs__|__host exec__|__ssh__ |__node list__|__host add__|__host remove__|__push acl__|__pull cfgs__|
-|------------|:------------:|:-----------:|:-----------:|:------:|:-----------:|:----------:|:-------------:|:----------:|:------------|
-| Cisco IOS  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |      -     |      x      |
-| Cisco NXOS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |      -     |      x      |
-| Cisco ASA  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
-| Juniper OS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |            |      x      |
-|F5 BigIP LTM|       x      |      x      |       x     |    x   |      x      |            |               |      -     |      x      |
+|__Platform__|__audit diff__|__push cfgs__|__host exec__|__ssh__ |__node list__|__host add__|__host remove__|__host discover__|__push acl__|__pull cfgs__|
+|------------|:------------:|:-----------:|:-----------:|:------:|:-----------:|:----------:|:-------------:|:---------------:|:----------:|:------------|
+| Cisco IOS  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |        x        |      -     |      x      |
+| Cisco NXOS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |        x        |      -     |      x      |
+| Cisco ASA  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |        x        |            |      x      |
+| Juniper OS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |        x        |            |      x      |
+|F5 BigIP LTM|       x      |      x      |       x     |    x   |      x      |      x     |       x       |        x        |      -     |      x      |
 
 ## Install
 
-To install superloop, simply use pip:
+There are a few methods to install superloop but the easiest is the following:
 
-```$ python -m pip install superloop```
+An appropriate install location would be in ```/usr/local/```
 
-This will install superloop along with all required dependencies to the directory ```/usr/local/lib/python3.x/dist-packages/superloop```. You will need to install yaml system wide via the following command ```$ python -m pip install pyyaml```
+```$ cd /usr/local/```
+   $ git clone https://github.com/superloopnetwork/superloop
+   $ cd superloop/
+   $ pip3 install -r requirements.txt```
+
+This will install superloop along with all required dependencies to the directory. 
 
 IMPORTANT: To simplify the execution of superloop application, please do the following after installation.
 
 Create a symbolic link of 'superloop.py' and place it in '/usr/local/bin/'. Set the permission to 755. (replace python3.x with your correct python version)
 ```
-$ ln -s /usr/local/lib/python3.x/dist-packages/superloop/superloop.py /usr/local/bin/superloop
+$ ln -s /usr/local/superloop/superloop/superloop.py /usr/local/bin/superloop
 $ chmod 755 /usr/local/bin/superloop
 ```
 Now uncomment the following code within ```/usr/local/bin/superloop``` near the top:
 ```
 #import sys
-#sys.path.append('/usr/local/lib/python3.x/dist-packages/superloop')
+#sys.path.append('/usr/local/superloop')
 ```
 So it looks like this . . . . 
 ```
 #!/usr/bin/python3
 import sys
-sys.path.append('/usr/local/lib/python3.x/dist-packages/superloop')
+sys.path.append('/usr/local/superloop')
 from auditdiff import auditdiff
 from push_cfgs import push_cfgs
 ...
@@ -51,7 +56,7 @@ from push_cfgs import push_cfgs
 .
 <output truncated>
 ```
-This will set the system path of superloop to '/usr/local/lib/python3.x/dist-packages/superloop'. If you have superloop installed in another directory, change the path accordingly (replace python3.x with appropriate version).
+This will set the system path of superloop to '/usr/local/superloop'. If you have superloop installed in another directory, change the path accordingly (replace python3.x with appropriate version).
 
 In Netmiko version 3.x by default is going to expect the configuration command to be echoed to the screen. This ensures Netmiko doesn't get out of sync with the underlying device (ex. keep sending configuration commands even though the remote device might be too slow and buffering them).
 
@@ -83,21 +88,72 @@ nodes.yaml acts as the inventory for all network devices. It must follow the for
 ```
 root@devvm:~/database# cat nodes.yaml 
 ---
-- name: core-fw-superloop-toron
-  ip: 10.10.10.10
-  platform_name: cisco
-  opersys: ios
+- created_at: '2021-01-18 21:01:19'
+  created_by: root
+  domain_name: 'null'
+  hardware_vendor: cisco
+  lifecycle_status: 'null'
+  location_name: 'null'
+  mgmt_con_ip4: 'null'
+  mgmt_ip4: 10.10.10.10
+  mgmt_oob_ip4: 'null'
+  mgmt_snmp_community4: 'null'
+  name: core-fw-superloop-toron
+  oncall_team: network
+  opersys: asa
+  platform_name: ASA5510
+  role_name: datacenter-firewall
+  serial_num: XXXXXXXXXX
+  software_image: 'null'
+  software_version: 'null'
+  status: online
   type: firewall
-- name: core.sw.superloop.sfran
-  ip: 20.20.20.20  
-  platform_name: cisco
+  updated_at: '2021-02-01 11:27:07'
+  updated_by: root
+- created_at: '2021-01-31 17:48:44'
+  created_by: root
+  domain_name: 'null'
+  hardware_vendor: cisco
+  lifecycle_status: 'null'
+  location_name: 'null'
+  mgmt_con_ip4: 'null'
+  mgmt_ip4: 20.20.20.20
+  mgmt_oob_ip4: 'null'
+  mgmt_snmp_community4: 'null'
+  name: core.sw.superloop.sfran
+  oncall_team: network
   opersys: ios
-  type: switch 
-- name: core.rt.superloop.sjose 
-  ip: 30.30.30.30 
-  platform_name: cisco
-  opersys: ios
-  type: router
+  platform_name: WS-C3750G-24TS-1U
+  role_name: datacenter-switch
+  serial_num: XXXXXXXXXX
+  software_image: 'null'
+  software_version: 'null'
+  status: online
+  type: switch
+  updated_at: '2021-02-01 11:19:24'
+  updated_by: root
+- created_at: '2021-01-22 20:42:28'
+  created_by: root
+  domain_name: 'null'
+  hardware_vendor: juniper
+  lifecycle_status: 'null'
+  location_name: 'null'
+  mgmt_con_ip4: 'null'
+  mgmt_ip4: 30.30.30.30
+  mgmt_oob_ip4: 'null'
+  mgmt_snmp_community4: 'null'
+  name: core.vsrx.superloop.sjose 
+  oncall_team: network
+  opersys: junos
+  platform_name: firefly-perimeter
+  role_name: datacenter-vfirewall
+  serial_num: XXXXXXXXXX
+  software_image: 'null'
+  software_version: 'null'
+  status: online
+  type: vfirewall
+  updated_at: '2021-02-01 15:44:23'
+  updated_by: root
 ```  
 Credentials used to connect to nodes are via OS environment varilables. This eliminates any files associated to the application 'superloop' hardcoded with the username and password and thus, reduces the risk of being leaked/hacked. To setup the OS environment variables, the easiest way is to create a hidden file like ```.secret``` placed in your home directory. This file absolutely needs to be locked down to the service account owner. Set permission so only the service account owner where superloop is executed can read/write ```chmod 600 .secret```.
 
