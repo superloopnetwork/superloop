@@ -17,7 +17,7 @@ import re
 import initialize
 import os
 
-home_directory = os.environ.get('HOME')
+pwd = os.getcwd()
 
 def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 	redirect = [] 
@@ -78,7 +78,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 			"""
 			if node_object[index]['hardware_vendor'] == 'juniper':
 				template_counter = template_counter + 1
-				f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['name'],template.split('.')[0]) + ".conf", "r")
+				f = open("{}/rendered-configs/{}.{}".format(pwd,node_object[index]['name'],template.split('.')[0]) + ".conf", "r")
 				init_config = f.readlines()
 				for config_line in init_config:
 					strip_config = config_line.strip('\n')
