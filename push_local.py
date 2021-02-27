@@ -10,12 +10,12 @@ from search import node_element
 from node_create import node_create
 from confirm import confirm
 from parse_cmd import parse_commands
+from get_property import get_home_directory
 
 def push_local(args):
 	argument_filename = args.filename
 	argument_node = args.node
 	commands = initialize.configuration
-	home_directory = os.path.expanduser('~')
 	redirect = [] 
 	"""
 		:param argument_filename: Argument accepted as template name.
@@ -26,9 +26,6 @@ def push_local(args):
 		
 		:param commands: Referenced to global variable commands which keeps track of all commands per node.
 		:type commands: list
-
-		:param home_directory: User home directory.
-		:type home_directory: str
 
 		:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
 		:type alt_key_file: list
@@ -52,7 +49,7 @@ def push_local(args):
 			redirect.append('push_cfgs')
 		for index in initialize.element:
 			config_list = []
-			f = open('{}/{}'.format(home_directory,argument_filename), 'r')
+			f = open('{}/{}'.format(get_home_directory(),argument_filename), 'r')
 			init_config = f.readlines()
 			parse_commands(node_object[index],init_config)
 		confirm(redirect,commands)

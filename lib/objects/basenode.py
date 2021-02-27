@@ -115,7 +115,7 @@ class BaseNode(object):
 			self.scpconnect()
 			self.write_to_file(command)
 			scp_flag = True
-			self.scp_connect.scp_get_file('/var/local/ucs/config.ucs', '{}/backup-configs/{}'.format(self.get_pwd(),self.name))
+			self.scp_connect.scp_get_file('/var/local/ucs/config.ucs', '{}/backup-configs/{}'.format(self.get_home_directory(),self.name))
 			self.scp_connect.close()
 			self.net_connect.disconnect()
 		if self.hardware_vendor != 'juniper' or self.hardware_vendor != 'f5':
@@ -132,10 +132,10 @@ class BaseNode(object):
 		print('')
 		self.net_connect.disconnect()
 
-	def get_pwd(self):
-		pwd = os.getcwd()
+	def get_home_directory(self):
+		home_directory = os.getenv('HOME')
 
-		return pwd
+		return home_directory
 
 	def get_config(self,command):
 		scp_flag = False
@@ -170,27 +170,27 @@ class BaseNode(object):
 			else:
 				extention = '.conf'
 			self.check_and_mkdir(scp_flag,method)
-			with open('{}/backup-configs/{}/{}{}'.format(self.get_pwd(),self.get_subdir(scp_flag),self.name,extention), "w") as file:
+			with open('{}/backup-configs/{}/{}{}'.format(self.get_home_directory(),self.get_subdir(scp_flag),self.name,extention), "w") as file:
 				output = self.net_connect.send_command(command)
 				file.write(output)
 				file.close()
 		elif method == 'get_config':
 			self.check_and_mkdir(scp_flag,method)
-			with open('{}/backup-configs/{}'.format(self.get_pwd(),self.name) + ".conf", "w") as file:
+			with open('{}/backup-configs/{}'.format(self.get_home_directory(),self.name) + ".conf", "w") as file:
 				output = self.net_connect.send_command(command)
 				file.write(output)
 				file.close()
 		elif method == 'get_diff':
 			self.check_and_mkdir(scp_flag,method)
-			with open('{}/diff-configs/{}'.format(self.get_pwd(),self.name) + ".conf", "w") as file:
+			with open('{}/diff-configs/{}'.format(self.get_home_directory(),self.name) + ".conf", "w") as file:
 				output = self.net_connect.send_config_set(command)
 				file.write(output)
 				file.close()
 
 	def check_and_mkdir(self,scp_flag,method):
 		if method == 'pull_cfgs':
-			os.makedirs('{}/backup-configs/{}/'.format(self.get_pwd(),self.get_subdir(scp_flag)),exist_ok=True)
+			os.makedirs('{}/backup-configs/{}/'.format(self.get_home_directory(),self.get_subdir(scp_flag)),exist_ok=True)
 		elif method == 'get_config':
-			os.makedirs('{}/backup-configs/{}'.format(self.get_pwd(),self.name),exist_ok=True)	
+			os.makedirs('{}/backup-configs/{}'.format(self.get_home_directory(),self.name),exist_ok=True)	
 		elif method == 'get_diff':
-			os.makedirs('{}/diff-configs/{}'.format(self.get_pwd(),self.name),exist_ok=True)
+			os.makedirs('{}/diff-configs/{}'.format(self.get_home_directory(),self.name),exist_ok=True)

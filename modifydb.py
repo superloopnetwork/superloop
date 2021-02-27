@@ -2,12 +2,11 @@
 	This module allows modification to be made to the database.
 """
 import os
+from get_property import get_home_directory 
 from get_property import timestamp
 from processdb import process_nodes
 from snmp import snmp
 import yaml
-
-pwd = os.getcwd()
 
 def append(args):
 	argument_node = args.node
@@ -30,12 +29,12 @@ def append(args):
 			if 'MATCH' in match_node:
 				print('+ Node currently present in database.')
 			else:
-				with open('{}/database/nodes.yaml'.format(pwd),'a') as file:
+				with open('{}/database/nodes.yaml'.format(home_directory),'a') as file:
 					file.write(new_node)
 				database = process_nodes()
 				sorted_database = sortdb(database)
 				updated_database = yaml.dump(sorted_database,default_flow_style = False)
-				with open('{}/database/nodes.yaml'.format(pwd),'w') as file:
+				with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
 					file.write('---\n')
 					file.write(updated_database)
 				print('+ SNMP discovery successful.')
@@ -63,7 +62,7 @@ def remove(args):
 		database.pop(index)
 		updated_database = yaml.dump(database,default_flow_style = False)
 		try:
-			with open('{}/database/nodes.yaml'.format(pwd),'w') as file:
+			with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
 				file.write('---\n')
 				file.write(updated_database)
 				print('- Node successfully removed from database.')
@@ -101,7 +100,7 @@ def update(args):
 					database[index]['updated_by'] = '{}'.format(os.environ.get('USER'))
 					updated_database = yaml.dump(database,default_flow_style = False)
 					try:
-						with open('{}/database/nodes.yaml'.format(pwd),'w') as file:
+						with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
 							file.write('---\n')
 							file.write(updated_database)
 							print('+ Amendment to database was successful.')
@@ -142,7 +141,7 @@ def discover(args):
 	database[index]['updated_at'] = timestamp()
 	database[index]['updated_by'] = '{}'.format(os.environ.get('USER'))
 	updated_database = yaml.dump(database,default_flow_style = False)
-	with open('{}/database/nodes.yaml'.format(pwd),'w') as file:
+	with open('{}/database/nodes.yaml'.format(home_directory),'w') as file:
 		file.write('---\n')
 		file.write(updated_database)
 	print('+ SNMP discovery successful.')

@@ -5,12 +5,11 @@ import initialize
 import os
 import re
 from jinja2 import Environment, FileSystemLoader
+from get_property import get_home_directory
 from get_property import get_template_directory
 from get_property import get_location_directory
 from get_property import get_updated_list
 from parse_cmd import parse_commands
-
-pwd = os.getcwd()
 
 def render(template_list,node_object,auditcreeper,output,with_remediation):
 	global with_remediate
@@ -26,7 +25,7 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 			print("{}{}".format(get_hardware_vendorg_template_directory,template))
 			if(output):
 				print("{}".format(config))
-			f = open("{}/rendered-configs/{}.{}".format(pwd,node_object[index]['name'],template.replace('jinja2','')) + "conf", "r")
+			f = open("{}/rendered-configs/{}.{}".format(get_home_directory(),node_object[index]['name'],template.replace('jinja2','')) + "conf", "r")
 			init_config = f.readlines()
 			"""
 				The below parse_commands() function will only get executed if
@@ -46,8 +45,8 @@ def process_jinja2_template(node_object,index,template,with_remediation):
 	get_location_template_directory = get_location_directory(node_object[index]['name'],node_object[index]['hardware_vendor'],node_object[index]['type'])
 	env = Environment(loader=FileSystemLoader([get_hardware_vendorg_template_directory,get_location_template_directory]),lstrip_blocks = True,trim_blocks=True)
 	baseline = env.get_template(template)
-	os.makedirs('{}/rendered-configs/'.format(pwd),exist_ok=True)
-	f = open("{}/rendered-configs/{}.{}".format(pwd,node_object[index]['name'],template.replace('jinja2','')) + "conf", "w") 
+	os.makedirs('{}/rendered-configs/'.format(get_home_directory()),exist_ok=True)
+	f = open("{}/rendered-configs/{}.{}".format(get_home_directory(),node_object[index]['name'],template.replace('jinja2','')) + "conf", "w") 
 	config = baseline.render(nodes = node_object[index],with_remediation = with_remediation)
 	f.write(config) 
 	f.close 
