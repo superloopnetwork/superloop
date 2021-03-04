@@ -25,10 +25,12 @@ There are a few methods to install superloop but the easiest is the following:
 
 An appropriate install location would be in ```/usr/local/```
 
-```$ cd /usr/local/
+```
+   $ cd /usr/local/
    $ git clone https://github.com/superloopnetwork/superloop
    $ cd superloop/
-   $ pip3 install -r requirements.txt```
+   $ pip3 install -r requirements.txt
+```
 
 This will install superloop along with all required dependencies to the directory. 
 
