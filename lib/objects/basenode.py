@@ -34,7 +34,6 @@ class BaseNode(object):
 		self.username = os.environ.get('USERNAME')
 
 	def connect(self):
-		print(self.password)
 		self.net_connect = ConnectHandler(self.mgmt_ip4,self.name,self.username,self.password,self.password,device_type=self.get_device_type())
 			
 	def scpconnect(self):
