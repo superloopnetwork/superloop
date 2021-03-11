@@ -19,7 +19,7 @@ class BaseNode(object):
 		self.mgmt_snmp_community4 = mgmt_snmp_community4
 		self.name = name
 		self.oncall_team = oncall_team
-		self.password = os.environ.get('NETWORK_USR')
+		self.password = os.environ.get('USERNAME')
 		self.platform_name = platform_name
 		self.oncall_team = oncall_team
 		self.opersys = opersys
@@ -31,7 +31,7 @@ class BaseNode(object):
 		self.type = type
 		self.updated_at = updated_at
 		self.updated_by = updated_by
-		self.username = os.environ.get('NETWORK_PSW')
+		self.username = os.environ.get('PASSWORD')
 
 	def connect(self):
 		self.net_connect = ConnectHandler(self.mgmt_ip4,self.name,self.username,self.password,self.password,device_type=self.get_device_type())
