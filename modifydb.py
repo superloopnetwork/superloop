@@ -2,7 +2,7 @@
 	This module allows modification to be made to the database.
 """
 import os
-from get_property import get_home_directory 
+from get_property import get_real_path 
 from get_property import timestamp
 from processdb import process_nodes
 from snmp import snmp

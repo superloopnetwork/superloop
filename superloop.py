@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """ 
 	Main executable file for superloop. A symbolic link should be created as a global command for ease of use.	
 """

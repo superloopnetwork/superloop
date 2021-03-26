@@ -10,6 +10,11 @@ def get_home_directory():
 
 	return home_directory
 
+def get_real_path():
+	real_path = os.path.dirname(os.path.realpath(__file__))
+
+	return real_path
+
 def get_port(node_object,element,ssh_id):
 	if node_object[element[ssh_id]]['type'] == 'switch':
 		port = '22'
@@ -37,30 +42,30 @@ def get_template_directory(hardware_vendor,opersys,device_type):
 	"""
 	directory = ''
 	if hardware_vendor == 'cisco' and opersys == 'asa' and device_type == 'firewall':
-		directory = '{}/templates/cisco/asa/firewall/'.format(get_home_directory())
+		directory = '{}/templates/cisco/asa/firewall/'.format(get_real_path())
 	elif hardware_vendor == 'cisco' and opersys == 'ios'and device_type == 'router':
-		directory = '{}/templates/cisco/ios/router'.format(get_home_directory())
+		directory = '{}/templates/cisco/ios/router'.format(get_real_path())
 	elif hardware_vendor == 'cisco' and opersys == 'ios'and device_type == 'switch':
-		directory = '{}/templates/cisco/ios/switch/'.format(get_home_directory())
+		directory = '{}/templates/cisco/ios/switch/'.format(get_real_path())
 	elif hardware_vendor == 'cisco' and opersys == 'nxos'and device_type == 'switch':
-		directory = '{}/templates/cisco/nxos/switch/'.format(get_home_directory())
+		directory = '{}/templates/cisco/nxos/switch/'.format(get_real_path())
 	elif hardware_vendor == 'cisco' and opersys == 'nxos'and device_type == 'router':
-		directory = '{}/templates/cisco/nxos/router/'.format(get_home_directory())
+		directory = '{}/templates/cisco/nxos/router/'.format(get_real_path())
 	elif hardware_vendor == 'juniper' and opersys == 'junos' and device_type == 'vfirewall':
-		directory = '{}/templates/juniper/junos/vfirewall/'.format(get_home_directory())
+		directory = '{}/templates/juniper/junos/vfirewall/'.format(get_real_path())
 	elif hardware_vendor == 'juniper' and opersys == 'junos' and device_type == 'router':
-		directory = '{}/templates/juniper/junos/router/'.format(get_home_directory())
+		directory = '{}/templates/juniper/junos/router/'.format(get_real_path())
 	elif hardware_vendor == 'f5' and opersys == 'tmsh' and device_type == 'loadbalancer':
-		directory = '{}/templates/f5/tmsh/ltm/'.format(get_home_directory())
+		directory = '{}/templates/f5/tmsh/ltm/'.format(get_real_path())
 
 	return directory
 
 def get_policy_directory(hardware_vendor,opersys,device_type):
 	directory = ''
 	if hardware_vendor == 'cisco' and os == 'ios' and device_type == 'firewall':
-		directory = '{}/policy/cisco/ios/firewall/'.format(get_home_directory())
+		directory = '{}/policy/cisco/ios/firewall/'.format(get_real_path())
 	elif hardware_vendor == 'juniper' and os == 'junos' and device_type == 'vfirewall':
-		directory = '{}/policy/juniper/junos/firewall/'.format(get_home_directory())
+		directory = '{}/policy/juniper/junos/firewall/'.format(get_real_path())
 
 	return directory
 
@@ -143,7 +148,7 @@ def get_location_directory(name,hardware_vendor,type):
 		location_list = name.split('.')    
 		datacenter_location = location_list[3]
 
-	directory = '{}/templates/{}/common/{}/'.format(get_home_directory(),hardware_vendor,datacenter_location)
+	directory = '{}/templates/{}/common/{}/'.format(get_real_path(),hardware_vendor,datacenter_location)
 
 	return directory 
 
