@@ -33,7 +33,7 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 				for push. push_cfgs(output = True) vs render_config(output = False) functions.
 			"""
 			if output!=True:
-				parse_commands(node_object[index],init_config)
+				parse_commands(node_object[index],init_config,set_notation=False)
 			print()
 		if auditcreeper:
 			template_list = get_updated_list(template_list_copy)

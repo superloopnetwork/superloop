@@ -4,14 +4,16 @@ from processdb import process_json
 from get_property import get_policy_directory
 
 
-def parse_commands(node_object,init_config):
+def parse_commands(node_object,init_config,set_notation):
 	"""
 		This function generates the commands in a form of a list so that
 		it can be passed into the method of the object.
 	"""
 	commands = initialize.configuration
 	config_list = []
-	if node_object['hardware_vendor'] == 'juniper':
+	if node_object['hardware_vendor'] == 'juniper' and set_notation:
+		config_list.append('load set terminal')
+	elif node_object['hardware_vendor'] == 'juniper':
 		config_list.append('load replace terminal')
 	elif node_object['hardware_vendor'] == 'f5':
 		config_list.append('load sys config merge from-terminal')

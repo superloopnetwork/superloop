@@ -51,7 +51,7 @@ def push_local(args):
 			config_list = []
 			f = open('{}/{}'.format(get_home_directory(),argument_filename), 'r')
 			init_config = f.readlines()
-			parse_commands(node_object[index],init_config)
+			parse_commands(node_object[index],init_config,set_notation=True)
 		confirm(redirect,commands)
 
 	return None
