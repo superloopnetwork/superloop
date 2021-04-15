@@ -43,6 +43,7 @@ def snmp(argument_node):
 		'oncall_team':'network',
 		'opersys':'{}'.format(operating_system),
 		'platform_name':'{}'.format(platform_name),
+		'ports':[snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name)][0],
 		'role_name':'{}'.format(role_name),
 		'serial_num':'{}'.format(serial_num),
 		'software_image':'null',
@@ -56,6 +57,74 @@ def snmp(argument_node):
 
 	return data
 
+def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
+	interface = []
+	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.2.2.1.2'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	oids = snmpwalk.stdout.read()
+	oids = oids.decode().split('\n')
+	for index in oids:
+		if '' == index:
+			pass
+		else:
+			interface_name = index.split()[3].strip('"')
+			interface_data = {
+				'access_vlan': 'null',
+				'acl4_in': 'null',
+				'acl4_out': 'null',
+				'admin_status': 'null',
+				'created_at': '{}'.format(timestamp()),
+				'created_by': '{}'.format(os.environ.get('USER')),
+				'data': 'null',
+				'drain_status': 'none',
+				'farend_name': 'null',
+				'if_speed': 'null',
+				'ip4': '{}'.format(snmp_interface_ip(interface_name,SNMP_COMMUNITY_STRING,argument_node)),
+				'management': 'null',
+				'mtu': 'null',
+				'name': '{}'.format(interface_name),
+				'node_name': '{}'.format(snmp_name),
+				'portrole_name': 'null',
+				'type': 'null',
+				'updated_at': 'null',
+				'updated_by': 'null',
+				'wan_link': 'null'
+			}
+			interface.append(interface_data)
+
+	return interface
+
+def snmp_interface_ip(interface_name,SNMP_COMMUNITY_STRING,argument_node):
+	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.4.20.1.1'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	oids = snmpwalk.stdout.read()
+	oids = oids.decode().split('\n')
+	for index in oids:
+		if '' == index:
+			pass
+		else:
+			ip4 = index.split()[3]
+			snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.4.20.1.2.{}'.format(SNMP_COMMUNITY_STRING,argument_node,ip4),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+			oids = snmpwalk.stdout.read()
+			oids = oids.decode().split('\n')
+			for index in oids:
+				if '' == index:
+					pass
+				else:
+					interface_index = index.split()[3]
+					snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.2.2.1.2.{}'.format(SNMP_COMMUNITY_STRING,argument_node,interface_index),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+					oids = snmpwalk.stdout.read()
+					oids = oids.decode().split('\n')
+					for index in oids:
+						if '' == index:
+							pass
+						else:
+							interface_name_lookup = index.split()[3].strip('"')
+							if interface_name.strip('"') == interface_name_lookup:
+								return ip4
+							else:
+								continue
+
+	return 'None'
+	
 def snmp_data(device,oid,port):
 	snmp_data = snmp_get_oid(device,oid,display_errors=True)
 	snmp_property = snmp_extract(snmp_data)

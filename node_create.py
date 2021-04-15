@@ -19,6 +19,7 @@ def node_create(match_node,node_object):
 				node_object[index]['mgmt_snmp_community4'],
 				node_object[index]['name'],
 				node_object[index]['platform_name'],
+				node_object[index]['ports'],
 				node_object[index]['oncall_team'],
 				node_object[index]['opersys'],
 				node_object[index]['role_name'],

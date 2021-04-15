@@ -90,6 +90,7 @@ def main():
 	node_list_cmd = node_subparsers.add_parser('list')
 	node_list_cmd.set_defaults(func=node_list)
 	node_list_cmd.add_argument('name', help='Specify name(s) to match again. Accepts regular expressions.')
+	node_list_cmd.add_argument('-e','--extended', dest='attribute', help='Specify extended option for additional attributes. {ports}')
 
 	args = parser.parse_args()
 	args.func(args)

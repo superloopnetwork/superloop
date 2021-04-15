@@ -17,6 +17,7 @@ def node_list(args):
 	element_position = 1
 	template_list = []
 	template_list_copy = template_list
+	print(args.attribute)
 	"""
 		:param argument_node: Argument accepted as regular expression.
 		:type augument_node: str
@@ -67,7 +68,7 @@ def node_list(args):
 				  "\t    \"managed_configs\": {" \
 					)
 			for template in template_list:
-				print ("\t\t   \"{}\"".format(template))
+				print("\t\t   \"{}\"".format(template))
 			print('\t     }')
 			print('         }')
 			print("\t\"domain_name\": \"{}\"\n" \
@@ -80,8 +81,69 @@ def node_list(args):
 				  "\t\"mgmt_snmp_community4\": \"{}\"\n" \
 				  "\t\"name\": \"{}\"\n" \
 				  "\t\"opersys\": \"{}\"\n" \
-				  "\t\"platform_name\": \"{}\"\n" \
-				  "\t\"role_name\": \"{}\"\n" \
+				  "\t\"platform_name\": \"{}\"" \
+					.format(node_object[index]['domain_name'],
+							node_object[index]['hardware_vendor'],
+							node_object[index]['lifecycle_status'],
+							node_object[index]['location_name'],
+							node_object[index]['mgmt_con_ip4'],
+							node_object[index]['mgmt_ip4'],
+							node_object[index]['mgmt_oob_ip4'],
+							node_object[index]['mgmt_snmp_community4'],
+							node_object[index]['name'],
+							node_object[index]['opersys'],
+							node_object[index]['platform_name']
+					)
+			)
+			if(args.attribute == 'ports'):
+				print("\t\"ports\": [")
+				for interface in node_object[index]['ports']:
+					print("\t   {")
+					print("\t\t\"access_vlan\": \"{}\"\n" \
+					  	  "\t\t\"acl4_in\": \"{}\"\n" \
+					  	  "\t\t\"acl4_out: \"{}\"\n" \
+					  	  "\t\t\"admin_status: \"{}\"\n" \
+					  	  "\t\t\"created_at: \"{}\"\n" \
+					  	  "\t\t\"created_by: \"{}\"\n" \
+					  	  "\t\t\"data: \"{}\"\n" \
+					  	  "\t\t\"drain_status: \"{}\"\n" \
+					  	  "\t\t\"farend_name: \"{}\"\n" \
+					  	  "\t\t\"if_speed: \"{}\"\n" \
+					  	  "\t\t\"ip4: \"{}\"\n" \
+					  	  "\t\t\"management: \"{}\"\n" \
+					  	  "\t\t\"mtu: \"{}\"\n" \
+					  	  "\t\t\"name: \"{}\"\n" \
+					  	  "\t\t\"node_name: \"{}\"\n" \
+					  	  "\t\t\"portrole_name: \"{}\"\n" \
+					  	  "\t\t\"type: \"{}\"\n" \
+					  	  "\t\t\"updated_at: \"{}\"\n" \
+					  	  "\t\t\"updated_by: \"{}\"\n" \
+					  	  "\t\t\"wan_link: \"{}\"" \
+							.format(interface['access_vlan'],
+									interface['acl4_in'],
+									interface['acl4_out'],
+									interface['admin_status'],
+									interface['created_at'],
+									interface['created_by'],
+									interface['data'],
+									interface['drain_status'],
+									interface['farend_name'],
+									interface['if_speed'],
+									interface['ip4'],
+									interface['management'],
+									interface['mtu'],
+									interface['name'],
+									interface['node_name'],
+									interface['portrole_name'],
+									interface['type'],
+									interface['updated_at'],
+									interface['updated_by'],
+									interface['wan_link']
+							)
+				)
+					print("\t   },")
+				print('        ]')
+			print("\t\"role_name\": \"{}\"\n" \
 				  "\t\"serial_num\": \"{}\"\n" \
 				  "\t\"software_image\": \"{}\"\n" \
 				  "\t\"software_version\": \"{}\"\n" \
@@ -89,8 +151,16 @@ def node_list(args):
 				  "\t\"type\": \"{}\"\n" \
                   "\t\"updated_at\": \"{}\"\n" \
                   "\t\"updated_by\": \"{}\"" \
-					.format(node_object[index]['domain_name'],node_object[index]['hardware_vendor'],node_object[index]['lifecycle_status'],node_object[index]['location_name'],node_object[index]['mgmt_con_ip4'],node_object[index]['mgmt_ip4'],node_object[index]['mgmt_oob_ip4'],node_object[index]['mgmt_snmp_community4'],node_object[index]['name'],node_object[index]['opersys'],node_object[index]['platform_name'],node_object[index]['role_name'],node_object[index]['serial_num'],node_object[index]['software_image'],node_object[index]['software_version'],node_object[index]['status'],node_object[index]['type'],node_object[index]['updated_at'],node_object[index]['updated_by'])
+					.format(node_object[index]['role_name'],
+							node_object[index]['serial_num'],
+							node_object[index]['software_image'],
+							node_object[index]['software_version'],
+							node_object[index]['status'],
+							node_object[index]['type'],
+							node_object[index]['updated_at'],
+							node_object[index]['updated_by']
 					)
+			)
 			template_list = get_updated_list(template_list_copy)
 			if element_position == len(initialize.element):
 				print('    }')
