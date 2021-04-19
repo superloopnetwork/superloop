@@ -47,7 +47,7 @@ def process_jinja2_template(node_object,index,template,with_remediation):
 	baseline = env.get_template(template)
 	os.makedirs('{}/rendered-configs/'.format(get_real_path()),exist_ok=True)
 	f = open("{}/rendered-configs/{}.{}".format(get_real_path(),node_object[index]['name'],template.replace('jinja2','')) + "conf", "w") 
-	config = baseline.render(nodes = node_object[index],with_remediation = with_remediation)
+	config = baseline.render(node = node_object[index],with_remediation = with_remediation)
 	f.write(config) 
 	f.close 
 

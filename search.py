@@ -6,6 +6,7 @@ import initialize
 from processdb import process_json
 from get_property import get_template_directory
 from get_property import get_policy_directory
+from get_property import get_home_directory
 
 def search_node(argument_node,node_object):
 	"""
@@ -67,6 +68,10 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 						else:
 							directory = get_template_directory(node_obj['hardware_vendor'],node_obj['opersys'],node_obj['type'])
 							file = directory + template_list[element]
+							template_index = 0
+							for template_path in node_temp['templates']:
+								node_temp['templates'][template_index] = template_path.replace('~','{}'.format(get_home_directory()))
+								template_index = template_index + 1
 							if file in node_temp['templates']:
 								search_result.append("MATCH")	
 							else:
