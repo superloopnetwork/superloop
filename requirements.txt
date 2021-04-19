@@ -3,4 +3,4 @@ commentjson==0.8.3
 Jinja2==2.10.1
 netmiko==3.1.1
 pysnmp==4.4.12
-PyYAML==5.3.1
+PyYAML==5.4
