@@ -71,7 +71,7 @@ def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
 				'access_vlan': 'null',
 				'acl4_in': 'null',
 				'acl4_out': 'null',
-				'admin_status': 'null',
+				'admin_status': '{}'.format(snmp_interface_admin_status(interface_name,SNMP_COMMUNITY_STRING,argument_node)),
 				'created_at': '{}'.format(timestamp()),
 				'created_by': '{}'.format(os.environ.get('USER')),
 				'data': 'null',
@@ -124,7 +124,35 @@ def snmp_interface_ip(interface_name,SNMP_COMMUNITY_STRING,argument_node):
 								continue
 
 	return 'None'
-	
+
+def snmp_interface_admin_status(interface_name,SNMP_COMMUNITY_STRING,argument_node):
+	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.2.2.1.7'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	oids = snmpwalk.stdout.read()
+	oids = oids.decode().split('\n')
+	for index in oids:
+		if '' == index:
+			pass
+		else:
+			interface_admin_status_index = index.split()[3]
+			if interface_admin_status_index == '1':
+				interface_admin_status = 'up'
+			else:
+				interface_admin_status = 'down'
+			oids_split = index.split(' ')
+			interface_index = oids_split[0].split('.')[10]
+			snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.2.2.1.2.{}'.format(SNMP_COMMUNITY_STRING,argument_node,interface_index),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+			oids = snmpwalk.stdout.read()
+			oids = oids.decode().split('\n')
+			for index in oids:
+				if '' == index:
+					pass
+				else:
+					interface_name_lookup = index.split()[3].strip('"')
+				if interface_name.strip('"') == interface_name_lookup:
+					return interface_admin_status
+				else:
+					continue
+
 def snmp_data(device,oid,port):
 	snmp_data = snmp_get_oid(device,oid,display_errors=True)
 	snmp_property = snmp_extract(snmp_data)

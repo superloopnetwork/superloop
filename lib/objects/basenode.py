@@ -184,7 +184,6 @@ class BaseNode(object):
 		elif method == 'get_diff':
 			self.check_and_mkdir(scp_flag,method)
 			with open('{}/diff-configs/{}'.format(self.get_home_directory(),self.name) + ".conf", "w") as file:
-				print(command)
 				output = self.net_connect.send_config_set(command)
 				file.write(output)
 				file.close()
