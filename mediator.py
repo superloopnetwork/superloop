@@ -159,8 +159,18 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 			for config_line in init_config:
 				strip_config = config_line.strip('\n')
 				diff_config.append(strip_config)
-			juniper_mediator(node_object,template_list,diff_config,edit_list,index)
-			juniper_audit_diff(directory,template_list,diff_config,edit_list)
+			for output in diff_config:
+				if 'error' in output:
+					error = True
+					break
+				else:
+					error = False
+			if error:
+				print('+ Please check error(s) in {}.jinja template'.format(template))
+				break
+			else:
+				juniper_mediator(node_object,template_list,diff_config,edit_list,index)
+				juniper_audit_diff(directory,template_list,diff_config,edit_list)
 		if auditcreeper:
 			initialize.configuration.append(node_configs)
 			if ntw_device_pop == True:
