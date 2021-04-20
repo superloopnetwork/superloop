@@ -17,7 +17,6 @@ def node_list(args):
 	element_position = 1
 	template_list = []
 	template_list_copy = template_list
-	print(args.attribute)
 	"""
 		:param argument_node: Argument accepted as regular expression.
 		:type augument_node: str

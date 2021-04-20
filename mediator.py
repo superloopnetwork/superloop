@@ -160,13 +160,13 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 				strip_config = config_line.strip('\n')
 				diff_config.append(strip_config)
 			for output in diff_config:
-				if 'error' in output:
+				if 'errors' in output:
 					error = True
 					break
 				else:
 					error = False
 			if error:
-				print('+ Please check error(s) in {}.jinja template'.format(template))
+				print('+ Please check error(s) in template(s)')
 				break
 			else:
 				juniper_mediator(node_object,template_list,diff_config,edit_list,index)
