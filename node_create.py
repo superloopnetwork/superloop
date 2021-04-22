@@ -22,6 +22,7 @@ def node_create(match_node,node_object):
 				node_object[index]['ports'],
 				node_object[index]['oncall_team'],
 				node_object[index]['opersys'],
+				node_object[index]['ospf'],
 				node_object[index]['role_name'],
 				node_object[index]['serial_num'],
 				node_object[index]['software_image'],

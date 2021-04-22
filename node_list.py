@@ -79,8 +79,7 @@ def node_list(args):
 				  "\t\"mgmt_oob_ip4\": \"{}\"\n" \
 				  "\t\"mgmt_snmp_community4\": \"{}\"\n" \
 				  "\t\"name\": \"{}\"\n" \
-				  "\t\"opersys\": \"{}\"\n" \
-				  "\t\"platform_name\": \"{}\"" \
+				  "\t\"opersys\": \"{}\"" \
 					.format(node_object[index]['domain_name'],
 							node_object[index]['hardware_vendor'],
 							node_object[index]['lifecycle_status'],
@@ -91,10 +90,29 @@ def node_list(args):
 							node_object[index]['mgmt_snmp_community4'],
 							node_object[index]['name'],
 							node_object[index]['opersys'],
-							node_object[index]['platform_name']
 					)
 			)
-			if(args.attribute == 'ports'):
+			if(args.attribute == 'protocols' or args.attribute == 'all'):
+				print("\t\"ospf\": [")
+				for peer in node_object[index]['ospf']:
+					print("\t   {")
+					print("\t\t\"neighbor_id\": \"{}\"\n" \
+					  	  "\t\t\"area\": \"{}\"\n" \
+					  	  "\t\t\"priority: \"{}\"\n" \
+					  	  "\t\t\"state: \"{}\"" \
+							.format(peer['neighbor_id'],
+									peer['area'],
+									peer['priority'],
+									peer['state']
+								)
+					)
+					print("\t   },")
+					print('        ]')
+			print("\t\"platform_name\": \"{}\"" \
+				.format(node_object[index]['platform_name']
+					)
+			)
+			if(args.attribute == 'ports' or args.attribute == 'all'):
 				print("\t\"ports\": [")
 				for interface in node_object[index]['ports']:
 					print("\t   {")
@@ -140,7 +158,7 @@ def node_list(args):
 									interface['wan_link']
 							)
 				)
-					print("\t   },")
+				print("\t   },")
 				print('        ]')
 			print("\t\"role_name\": \"{}\"\n" \
 				  "\t\"serial_num\": \"{}\"\n" \

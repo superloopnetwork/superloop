@@ -42,6 +42,7 @@ def snmp(argument_node):
 		'name': '{}'.format(snmp_name),
 		'oncall_team':'network',
 		'opersys':'{}'.format(operating_system),
+		'ospf':[snmp_ospf(SNMP_COMMUNITY_STRING,argument_node)][0],
 		'platform_name':'{}'.format(platform_name),
 		'ports':[snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name)][0],
 		'role_name':'{}'.format(role_name),
@@ -90,8 +91,84 @@ def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
 				'wan_link': 'null'
 			}
 			interface.append(interface_data)
+	print('+ interfaces discovered. [complete]')
 
 	return interface
+
+def snmp_ospf(SNMP_COMMUNITY_STRING,argument_node):
+	ospf=[]
+	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.14.10.1.1'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	oids = snmpwalk.stdout.read()
+	oids = oids.decode().split('\n')
+	for index in oids:
+		if '' == index:
+			pass
+		elif 'No' in index:
+			ospf_neighbor_id = 'null'
+			ospf_data = {
+				'neighbor_id': 'null',
+				'area': 'null',
+				'priority': 'null',
+				'state': 'null'
+			}
+		else:
+			ospf_neighbor_id = index.split()[3]
+			ospf_data = {
+				'neighbor_id': '{}'.format(ospf_neighbor_id),
+				'area': '{}'.format(snmp_ospf_area(ospf_neighbor_id,SNMP_COMMUNITY_STRING,argument_node)),
+				'priority': '{}'.format(snmp_ospf_priority(ospf_neighbor_id,SNMP_COMMUNITY_STRING,argument_node)),
+				'state': '{}'.format(snmp_ospf_state(ospf_neighbor_id,SNMP_COMMUNITY_STRING,argument_node))
+			}
+		ospf.append(ospf_data)
+	print('+ ospf discovered. [complete]')
+
+	return ospf 
+
+def snmp_ospf_area(ospf_neighbor_id,SNMP_COMMUNITY_STRING,argument_node):
+	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.14.7.1.3.{}'.format(SNMP_COMMUNITY_STRING,argument_node,ospf_neighbor_id) + '.0',shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	oids = snmpwalk.stdout.read()
+	oids = oids.decode().split('\n')
+	for index in oids:
+		if '' == index:
+			return 'null'
+		else:
+			ospf_area = index.split()[3]
+
+	return ospf_area
+
+def snmp_ospf_priority(ospf_neighbor_id,SNMP_COMMUNITY_STRING,argument_node):
+	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.14.10.1.5.{}'.format(SNMP_COMMUNITY_STRING,argument_node,ospf_neighbor_id) + '.0',shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	oids = snmpwalk.stdout.read()
+	oids = oids.decode().split('\n')
+	for index in oids:
+		if '' == index:
+			return 'null'
+		else:
+			ospf_priority = index.split()[3]
+
+	return ospf_priority
+
+def snmp_ospf_state(ospf_neighbor_id,SNMP_COMMUNITY_STRING,argument_node):
+	ospf_state_index = {
+		'1':'Down',
+		'2':'Attempt',
+		'3':'Init',
+		'4':'2Way',
+		'5':'ExchangeStart',
+		'6':'Exchange',
+		'7':'Loading',
+		'8':'Full'
+	}
+	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.14.10.1.6.{}'.format(SNMP_COMMUNITY_STRING,argument_node,ospf_neighbor_id) + '.0',shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	oids = snmpwalk.stdout.read()
+	oids = oids.decode().split('\n')
+	for index in oids:
+		if '' == index:
+			return 'null'
+		else:
+			ospf_state = index.split()[3]
+
+	return ospf_state_index['{}'.format(ospf_state)]
 
 def snmp_interface_ip(interface_name,SNMP_COMMUNITY_STRING,argument_node):
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.4.20.1.1'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
