@@ -13,37 +13,37 @@ def append(args):
 	database = process_nodes()
 	index = 0
 	match_node = []
-#	try:
-	device = snmp(argument_node)
-	new_node = yaml.dump(device,default_flow_style = False)
-	"""
-		Check if new node currently exist in database.
-	"""
-	for node in database:
-		if device[index]['mgmt_ip4'] == node['mgmt_ip4']:
-			match_node.append('MATCH')	
-			break
-		else:
-			continue
 	try:
-		if 'MATCH' in match_node:
-			print('+ Node currently present in database.')
-		else:
-			with open('{}/database/nodes.yaml'.format(get_home_directory()),'a') as file:
-				file.write(new_node)
-			database = process_nodes()
-			sorted_database = sortdb(database)
-			updated_database = yaml.dump(sorted_database,default_flow_style = False)
-			with open('{}/database/nodes.yaml'.format(get_home_directory()),'w') as file:
-				file.write('---\n')
-				file.write(updated_database)
-			print('+ SNMP discovery successful.')
-			print('+ New node appended to database.')
-	except FileNotFoundError as error:
-		print('FileNotFoundError: file cannot be found')
-		print(error)
-#	except Exception as error:
-#		print('SNMP query timeout. Please ensure that FQDN or IP address is reachable via SNMP.')
+		device = snmp(argument_node)
+		new_node = yaml.dump(device,default_flow_style = False)
+		"""
+			Check if new node currently exist in database.
+		"""
+		for node in database:
+			if device[index]['mgmt_ip4'] == node['mgmt_ip4']:
+				match_node.append('MATCH')	
+				break
+			else:
+				continue
+		try:
+			if 'MATCH' in match_node:
+				print('+ Node currently present in database.')
+			else:
+				with open('{}/database/nodes.yaml'.format(get_home_directory()),'a') as file:
+					file.write(new_node)
+				database = process_nodes()
+				sorted_database = sortdb(database)
+				updated_database = yaml.dump(sorted_database,default_flow_style = False)
+				with open('{}/database/nodes.yaml'.format(get_home_directory()),'w') as file:
+					file.write('---\n')
+					file.write(updated_database)
+				print('+ SNMP discovery successful.')
+				print('+ New node appended to database.')
+		except FileNotFoundError as error:
+			print('FileNotFoundError: file cannot be found')
+			print(error)
+	except Exception as error:
+		print('SNMP query timeout. Please ensure that FQDN or IP address is reachable via SNMP.')
 
 	return None
 
