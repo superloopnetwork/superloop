@@ -91,6 +91,7 @@ def snmp_ospf(SNMP_COMMUNITY_STRING,argument_node):
 def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
 	print('+ Discovering switchport interfaces. ')
 	interface = []
+	arp_table = {}
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.2.2.1.2'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	oids = snmpwalk.stdout.read()
 	oids = oids.decode().split('\n')
@@ -109,7 +110,7 @@ def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
 			'drain_status': 'none',
 			'farend_name': 'null',
 			'if_speed': 'null',
-			'ip4': '{}'.format(snmp_interface_ip(interface_name,SNMP_COMMUNITY_STRING,argument_node)),
+			'ip4': '{}'.format(snmp_interface_ip(arp_table,interface_name,SNMP_COMMUNITY_STRING,argument_node)),
 			'management': 'null',
 			'mtu': 'null',
 			'name': '{}'.format(interface_name),
@@ -177,13 +178,16 @@ def snmp_ospf_state(ospf_neighbor_id,SNMP_COMMUNITY_STRING,argument_node):
 
 	return ospf_state_index['{}'.format(ospf_state)]
 
-def snmp_interface_ip(interface_name,SNMP_COMMUNITY_STRING,argument_node):
+def snmp_interface_ip(arp_table,interface_name,SNMP_COMMUNITY_STRING,argument_node):
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.4.20.1.1'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	oids = snmpwalk.stdout.read()
 	oids = oids.decode().split('\n')
 	for index in oids:
 		if '' == index:
 			pass
+		elif interface_name in arp_table:
+			print('hit')
+			return arp_table['{}'.format(interface_name)]
 		else:
 			ip4 = index.split()[3]
 			snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.4.20.1.2.{}'.format(SNMP_COMMUNITY_STRING,argument_node,ip4),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -205,7 +209,9 @@ def snmp_interface_ip(interface_name,SNMP_COMMUNITY_STRING,argument_node):
 							if interface_name.strip('"') == interface_name_lookup:
 								return ip4
 							else:
-								continue
+								arp_table['{}'.format(interface_name_lookup)] = '{}'.format(ip4)
+								break
+					break
 
 	return 'None'
 
