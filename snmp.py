@@ -59,7 +59,7 @@ def snmp(argument_node):
 	return data
 
 def snmp_ospf(SNMP_COMMUNITY_STRING,argument_node):
-	print('+ .... discovering OSPF data. ', end='')
+	print('+ Discovering OSPF data. ')
 	ospf=[]
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.14.10.1.1'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	oids = snmpwalk.stdout.read()
@@ -84,12 +84,12 @@ def snmp_ospf(SNMP_COMMUNITY_STRING,argument_node):
 				'state': '{}'.format(snmp_ospf_state(ospf_neighbor_id,SNMP_COMMUNITY_STRING,argument_node))
 			}
 			ospf.append(ospf_data)
-	print('[complete]')
+		print('+ .... neighbor {} [complete]'.format(ospf_neighbor_id))
 
 	return ospf 
 
 def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
-	print('+ .... discovering switchport interfaces. ', end='')
+	print('+ Discovering switchport interfaces. ')
 	interface = []
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.2.2.1.2'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	oids = snmpwalk.stdout.read()
@@ -121,8 +121,7 @@ def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
 			'wan_link': 'null'
 		}
 		interface.append(interface_data)
-
-	print('[complete]')
+		print('+ .... {} [complete]'.format(interface_name))
 
 	return interface
 
