@@ -186,7 +186,6 @@ def snmp_interface_ip(arp_table,interface_name,SNMP_COMMUNITY_STRING,argument_no
 		if '' == index:
 			pass
 		elif interface_name in arp_table:
-			print('hit')
 			return arp_table['{}'.format(interface_name)]
 		else:
 			ip4 = index.split()[3]
