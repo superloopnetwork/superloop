@@ -297,7 +297,7 @@ def snmp_ospf(SNMP_COMMUNITY_STRING,argument_node):
 	oids = oids.decode().split('\n')
 	for index in oids:
 		if '' == index:
-			pass
+			break
 		elif 'No' in index:
 			ospf_data = {
 				'neighbor_id': 'null',
@@ -318,7 +318,6 @@ def snmp_ospf(SNMP_COMMUNITY_STRING,argument_node):
 		print('+ .... neighbor {} [complete]'.format(ospf_neighbor_id))
 
 	return ospf 
-
 
 def snmp_ospf_area(ospf_neighbor_id,SNMP_COMMUNITY_STRING,argument_node):
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.14.2.1.1'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
