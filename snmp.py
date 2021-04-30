@@ -185,6 +185,9 @@ def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
 	print('+ Discovering switchport interfaces. ')
 	interface = []
 	arp_table = {}
+	interface_admin_status_table = {}
+	build_interface_admin_status_table(interface_admin_status_table,SNMP_COMMUNITY_STRING,argument_node)
+	build_arp_table(arp_table,SNMP_COMMUNITY_STRING,argument_node)
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.2.2.1.2'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	oids = snmpwalk.stdout.read()
 	oids = oids.decode().split('\n')
@@ -192,18 +195,23 @@ def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
 		oids.remove('')
 	for index in oids:
 		interface_name = index.split()[3].strip('"')
+		admin_status = interface_admin_status_table['{}'.format(interface_name)]
+		if interface_name in arp_table.keys():
+			ip4 = arp_table['{}'.format(interface_name)]
+		else:
+			ip4 = 'None'
 		interface_data = {
 			'access_vlan': 'null',
 			'acl4_in': 'null',
 			'acl4_out': 'null',
-			'admin_status': '{}'.format(snmp_interface_admin_status(interface_name,SNMP_COMMUNITY_STRING,argument_node)),
+			'admin_status': '{}'.format(admin_status),
 			'created_at': '{}'.format(timestamp()),
 			'created_by': '{}'.format(os.environ.get('USER')),
 			'data': 'null',
 			'drain_status': 'none',
 			'farend_name': 'null',
 			'if_speed': 'null',
-			'ip4': '{}'.format(snmp_interface_ip(arp_table,interface_name,SNMP_COMMUNITY_STRING,argument_node)),
+			'ip4': '{}'.format(ip4),
 			'management': 'null',
 			'mtu': 'null',
 			'name': '{}'.format(interface_name),
@@ -219,15 +227,13 @@ def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
 
 	return interface
 
-def snmp_interface_ip(arp_table,interface_name,SNMP_COMMUNITY_STRING,argument_node):
+def build_arp_table(arp_table,SNMP_COMMUNITY_STRING,argument_node):
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.4.20.1.1'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	oids = snmpwalk.stdout.read()
 	oids = oids.decode().split('\n')
 	for index in oids:
 		if '' == index:
 			pass
-		elif interface_name in arp_table:
-			return arp_table['{}'.format(interface_name)]
 		else:
 			ip4 = index.split()[3]
 			snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.4.20.1.2.{}'.format(SNMP_COMMUNITY_STRING,argument_node,ip4),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -246,17 +252,14 @@ def snmp_interface_ip(arp_table,interface_name,SNMP_COMMUNITY_STRING,argument_no
 							pass
 						else:
 							interface_name_lookup = index.split()[3].strip('"')
-							if interface_name.strip('"') == interface_name_lookup:
-								return ip4
-							else:
-								arp_table['{}'.format(interface_name_lookup)] = '{}'.format(ip4)
-								break
+							arp_table['{}'.format(interface_name_lookup)] = '{}'.format(ip4)
+							break
 					break
 
 	return 'None'
 
 
-def snmp_interface_admin_status(interface_name,SNMP_COMMUNITY_STRING,argument_node):
+def build_interface_admin_status_table(interface_admin_status_table,SNMP_COMMUNITY_STRING,argument_node):
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.2.2.1.7'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	oids = snmpwalk.stdout.read()
 	oids = oids.decode().split('\n')
@@ -279,10 +282,10 @@ def snmp_interface_admin_status(interface_name,SNMP_COMMUNITY_STRING,argument_no
 					pass
 				else:
 					interface_name_lookup = index.split()[3].strip('"')
-				if interface_name.strip('"') == interface_name_lookup:
-					return interface_admin_status
-				else:
-					continue
+					interface_admin_status_table['{}'.format(interface_name_lookup)] = '{}'.format(interface_admin_status)
+					break
+
+	return 'None'
 
 """
 	snmp_ospf() performs a recursive lookup on OIDs to extract data
@@ -297,7 +300,7 @@ def snmp_ospf(SNMP_COMMUNITY_STRING,argument_node):
 	oids = oids.decode().split('\n')
 	for index in oids:
 		if '' == index:
-			break
+			pass
 		elif 'No' in index:
 			ospf_data = {
 				'neighbor_id': 'null',
@@ -318,6 +321,7 @@ def snmp_ospf(SNMP_COMMUNITY_STRING,argument_node):
 		print('+ .... neighbor {} [complete]'.format(ospf_neighbor_id))
 
 	return ospf 
+
 
 def snmp_ospf_area(ospf_neighbor_id,SNMP_COMMUNITY_STRING,argument_node):
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.14.2.1.1'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
