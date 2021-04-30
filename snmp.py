@@ -300,7 +300,7 @@ def snmp_ospf(SNMP_COMMUNITY_STRING,argument_node):
 	oids = oids.decode().split('\n')
 	for index in oids:
 		if '' == index:
-			pass
+			break	
 		elif 'No' in index:
 			ospf_data = {
 				'neighbor_id': 'null',
