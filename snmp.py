@@ -45,7 +45,7 @@ def snmp(argument_node):
 		'opersys':'{}'.format(operating_system),
 		'ospf':[snmp_ospf(SNMP_COMMUNITY_STRING,argument_node)][0],
 		'platform_name':'{}'.format(platform_name),
-		'ports':[snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name)][0],
+		'ports':[snmp_interface(operating_system,argument_node,SNMP_COMMUNITY_STRING,snmp_name)][0],
 		'role_name':'{}'.format(role_name),
 		'serial_num':'{}'.format(serial_num),
 		'software_image':'null',
@@ -182,20 +182,23 @@ def timestamp():
 	for certain attributes.
 """
 
-def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
+def snmp_interface(operating_system,argument_node,SNMP_COMMUNITY_STRING,snmp_name):
 	print('+ Discovering switchport interfaces. ')
 	interface = []
 	arp_table = {}
 	interface_admin_status_table = {}
-	build_interface_admin_status_table(interface_admin_status_table,SNMP_COMMUNITY_STRING,argument_node)
-	build_arp_table(arp_table,SNMP_COMMUNITY_STRING,argument_node)
+	build_interface_admin_status_table(interface_admin_status_table,operating_system,SNMP_COMMUNITY_STRING,argument_node)
+	build_arp_table(arp_table,operating_system,SNMP_COMMUNITY_STRING,argument_node)
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.2.2.1.2'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	oids = snmpwalk.stdout.read()
 	oids = oids.decode().split('\n')
 	while '' in oids:
 		oids.remove('')
 	for index in oids:
-		interface_name = index.split()[3].strip('"')
+		if operating_system == 'asa':
+			interface_name = index.split()[6].strip('"')
+		else:	
+			interface_name = index.split()[3].strip('"')
 		admin_status = interface_admin_status_table['{}'.format(interface_name)]
 		if interface_name in arp_table.keys():
 			ip4 = arp_table['{}'.format(interface_name)]
@@ -228,7 +231,7 @@ def snmp_interface(argument_node,SNMP_COMMUNITY_STRING,snmp_name):
 
 	return interface
 
-def build_arp_table(arp_table,SNMP_COMMUNITY_STRING,argument_node):
+def build_arp_table(arp_table,operating_system,SNMP_COMMUNITY_STRING,argument_node):
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.4.20.1.1'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	oids = snmpwalk.stdout.read()
 	oids = oids.decode().split('\n')
@@ -252,7 +255,10 @@ def build_arp_table(arp_table,SNMP_COMMUNITY_STRING,argument_node):
 						if '' == index:
 							pass
 						else:
-							interface_name_lookup = index.split()[3].strip('"')
+							if operating_system == 'asa':
+								interface_name_lookup = index.split()[6].strip('"')
+							else:
+								interface_name_lookup = index.split()[3].strip('"')
 							arp_table['{}'.format(interface_name_lookup)] = '{}'.format(ip4)
 							break
 					break
@@ -260,7 +266,7 @@ def build_arp_table(arp_table,SNMP_COMMUNITY_STRING,argument_node):
 	return 'None'
 
 
-def build_interface_admin_status_table(interface_admin_status_table,SNMP_COMMUNITY_STRING,argument_node):
+def build_interface_admin_status_table(interface_admin_status_table,operating_system,SNMP_COMMUNITY_STRING,argument_node):
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.2.2.1.7'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	oids = snmpwalk.stdout.read()
 	oids = oids.decode().split('\n')
@@ -282,7 +288,10 @@ def build_interface_admin_status_table(interface_admin_status_table,SNMP_COMMUNI
 				if '' == index:
 					pass
 				else:
-					interface_name_lookup = index.split()[3].strip('"')
+					if operating_system == 'asa':
+						interface_name_lookup = index.split()[6].strip('"')
+					else:
+						interface_name_lookup = index.split()[3].strip('"')
 					interface_admin_status_table['{}'.format(interface_name_lookup)] = '{}'.format(interface_admin_status)
 					break
 
