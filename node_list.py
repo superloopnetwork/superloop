@@ -59,6 +59,18 @@ def node_list(args):
 		template_list = template_list_copy[0]
 		for index in initialize.element:
 			print('    {')
+			if(args.attribute == 'protocols' or args.attribute == 'all'):
+				print("\t\"bgp\": [")
+				for peer in node_object[index]['bgp']:
+					print("\t   {")
+					print("\t\t\"peer\": \"{}\"\n" \
+					  	  "\t\t\"remote_as\": \"{}\"" \
+							.format(peer['peer'],
+									peer['remote_as']
+								)
+					)
+					print("\t   },")
+					print('        ]')
 			print("\t\"created_at\": \"{}\"\n" \
 				  "\t\"created_by\": \"{}\"" \
 					.format(node_object[index]['created_at'],node_object[index]['created_by'])

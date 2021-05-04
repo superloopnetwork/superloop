@@ -29,6 +29,7 @@ def snmp(argument_node):
 	SERIAL_NUM_OID = get_serial_oid(snmp_platform_name)
 	serial_num = snmp_data(device,SERIAL_NUM_OID,SNMP_PORT)
 	data = [{
+		'bgp':[snmp_bgp(SNMP_COMMUNITY_STRING,argument_node)][0],
 		'created_at': '{}'.format(timestamp()),
 		'created_by': '{}'.format(os.environ.get('USER')),
 		'domain_name': 'null',
@@ -302,6 +303,7 @@ def snmp_ospf(SNMP_COMMUNITY_STRING,argument_node):
 		if '' == index:
 			break	
 		elif 'No' in index:
+			ospf_neighbor_id = '\'None\''
 			ospf_data = {
 				'neighbor_id': 'null',
 				'area': 'null',
@@ -374,3 +376,49 @@ def snmp_ospf_state(ospf_neighbor_id,SNMP_COMMUNITY_STRING,argument_node):
 			ospf_state = index.split()[3]
 
 	return ospf_state_index['{}'.format(ospf_state)]
+
+"""
+	snmp_bgp() performs a recursive lookup on OIDs to extract data
+	for certain attributes.
+"""
+
+def snmp_bgp(SNMP_COMMUNITY_STRING,argument_node):
+	print('+ Discovering BGP data. ')
+	bgp = []
+	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.15.3.1.7'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	oids = snmpwalk.stdout.read()
+	oids = oids.decode().split('\n')
+	for index in oids:
+		if '' == index:
+			break	
+		elif 'No' in index:
+			bgp_peer = '\'None\''
+			bgp_data = {
+				'peer': 'null',
+				'remote_as': 'null'
+			}
+			bgp.append(bgp_data)
+		else:
+			bgp_peer = index.split()[3]
+			bgp_data = {
+				'peer': '{}'.format(bgp_peer),
+				'remote_as': '{}'.format(snmp_bgp_remote_as(bgp_peer,SNMP_COMMUNITY_STRING,argument_node))
+			}
+			bgp.append(bgp_data)
+		print('+ .... peer {} [complete]'.format(bgp_peer))
+
+	return bgp
+
+def snmp_bgp_remote_as(bgp_peer,SNMP_COMMUNITY_STRING,argument_node):
+	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.15.3.1.9.{}'.format(SNMP_COMMUNITY_STRING,argument_node,bgp_peer),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	oids = snmpwalk.stdout.read()
+	oids = oids.decode().split('\n')
+	while '' in oids:
+		oids.remove('')
+	for index in oids:
+		if '' == index:
+			remote_as = 'null'
+		else:
+			remote_as = index.split()[3]
+
+	return remote_as

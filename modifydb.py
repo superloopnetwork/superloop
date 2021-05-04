@@ -21,7 +21,7 @@ def append(args):
 		"""
 		for node in database:
 			if device[index]['mgmt_ip4'] == node['mgmt_ip4']:
-				match_node.append('MATCH')	
+				match_node.append('MATCH')
 				break
 			else:
 				continue
