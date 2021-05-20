@@ -1,12 +1,12 @@
 """
 	This module allows modification to be made to the database.
 """
+import os
 from get_property import get_home_directory 
+from get_property import get_resolve_hostname 
 from get_property import timestamp
 from processdb import process_nodes
 from snmp import snmp
-import os
-import socket
 import yaml
 
 def append(args):
@@ -14,14 +14,14 @@ def append(args):
 	database = process_nodes()
 	index = 0
 	match_node = []
-	mgmt_ip4 = socket.gethostbyname(argument_node)
+	mgmt_ip4 = get_resolve_hostname(argument_node)
 	try:
 		"""
 			Check if new node currently exist in database.
 		"""
 		for node in database:
-			if mgmt_ip4 == node['mgmt_ip4']:
-				match_node.append('MATCH')
+			if device[index]['mgmt_ip4'] == node['mgmt_ip4']:
+				match_node.append('MATCH')	
 				break
 			else:
 				continue

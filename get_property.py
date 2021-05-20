@@ -3,6 +3,7 @@
 """
 import datetime
 import os
+import socket
 import time
 
 def get_home_directory():
@@ -157,3 +158,11 @@ def timestamp():
     date_time = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
 
     return date_time
+
+def get_resolve_hostname(fqdn):
+	try:
+		mgmt_ip4 = socket.gethostbyname(fqdn)
+
+		return mgmt_ip4
+	except socket.error:
+		print('{} was not resolvable. Please check the FQDN and try again.'.format(fqdn))
