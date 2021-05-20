@@ -164,5 +164,8 @@ def get_resolve_hostname(fqdn):
 		mgmt_ip4 = socket.gethostbyname(fqdn)
 
 		return mgmt_ip4
+
 	except socket.error:
-		print('{} was not resolvable. Please check the FQDN and try again.'.format(fqdn))
+		mgmt_ip4 = 'null'
+
+	return mgmt_ip4
