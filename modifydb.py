@@ -20,8 +20,8 @@ def append(args):
 			Check if new node currently exist in database.
 		"""
 		for node in database:
-			if device[index]['mgmt_ip4'] == node['mgmt_ip4']:
-				match_node.append('MATCH')	
+			if mgmt_ip4 == node['mgmt_ip4']:
+				match_node.append('MATCH')
 				break
 			else:
 				continue
@@ -42,8 +42,8 @@ def append(args):
 				print('+ SNMP discovery successful.')
 				print('+ New node appended to database.')
 		except FileNotFoundError as error:
-			print('FileNotFoundError: file cannot be found')
-			print(error)
+				print('FileNotFoundError: file cannot be found')
+				print(error)
 	except Exception as error:
 		print('SNMP query timeout. Please ensure that FQDN or IP address is reachable via SNMP.')
 
@@ -121,7 +121,20 @@ def update(args):
 def discover(args):
 	argument_node = args.node
 	database = process_nodes()
-	index = 0
+	print(database)
+#	match_node = search_node(argument_node,node_object)
+#	"""
+#		:param node_object: All node(s) in the database with all attributes.
+#		:type node_object: list
+#	
+#		:param match_node: Nodes that matches the arguements passed in by user.
+#		:type match_node: list
+#	"""
+#	if len(match_node) == 0:
+#		print('+ No matching node(s) found in database.')
+#		print('')
+#	else:
+#	index = 0
 #	try:
 	for element in database:
 		if element['name'] == argument_node or element['mgmt_ip4'] == argument_node:
