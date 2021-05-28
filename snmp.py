@@ -265,7 +265,6 @@ def build_arp_table(arp_table,operating_system,SNMP_COMMUNITY_STRING,argument_no
 
 	return 'None'
 
-
 def build_interface_admin_status_table(interface_admin_status_table,operating_system,SNMP_COMMUNITY_STRING,argument_node):
 	snmpwalk = subprocess.Popen('snmpwalk -v 2c -c {} {} 1.3.6.1.2.1.2.2.1.7'.format(SNMP_COMMUNITY_STRING,argument_node),shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	oids = snmpwalk.stdout.read()
