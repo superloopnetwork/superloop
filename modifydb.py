@@ -162,8 +162,6 @@ def discover(args):
 			file.write('---\n')
 			file.write(updated_database)
 		print('+ SNMP discovery successful.')
-#	except IndexError as error:
-#		print('+ Node does not exist in database.')
 
 def sortdb(database):
 	sorted_database = []
