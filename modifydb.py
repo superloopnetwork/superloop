@@ -5,6 +5,7 @@ import os
 from get_property import get_home_directory 
 from get_property import get_resolve_hostname 
 from get_property import timestamp
+from search import search_node
 from processdb import process_nodes
 from snmp import snmp
 import yaml
@@ -121,45 +122,46 @@ def update(args):
 def discover(args):
 	argument_node = args.node
 	database = process_nodes()
-	print(database)
-#	match_node = search_node(argument_node,node_object)
-#	"""
-#		:param node_object: All node(s) in the database with all attributes.
-#		:type node_object: list
-#	
-#		:param match_node: Nodes that matches the arguements passed in by user.
-#		:type match_node: list
-#	"""
-#	if len(match_node) == 0:
-#		print('+ No matching node(s) found in database.')
-#		print('')
-#	else:
-#	index = 0
-#	try:
-	for element in database:
-		if element['name'] == argument_node or element['mgmt_ip4'] == argument_node:
-			break
-		else:
-			index = index + 1
+	match_node = search_node(argument_node,database)
 	"""
-		Identified node from list.
+		:param node_object: All node(s) in the database with all attributes.
+		:type node_object: list
+	
+		:param match_node: Nodes that matches the arguements passed in by user.
+		:type match_node: list
 	"""
-#		try:
-	device = snmp(argument_node)
-#		except Exception as error:
-#			print('SNMP query timeout. Please ensure that FQDN or IP address is reachable via SNMP.')
-	for attribute in database[index]:
-		if 'created_at' == attribute or 'created_by' == attribute:
-			continue
-		else:
-			database[index][attribute] = device[0][attribute]
-	database[index]['updated_at'] = timestamp()
-	database[index]['updated_by'] = '{}'.format(os.environ.get('USER'))
-	updated_database = yaml.dump(database,default_flow_style = False)
-	with open('{}/database/nodes.yaml'.format(get_home_directory()),'w') as file:
-		file.write('---\n')
-		file.write(updated_database)
-	print('+ SNMP discovery successful.')
+	if len(match_node) == 0:
+		print('+ No matching node(s) found in database.')
+		return None
+	else:
+		for node in match_node:
+			print('{}'.format(node)) 
+			index = 0
+			try:
+				for element in database:
+					if element['name'] == node or element['mgmt_ip4'] == node:
+						break
+					else:
+						index = index + 1
+				"""
+					Identified node from list.
+				"""
+				device = snmp(node)
+				print('')
+			except Exception as error:
+				print('SNMP query timeout. Please ensure that FQDN or IP address is reachable via SNMP.')
+		for attribute in database[index]:
+			if 'created_at' == attribute or 'created_by' == attribute:
+				continue
+			else:
+				database[index][attribute] = device[0][attribute]
+		database[index]['updated_at'] = timestamp()
+		database[index]['updated_by'] = '{}'.format(os.environ.get('USER'))
+		updated_database = yaml.dump(database,default_flow_style = False)
+		with open('{}/database/nodes.yaml'.format(get_home_directory()),'w') as file:
+			file.write('---\n')
+			file.write(updated_database)
+		print('+ SNMP discovery successful.')
 #	except IndexError as error:
 #		print('+ Node does not exist in database.')
 
