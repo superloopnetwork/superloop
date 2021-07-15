@@ -5,13 +5,14 @@ import commentjson
 import json
 import os
 import yaml
+from yaml import CLoader as Loader
 from node_create import node_create
 from get_property import get_home_directory
 from get_property import get_policy_directory
 
 def process_nodes():
 	with open("{}/database/nodes.yaml".format(get_home_directory())) as yaml_file:
-		node_object = yaml.load(yaml_file, yaml.UnsafeLoader)
+		node_object = yaml.load(yaml_file,Loader=Loader)
 
 	return node_object
 	
