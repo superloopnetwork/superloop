@@ -7,7 +7,8 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
   3. snmp_helper.py - module written by Kirk Byers (https://github.com/ktbyers/pynet/blob/master/snmp/snmp_helper.py).
   4. ciscoconfparse - A library to help parse out Cisco (or similiar) CLI configs (https://pypi.org/project/ciscoconfparse/).
   5. yaml - YAML is a human-readable data-serialization language (https://en.wikipedia.org/wiki/YAML).
-  6. jinja2 - template engine for Python (https://jinja.palletsprojects.com/en/2.11.x/)
+  6. libyaml-dev - C parser for yaml (apt install libyaml-dev)
+  7. jinja2 - template engine for Python (https://jinja.palletsprojects.com/en/2.11.x/)
 
 ## Support
 
