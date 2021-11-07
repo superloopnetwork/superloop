@@ -78,31 +78,31 @@ class BaseNode(object):
 		if self.hardware_vendor == 'cisco' and self.opersys == 'ios':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
 			save = self.net_connect.send_command('write memory')
-			print(output)
-			print(save)
+#			print(output)
+#			print(save)
 		elif self.hardware_vendor == 'cisco' and self.opersys == 'asa':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
 			save = self.net_connect.send_command('write memory')
-			print(output)
-			print(save)
+#			print(output)
+#			print(save)
 		elif self.hardware_vendor == 'cisco' and self.opersys == 'nxos':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
 			save = self.net_connect.send_command('copy running-config startup-config')
-			print(output)
-			print(save)
+#			print(output)
+#			print(save)
 		elif self.hardware_vendor == 'juniper':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
 			self.net_connect.commit(and_quit=True)
-			print(output)
+#			print(output)
 		elif self.hardware_vendor == 'vyatta':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
 			self.net_connect.commit()
-			print(output)
+#			print(output)
 		elif self.hardware_vendor == 'f5':
 			output = self.net_connect.send_config_set(commands,enter_config_mode=False,exit_config_mode=False)
 			save = self.net_connect.send_command('save sys config')
-			print(output)
-			print(save)
+#			print(output)
+#			print(save)
 		self.net_connect.disconnect()
 
 	def pull_cfgs(self,command):

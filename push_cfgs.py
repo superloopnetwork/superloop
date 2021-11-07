@@ -19,6 +19,7 @@ def push_cfgs(args):
 	ext = '.jinja2'
 	output = False 
 	redirect = []
+	push_cfgs = False
 	with_remediation = True
 	"""
 		:param argument_node: Argument accepted as regular expression.
@@ -39,6 +40,9 @@ def push_cfgs(args):
 		:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
 		:type alt_key_file: list
 		
+		:param push_cfgs: This flag is to determine if a push is required for Cisco like platforms. Juniper will continue to push configs no matter if there are no diffs. 
+		:type ext: bool 
+
 		:param with_remediation: Current function to remediate or not remediate.  
 		:type ext: bool 
 	"""
@@ -86,7 +90,12 @@ def push_cfgs(args):
 			redirect.append('push_cfgs')
 		for index in range(len(initialize.element)):
 			if len(commands[index]) != 0:
-				confirm(redirect,commands)
+				push_cfgs = True
+				break
+			else:
+				push_cfgs = False
+		if push_cfgs:
+			confirm(redirect,commands)
 		print('')
 
 	return None
