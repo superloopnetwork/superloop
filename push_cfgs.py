@@ -74,10 +74,19 @@ def push_cfgs(args):
 		print('')
 	else:
 		node_create(match_node,node_object)
-		render(template_list,node_object,auditcreeper,output,with_remediation)
+		for index in initialize.element:
+			if node_object[index]['hardware_vendor'] == 'cisco':
+				get_diff = True
+				break
+		if get_diff:
+			mediator(template_list,node_object,auditcreeper,output,with_remediation)	
+		else:
+			render(template_list,node_object,auditcreeper,output,with_remediation)
 		for index in initialize.element:
 			redirect.append('push_cfgs')
-		confirm(redirect,commands)
+		for index in range(len(initialize.element)):
+			if len(commands[index]) != 0:
+				confirm(redirect,commands)
 		print('')
 
 	return None

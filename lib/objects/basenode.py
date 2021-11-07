@@ -80,6 +80,11 @@ class BaseNode(object):
 			save = self.net_connect.send_command('write memory')
 			print(output)
 			print(save)
+		elif self.hardware_vendor == 'cisco' and self.opersys == 'asa':
+			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
+			save = self.net_connect.send_command('write memory')
+			print(output)
+			print(save)
 		elif self.hardware_vendor == 'cisco' and self.opersys == 'nxos':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
 			save = self.net_connect.send_command('copy running-config startup-config')

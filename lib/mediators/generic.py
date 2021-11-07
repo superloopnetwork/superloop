@@ -18,6 +18,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 		filtered_backup_config = []
 		rendered_config = []
 		backup_config = []
+		commands = []
 		"""
 		:param filtered_backup_config: Audit filters that matches the lines in backup_config. Entries include depths/deep configs.
 		:type filtered_backup_config: list
@@ -27,6 +28,9 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 
 		:param backup_config: Backup configs from the 'show run', 'list ltm' etc...
 		:type backup_config: list
+
+		:param commands: ... Configurations generated from the diff'ed output.
+		:type commands: list
 		"""
 		f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['name'],template.split('.')[0]) + ".conf", "r")
 		init_config = f.readlines()
@@ -71,32 +75,40 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				debug=False
 		)
 		if(len(push_configs) == 0):
-			if(output):
+			if output:
 				print("{}{} (none)".format(directory,template))
 				print('')
+			else:
+				initialize.configuration.append([])
+				print('There are no diffs to be pushed for template {} on {}'.format(template,node_object[index]['name']))
+				if len(initialize.element) == 0:
+					break
 		else:
-			if(output):
+			if output:
 				print("{}{}".format(directory,template))
-			for line in push_configs:
-				search = parse_backup_configs.find_objects(r"^{}".format(line))
-				if re.search(r'^no',line) or re.search(r'\sno',line):
-					line = re.sub("no","",line)
-					print("-{}".format(line))
-				elif(len(search) == 0):
-					print("+ {}".format(line))
-				elif(len(search) > 1):
-					print("+ {}".format(line))
-				else:
-					print("  {}".format(line))
-				
+				for line in push_configs:
+					search = parse_backup_configs.find_objects(r"^{}".format(line))
+					if re.search(r'^no',line) or re.search(r'\sno',line):
+						line = re.sub("no","",line)
+						print("-{}".format(line))
+					elif(len(search) == 0):
+						print("+ {}".format(line))
+					elif(len(search) > 1):
+						print("+ {}".format(line))
+					else:
+						print("  {}".format(line))
+			else:
+				for line in push_configs:
+					commands.append(line)
+				initialize.configuration.append(commands)
 			print("")
-			if(with_remediation):
-				for config in push_configs:
-					node_configs.append(config)
-					ntw_device_pop = False
-				if(auditcreeper == False):
-					initialize.configuration.append(node_configs)
-				node_index = node_index + 1
+#			if(with_remediation):
+#				for config in push_configs:
+#					node_configs.append(config)
+#					ntw_device_pop = False
+#				if(auditcreeper == False):
+#					initialize.configuration.append(node_configs)
+#				node_index = node_index + 1
 
 	return None
 

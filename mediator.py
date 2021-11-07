@@ -99,7 +99,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 					#print("RENDERED CONFIG: {}".format(rendered_config))
 		"""
 			The below statement will only execute if user is auditing 
-			against multiple templates. if only one template is being 
+			against multiple templates. If only one template is being 
 			audited, do no pop off element.
 		"""
 		if len(template_list) != 1:
