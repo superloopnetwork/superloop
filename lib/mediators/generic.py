@@ -74,10 +74,10 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				remove_lines=True, 
 				debug=False
 		)
-		'''
+		"""
 			If there are no diffs and only and audit diff is executed, (none) will be printed to show users the result. However, if there are no diffs but a push cfgs
 			if executed resulting in output set as false, an empty list is appended.
-		'''
+		"""
 		if(len(push_configs) == 0):
 			if output:
 				print("{}{} (none)".format(directory,template))
@@ -87,13 +87,13 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				print('There are no diffs to be pushed for template {} on {}'.format(template,node_object[index]['name']))
 				if len(initialize.element) == 0:
 					break
-		'''
-			If an audit diff is executed, the diff is outputed to user. If a push cfgs is executed against Cisco like platforms, the commands from the diff are executed
-			with the negation (no). This is to maintain the sequence of the the commands in order to match the jinja2 templates. What you see on the template is what the
-			users want exactly as the running-configurations. The with_remediation flag is no longer required on the template itself as it may cause disruptions to
-			services. For example, blowing out an entire logging configs (no logging) and readding all the logging host back on.
-		''' 
 		else:
+			"""
+				If an audit diff is executed, the diff is outputed to user. If a push cfgs is executed against Cisco like platforms, the commands from the diff are executed
+				with the negation (no). This is to maintain the sequence of the the commands in order to match the jinja2 templates. What you see on the template is what the
+				users want exactly as the running-configurations. The with_remediation flag is no longer required on the template itself as it may cause disruptions to
+				services. For example, blowing out an entire logging configs (no logging) and readding all the logging host back on.
+			"""
 			if output:
 				print("{}{}".format(directory,template))
 				for line in push_configs:
