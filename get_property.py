@@ -169,3 +169,23 @@ def get_resolve_hostname(fqdn):
 		mgmt_ip4 = 'null'
 
 	return mgmt_ip4
+
+
+def get_serial_oid(snmp_platform_name):
+	platform_name = snmp_platform_name.lower() 
+	device_serial = ''
+	SERIAL_OID = {
+			'firefly-perimeter':'1.3.6.1.4.1.2636.3.1.3.0',
+			'c3750':'1.3.6.1.4.1.9.5.1.2.19.0',
+			'adaptive security appliance':'1.3.6.1.2.1.47.1.1.1.1.11.1',
+			'cisco nx-os':'1.3.6.1.2.1.47.1.1.1.1.11.22',
+			'netscaler':'1.3.6.1.4.1.5951.4.1.1.14.0'
+		}
+	for model in SERIAL_OID:
+		if model in platform_name:
+			device_serial_oid = SERIAL_OID[model]
+			break
+		else:
+			device_serial_oid = 'null'
+
+	return device_serial_oid 

@@ -1,6 +1,7 @@
 """
 	This module fetches information from the device via snmp
 """
+from get_property import get_serial_oid
 from snmp_helper import snmp_get_oid
 from snmp_helper import snmp_extract 
 from processdb import process_models
@@ -61,6 +62,7 @@ def snmp(argument_node):
 
 def snmp_data(device,oid,port):
 	snmp_data = snmp_get_oid(device,oid,display_errors=True)
+	print(snmp_data)
 	snmp_property = snmp_extract(snmp_data)
 
 	return snmp_property
@@ -154,23 +156,6 @@ def snmp_parse_role_name(snmp_platform_name):
 
 	return device_role_name
 
-def get_serial_oid(snmp_platform_name):
-	platform_name = snmp_platform_name.lower() 
-	device_serial = ''
-	SERIAL_OID = {
-			'firefly-perimeter':'1.3.6.1.4.1.2636.3.1.3.0',
-			'c3750':'1.3.6.1.4.1.9.5.1.2.19.0',
-			'adaptive security appliance':'1.3.6.1.2.1.47.1.1.1.1.11.1'
-		}
-	for model in SERIAL_OID:
-		if model in platform_name:
-			device_serial_oid = SERIAL_OID[model]
-			break
-		else:
-			device_serial_oid = 'null'
-
-	return device_serial_oid 
-
 def timestamp():
 	time_stamp =time.time()
 	date_time = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d %H:%M:%S')
@@ -194,6 +179,7 @@ def snmp_interface(operating_system,argument_node,SNMP_COMMUNITY_STRING,snmp_nam
 	oids = oids.decode().split('\n')
 	while '' in oids:
 		oids.remove('')
+		print(oids)
 	for index in oids:
 		if operating_system == 'asa':
 			interface_name = index.split()[6].strip('"')
