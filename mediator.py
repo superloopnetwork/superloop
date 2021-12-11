@@ -10,7 +10,6 @@ from lib.mediators.juniper import juniper_mediator
 from lib.mediators.juniper import juniper_audit_diff
 from get_property import get_home_directory
 from get_property import get_template_directory
-from get_property import get_location_directory
 from get_property import get_updated_list
 from get_property import get_syntax
 from get_property import get_sorted_juniper_template_list 

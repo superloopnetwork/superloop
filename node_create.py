@@ -7,7 +7,6 @@ from lib.objects.basenode import BaseNode
 def node_create(match_node,node_object):
 	for index in initialize.element:
 		node = BaseNode(
-				node_object[index]['bgp'],
 				node_object[index]['created_at'],
 				node_object[index]['created_by'],
 				node_object[index]['domain_name'],
@@ -20,10 +19,8 @@ def node_create(match_node,node_object):
 				node_object[index]['mgmt_snmp_community4'],
 				node_object[index]['name'],
 				node_object[index]['platform_name'],
-				node_object[index]['ports'],
 				node_object[index]['oncall_team'],
 				node_object[index]['opersys'],
-				node_object[index]['ospf'],
 				node_object[index]['role_name'],
 				node_object[index]['serial_num'],
 				node_object[index]['software_image'],

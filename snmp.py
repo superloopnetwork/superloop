@@ -30,7 +30,7 @@ def snmp(argument_node):
 	SERIAL_NUM_OID = get_serial_oid(snmp_platform_name)
 	serial_num = snmp_data(device,SERIAL_NUM_OID,SNMP_PORT)
 	data = [{
-		'bgp':[snmp_bgp(SNMP_COMMUNITY_STRING,argument_node)][0],
+#		'bgp':[snmp_bgp(SNMP_COMMUNITY_STRING,argument_node)][0],
 		'created_at': '{}'.format(timestamp()),
 		'created_by': '{}'.format(os.environ.get('USER')),
 		'domain_name': 'null',
@@ -44,9 +44,9 @@ def snmp(argument_node):
 		'name': '{}'.format(snmp_name),
 		'oncall_team':'network',
 		'opersys':'{}'.format(operating_system),
-		'ospf':[snmp_ospf(SNMP_COMMUNITY_STRING,argument_node)][0],
+#		'ospf':[snmp_ospf(SNMP_COMMUNITY_STRING,argument_node)][0],
 		'platform_name':'{}'.format(platform_name),
-		'ports':[snmp_interface(operating_system,argument_node,SNMP_COMMUNITY_STRING,snmp_name)][0],
+#		'ports':[snmp_interface(operating_system,argument_node,SNMP_COMMUNITY_STRING,snmp_name)][0],
 		'role_name':'{}'.format(role_name),
 		'serial_num':'{}'.format(serial_num),
 		'software_image':'null',
@@ -62,7 +62,6 @@ def snmp(argument_node):
 
 def snmp_data(device,oid,port):
 	snmp_data = snmp_get_oid(device,oid,display_errors=True)
-	print(snmp_data)
 	snmp_property = snmp_extract(snmp_data)
 
 	return snmp_property

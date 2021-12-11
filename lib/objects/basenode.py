@@ -5,9 +5,8 @@ import os
 
 class BaseNode(object):
 
-	def __init__(self,bgp,created_at,created_by,domain_name,hardware_vendor,lifecycle_status,location_name,mgmt_ip4,mgmt_con_ip4,mgmt_oob_ip4,mgmt_snmp_community4,name,platform_name,ports,oncall_team,opersys,ospf,software_image,software_version,type,role_name,serial_num,status,updated_at,updated_by):
+	def __init__(self,created_at,created_by,domain_name,hardware_vendor,lifecycle_status,location_name,mgmt_ip4,mgmt_con_ip4,mgmt_oob_ip4,mgmt_snmp_community4,name,platform_name,oncall_team,opersys,software_image,software_version,type,role_name,serial_num,status,updated_at,updated_by):
 
-		self.bgp = bgp 
 		self.created_at = created_at
 		self.created_by = created_by
 		self.domain_name = domain_name
@@ -19,13 +18,10 @@ class BaseNode(object):
 		self.mgmt_oob_ip4 = mgmt_oob_ip4
 		self.mgmt_snmp_community4 = mgmt_snmp_community4
 		self.name = name
-		self.oncall_team = oncall_team
 		self.password = os.environ.get('PASSWORD')
 		self.platform_name = platform_name
-		self.ports = ports
 		self.oncall_team = oncall_team
 		self.opersys = opersys
-		self.ospf = ospf
 		self.role_name = role_name 
 		self.serial_num = serial_num
 		self.software_image = software_image
@@ -56,7 +52,6 @@ class BaseNode(object):
 		return datacenter_location
 
 	def get_device_type(self):
-
 
 		device_type = {
 				'ASA5510' : 'cisco_asa',

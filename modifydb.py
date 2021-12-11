@@ -20,6 +20,7 @@ def append(args):
 	"""
 		Check if new node currently exist in database.
 	"""
+	print(database)
 	for node in database:
 		if mgmt_ip4 == node['mgmt_ip4']:
 			match_node.append('MATCH')
@@ -32,12 +33,12 @@ def append(args):
 		else:
 			device = snmp(argument_node)
 			new_node = yaml.dump(device,default_flow_style = False)
-			with open('{}/database/nodes.yaml'.format(get_home_directory()),'a') as file:
+			with open('{}/superloop_code/database/nodes.yaml'.format(get_home_directory()),'a') as file:
 				file.write(new_node)
 			database = process_nodes()
 			sorted_database = sortdb(database)
 			updated_database = yaml.dump(sorted_database,default_flow_style = False)
-			with open('{}/database/nodes.yaml'.format(get_home_directory()),'w') as file:
+			with open('{}/superloop_code/database/nodes.yaml'.format(get_home_directory()),'w') as file:
 				file.write('---\n')
 				file.write(updated_database)
 			print('+ SNMP discovery successful.')
@@ -65,7 +66,7 @@ def remove(args):
 		database.pop(index)
 		updated_database = yaml.dump(database,default_flow_style = False)
 		try:
-			with open('{}/database/nodes.yaml'.format(get_home_directory()),'w') as file:
+			with open('{}/superloop_code/database/nodes.yaml'.format(get_home_directory()),'w') as file:
 				file.write('---\n')
 				file.write(updated_database)
 				print('- Node successfully removed from database.')
@@ -103,7 +104,7 @@ def update(args):
 					database[index]['updated_by'] = '{}'.format(os.environ.get('USER'))
 					updated_database = yaml.dump(database,default_flow_style = False)
 					try:
-						with open('{}/database/nodes.yaml'.format(get_home_directory()),'w') as file:
+						with open('{}/superloop_code/database/nodes.yaml'.format(get_home_directory()),'w') as file:
 							file.write('---\n')
 							file.write(updated_database)
 							print('+ Amendment to database was successful.')
@@ -158,7 +159,7 @@ def discover(args):
 		database[index]['updated_at'] = timestamp()
 		database[index]['updated_by'] = '{}'.format(os.environ.get('USER'))
 		updated_database = yaml.dump(database,default_flow_style = False)
-		with open('{}/database/nodes.yaml'.format(get_home_directory()),'w') as file:
+		with open('{}/superloop_code/database/nodes.yaml'.format(get_home_directory()),'w') as file:
 			file.write('---\n')
 			file.write(updated_database)
 		print('+ SNMP discovery successful.')
