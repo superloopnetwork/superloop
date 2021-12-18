@@ -25,6 +25,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 	AUDIT_FILTER_RE = r'\[.*\]'
 	template_list_original = template_list[:]
 	template_list_copy = template_list
+	authentication = True
 
 	"""
 	:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
@@ -122,7 +123,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 	#print('REDIRECT: {}'.format(redirect))
 	#print('TEMPLATE_LIST: {}'.format(template_list))
 	#print('COMMAND: {}'.format(command))
-	multithread_engine(initialize.ntw_device,redirect,command)
+	multithread_engine(initialize.ntw_device,redirect,command,authentication)
 	template_list = template_list_original
 	if(auditcreeper):
 		template_list = template_list_original[0]

@@ -16,6 +16,7 @@ def pull_cfgs(args):
 	commands = initialize.configuration
 	output = False
 	redirect = []
+	authentication = True
 	"""
 		:param argument_configm: Argument accepted as boolean
 		:type augument_confirm: bool
@@ -57,9 +58,9 @@ def pull_cfgs(args):
 			for index in initialize.element:
 				redirect.append('pull_cfgs')
 			if(confirm_flag):
-				confirm(redirect,commands)
+				confirm(redirect,commands,authentication)
 			else:
-				multithread_engine(initialize.ntw_device,redirect,commands)
+				multithread_engine(initialize.ntw_device,redirect,commands,authentication)
 			print('')
 	except Exception as error:
 		print('ExceptionError: an exception occured')

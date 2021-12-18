@@ -13,6 +13,7 @@ def exec_cmd(args):
 	argument_command = args.command
 	argument_node = args.node
 	redirect = []
+	authentication = True
 	"""
 		:param argument_command: Referenced to global variable commands which keeps track of all commands per node.
 		:type commands: list
@@ -44,7 +45,7 @@ def exec_cmd(args):
 			else:
 				node_element(match_node,node_object)
 				node_create(match_node,node_object)
-				multithread_engine(initialize.ntw_device,redirect,argument_command)
+				multithread_engine(initialize.ntw_device,redirect,argument_command,authentication)
 	except Exception as error:
 		print("ExceptionError: an exception occured")
 		print(error)

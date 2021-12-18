@@ -21,6 +21,7 @@ def push_cfgs(args):
 	redirect = []
 	push_cfgs = False
 	with_remediation = True
+	authentication = False
 	"""
 		:param argument_node: Argument accepted as regular expression.
 		:type augument_node: str
@@ -95,7 +96,7 @@ def push_cfgs(args):
 			else:
 				push_cfgs = False
 		if push_cfgs:
-			confirm(redirect,commands)
+			confirm(redirect,commands,authentication)
 		print('')
 
 	return None

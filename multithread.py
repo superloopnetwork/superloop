@@ -6,7 +6,7 @@ import initialize
 import threading
 import time
 
-def multithread_engine(ntw_object,redirect,commands):
+def multithread_engine(ntw_object,redirect,commands,authentication):
 	start_time = datetime.datetime.now()
 	index = 0
 	zero = 0
