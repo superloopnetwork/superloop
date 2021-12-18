@@ -25,8 +25,8 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 			print("{}{}".format(get_hardware_vendor_template_directory,template))
 			if(output):
 				print("{}".format(config))
-			f = open("{}/rendered-configs/{}.{}".format(get_home_directory(),node_object[index]['name'],template.replace('jinja2','')) + "conf", "r")
-			init_config = f.readlines()
+			with open('{}/rendered-configs/{}.{}'.format(get_home_directory(),node_object[index]['name'],template.replace('jinja2','')) + 'conf','r') as file:
+				init_config = f.readlines()
 			"""
 				The below parse_commands() function will only get executed if
 				it needs to store commands in the global variable initialize.configuration
@@ -46,10 +46,10 @@ def process_jinja2_template(node_object,index,template,with_remediation):
 	env = Environment(loader=FileSystemLoader([hardware_vendor_template_directory,standards_directory]),lstrip_blocks = True,trim_blocks=True)
 	baseline = env.get_template(template)
 	os.makedirs('{}/rendered-configs/'.format(get_home_directory()),exist_ok=True)
-	f = open("{}/rendered-configs/{}.{}".format(get_home_directory(),node_object[index]['name'],template.replace('jinja2','')) + "conf", "w") 
-	config = baseline.render(node = node_object[index],with_remediation = with_remediation)
-	f.write(config) 
-	f.close 
+	with open('{}/rendered-configs/{}.{}'.format(get_home_directory(),node_object[index]['name'],template.replace('jinja2','')) + 'conf', 'w') as file:
+		config = baseline.render(node = node_object[index],with_remediation = with_remediation)
+		file.write(config) 
+		file.close 
 
 	return config
 

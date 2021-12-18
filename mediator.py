@@ -77,8 +77,8 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 			"""
 			if node_object[index]['hardware_vendor'] == 'juniper':
 				template_counter = template_counter + 1
-				f = open("{}/rendered-configs/{}.{}".format(get_home_directory(),node_object[index]['name'],template.split('.')[0]) + ".conf", "r")
-				init_config = f.readlines()
+				with open('{}/rendered-configs/{}.{}'.format(get_home_directory(),node_object[index]['name'],template.split('.')[0]) + '.conf','r') as file:
+					init_config = file.readlines()
 				for config_line in init_config:
 					strip_config = config_line.strip('\n')
 					if(strip_config == '' or strip_config == "!"):
@@ -154,8 +154,8 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 		elif node_object[index]['hardware_vendor'] == 'juniper':
 			template_list = get_sorted_juniper_template_list(template_list)
 			directory = get_template_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
-			f = open("{}/diff-configs/{}".format(get_home_directory(),node_object[index]['name']) + ".conf", "r")
-			init_config = f.readlines()
+			with open('{}/diff-configs/{}'.format(get_home_directory(),node_object[index]['name']) + '.conf','r') as file:
+				init_config = file.readlines()
 			for config_line in init_config:
 				strip_config = config_line.strip('\n')
 				diff_config.append(strip_config)

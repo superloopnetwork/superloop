@@ -43,8 +43,9 @@ def parse_firewall_acl(node_policy,policy):
 	"""
 	directory = get_policy_directory(node_policy['hardware_vendor'],node_policy['opersys'],node_policy['type'])
 	acl_list = process_json(node_policy['hardware_vendor'],node_policy['opersys'],node_policy['type'],policy)
-	f = open("{}".format(directory) + policy, "r")
-	parse_include = f.readline()
+	with open('{}'.format(directory) + policy, 'r') as file:
+#	f = open("{}".format(directory) + policy, "r")
+		parse_include = file.readline()
 	path = eval(re.findall(PATH_FILTER_RE, parse_include)[0])
 	"""
 		Uncomment the below print statement for debugging purposes
@@ -71,8 +72,8 @@ def parse_firewall_acl(node_policy,policy):
 
 def object_group(path,object_group_search):
 	subnets = []
-	with open('{}'.format(path)) as f:
-		object_group_string = f.read()
+	with open('{}'.format(path), 'r') as file:
+		object_group_string = file.read()
 		object_group_list = object_group_string.split('\n')
 	if '{} ='.format(object_group_search) in set(object_group_list):
 		print('TRUE')

@@ -17,6 +17,7 @@ def push_local(args):
 	argument_node = args.node
 	commands = initialize.configuration
 	redirect = [] 
+	authentication = True
 	"""
 		:param argument_filename: Argument accepted as template name.
 		:type augument_filename: str
@@ -49,9 +50,9 @@ def push_local(args):
 			redirect.append('push_cfgs')
 		for index in initialize.element:
 			config_list = []
-			f = open('{}/{}'.format(get_home_directory(),argument_filename), 'r')
-			init_config = f.readlines()
+			with open('{}/{}'.format(get_home_directory(),argument_filename), 'r') as file:	
+				init_config = file.readlines()
 			parse_commands(node_object[index],init_config,set_notation=True)
-		confirm(redirect,commands)
+		confirm(redirect,commands,authentication)
 
 	return None
