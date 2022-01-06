@@ -60,7 +60,7 @@ class BaseNode(object):
 				'ltm' : 'f5_ltm',
 				'tmsh' : 'f5_tmsh',
 				'firefly-perimeter' : 'juniper',
-				'junos' : 'juniper_junos',
+				'juniper_junos' : 'juniper_junos',
 				'vyattavyos' : 'vyatta_vyos',
 				'vyos' : 'vyos'
 		}
