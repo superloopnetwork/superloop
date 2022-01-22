@@ -108,17 +108,17 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 					else:
 						print("  {}".format(line))
 			else:
-				for line in push_configs:
-					commands.append(line)
-				initialize.configuration.append(commands)
-			print("")
-#			if(with_remediation):
-#				for config in push_configs:
-#					node_configs.append(config)
-#					ntw_device_pop = False
-#				if(auditcreeper == False):
-#					initialize.configuration.append(node_configs)
-#				node_index = node_index + 1
+				if node_object[index]['hardware_vendor'] == 'cisco':
+					for line in push_configs:
+						commands.append(line)
+					initialize.configuration.append(commands)
+				elif node_object[index]['hardware_vendor'] == 'citrix':
+					commands = parse_negation_commands(push_configs)
+					initialize.configuration.append(commands)
+					"""
+						For debug purpose, you may enable the below print statement.
+					"""
+					print(initialize.configuration)
 
 	return None
 
