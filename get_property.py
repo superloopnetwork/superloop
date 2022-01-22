@@ -2,6 +2,7 @@
 	This module holds properties that superloop is required to retrieve.
 """
 import datetime
+import hvac
 import os
 import socket
 import time
@@ -180,3 +181,15 @@ def get_serial_oid(snmp_platform_name):
 			device_serial_oid = 'null'
 
 	return device_serial_oid 
+
+def get_secrets():
+	client = hvac.Client()
+	data = client.auth.approle.login(
+			role_id = os.environ.get('VAULT_ROLE_ID'),
+			secret_id = os.environ.get('VAULT_SECRET_ID')
+		)
+	VAULT_TOKEN = data['auth']['client_token']
+	secret_data = client.read('{}'.format(os.environ.get('VAULT_PATH')))
+	secrets = secret_data['data']['data']
+
+	return secrets

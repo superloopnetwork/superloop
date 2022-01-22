@@ -12,6 +12,7 @@ from get_property import get_home_directory
 from get_property import get_template_directory
 from get_property import get_updated_list
 from get_property import get_syntax
+from get_property import get_secrets
 from get_property import get_sorted_juniper_template_list 
 import re
 import initialize
@@ -70,6 +71,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 			template_list = get_sorted_juniper_template_list(template_list)
 			rendered_config.append('load replace terminal')
 		for template in template_list:
+			secrets = get_secrets()
 			process_jinja2_template(node_object,index,template,with_remediation)
 			"""
 				Compiling the rendered configs from template and preparing
