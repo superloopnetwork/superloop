@@ -67,14 +67,23 @@ def snmp_data(device,oid,port):
 	return snmp_property
 
 def snmp_ip(snmp_name):
-	mgmt_ip4 = socket.gethostbyname(snmp_name)
+	if snmp_name.lower() == 'netscaler':
+		MGMT_IP_ADDRESS_OID = {
+				'CITRIX_NETSCALER':'1.3.6.1.4.1.5951.4.1.1.2.0'
+			}
+		mgmt_ip4 = snmp_data(device,MGMT_IP_ADDRESS_OID['CITRIX_NETSCALER'],port)
+	else:
+		mgmt_ip4 = socket.gethostbyname(snmp_name)
 
 	return mgmt_ip4
 
 def snmp_parse_platform_name(snmp_platform_name,device,SNMP_PORT):
 	PLATFORM_NAME_OID = {
 			'CISCO_ASA_OID':'1.3.6.1.2.1.47.1.1.1.1.13.1',
-			'CISCO_CATALYST_OID':'1.3.6.1.2.1.47.1.1.1.1.2.1001'
+			'CISCO_CATALYST_OID':'1.3.6.1.2.1.47.1.1.1.1.2.1001',
+			'NEXUS_OID':'1.3.6.1.2.1.47.1.1.1.1.2.149',
+			'CITRIX_NETSCALER':'1.3.6.1.4.1.5951.4.1.1.11.0',
+			'PALO_ALTO':'1.3.6.1.2.1.47.1.1.1.1.13.1',
 		}
 	platform_name = snmp_platform_name.lower() 
 	device_platform_name = ''
@@ -82,7 +91,11 @@ def snmp_parse_platform_name(snmp_platform_name,device,SNMP_PORT):
 			'firefly-perimeter':'firefly-perimeter',
 			'c3750':'{}'.format(snmp_data(device,PLATFORM_NAME_OID['CISCO_CATALYST_OID'],SNMP_PORT)),
 			'adaptive security appliance':'{}'.format(snmp_data(device,PLATFORM_NAME_OID['CISCO_ASA_OID'],SNMP_PORT)),
+            'cisco nx-os':'{}'.format(snmp_data(device,PLATFORM_NAME_OID['NEXUS_OID'],SNMP_PORT)),
 			'big-ip':'f5',
+			'netscaler':'{}'.format(snmp_data(device,PLATFORM_NAME_OID['CITRIX_NETSCALER'],SNMP_PORT)),
+			'nsmpx-8900':'{}'.format(snmp_data(device,PLATFORM_NAME_OID['CITRIX_NETSCALER'],SNMP_PORT)),
+			'palo alto':'{}'.format(snmp_data(device,PLATFORM_NAME_OID['PALO_ALTO'],SNMP_PORT))
 		}
 	for platform in platforms:
 		if platform in platform_name:
@@ -94,8 +107,13 @@ def snmp_parse_platform_name(snmp_platform_name,device,SNMP_PORT):
 	return device_platform_name
 
 def get_hardware_vendor(snmp_platform_name):
-	vendor_name = snmp_platform_name.split()[0].lower()
-	device_vendor = vendor_name
+	if 'netscaler' in snmp_platform_name.lower():
+		vendor_name = 'citrix'
+	elif 'palo alto' in snmp_platform_name.lower():
+		vendor_name = 'palo alto'
+	else:
+		vendor_name = snmp_platform_name.split()[0].lower()
+		device_vendor = vendor_name
 
 	return vendor_name
 
@@ -108,7 +126,9 @@ def snmp_parse_opersys(snmp_platform_name):
 			'nx-os':'nxos',
 			'adaptive security appliance':'asa',
 			'vyatta':'vyos',
-			'f5':'tmsh'
+			'f5':'tmsh',
+			'netscaler':'netscaler',
+			'palo alto':'pan-os'
 		}
 	for vendor in operating_systems:
 		if vendor in platform_name:
@@ -126,7 +146,10 @@ def snmp_parse_type(snmp_platform_name):
 			'firefly-perimeter':'vfirewall',
 			'c3750':'switch',
 			'adaptive security appliance':'firewall',
-			'big-ip':'load-balancer',
+			'big-ip':'loadbalancer',
+			'netscaler':'loadbalancer',
+			'cisco nx-os':'switch',
+			'palo alto':'firewall',
 		}
 	for model in models:
 		if model in platform_name:
@@ -141,10 +164,11 @@ def snmp_parse_role_name(snmp_platform_name):
 	platform_name = snmp_platform_name.lower() 
 	device_role_name = ''
 	role_names = {
-			'firefly-perimeter':'datacenter-vfirewall',
 			'c3750':'datacenter-switch',
 			'adaptive security appliance':'datacenter-firewall',
 			'big-ip':'datacenter-load-balancer',
+			'netscaler':'datacenter-load-balancer',
+			'palo alto':'datacenter-firewall',
 		}
 	for role_name in role_names:
 		if role_name in platform_name:
@@ -154,6 +178,26 @@ def snmp_parse_role_name(snmp_platform_name):
 			device_role_name = 'null'
 
 	return device_role_name
+
+def get_serial_oid(snmp_platform_name):
+	platform_name = snmp_platform_name.lower()
+	device_serial = ''
+	SERIAL_OID = {
+			'firefly-perimeter':'1.3.6.1.4.1.2636.3.1.3.0',
+			'c3750':'1.3.6.1.4.1.9.5.1.2.19.0',
+			'adaptive security appliance':'1.3.6.1.2.1.47.1.1.1.1.11.1',
+			'cisco nx-os':'1.3.6.1.2.1.47.1.1.1.1.11.22',
+			'netscaler':'1.3.6.1.4.1.5951.4.1.1.14.0',
+			'palo alto':'1.3.6.1.4.1.25461.2.1.2.1.3'
+		}
+	for model in SERIAL_OID:
+		if model in platform_name:
+			device_serial_oid = SERIAL_OID[model]
+			break
+		else:
+			device_serial_oid = 'null'
+
+	return device_serial_oid
 
 def timestamp():
 	time_stamp =time.time()

@@ -2,6 +2,7 @@
 	This module controls the pulling of configs.
 """
 import initialize
+import os
 from processdb import process_nodes
 from search import search_node
 from search import node_element 
@@ -38,6 +39,8 @@ def pull_cfgs(args):
 			confirm_flag = True 
 		elif argument_confirm.lower() == 'false':
 			confirm_flag = False
+			authentication = False
+			initialize.password = os.environ.get('NETWORK_PASSWORD')
 		else:
 			raise argparse.ArgumentTypeError('Boolean value expected.')
 		node_object = process_nodes()

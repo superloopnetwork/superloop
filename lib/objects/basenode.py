@@ -60,9 +60,16 @@ class BaseNode(object):
 				'ltm' : 'f5_ltm',
 				'tmsh' : 'f5_tmsh',
 				'firefly-perimeter' : 'juniper',
-				'juniper_junos' : 'juniper_junos',
+				'junos' : 'juniper_junos',
 				'vyattavyos' : 'vyatta_vyos',
-				'vyos' : 'vyos'
+				'vyos' : 'vyos',
+				'NetScaler Virtual Appliance' : 'netscaler',
+				'NSMPX-8900 8*CPU+4*F1X+6*E1K+1*E1K+1*COL 8955' : 'netscaler',
+				'N9K-C9300v' : 'cisco_nxos',
+				'Nexus5548 Chassis' : 'cisco_nxos',
+				'N9K-C93108TC-FX' : 'cisco_nxos',
+				'N9K-C9372PX' : 'cisco_nxos',
+				'PA-VM' : 'paloalto_panos'
 		}
 	
 		return device_type['{}'.format(self.platform_name)]
@@ -73,31 +80,24 @@ class BaseNode(object):
 		if self.hardware_vendor == 'cisco' and self.opersys == 'ios':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
 			save = self.net_connect.send_command('write memory')
-#			print(output)
-#			print(save)
+			print(output)
 		elif self.hardware_vendor == 'cisco' and self.opersys == 'asa':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
 			save = self.net_connect.send_command('write memory')
-#			print(output)
-#			print(save)
 		elif self.hardware_vendor == 'cisco' and self.opersys == 'nxos':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=True)
 			save = self.net_connect.send_command('copy running-config startup-config')
-#			print(output)
-#			print(save)
 		elif self.hardware_vendor == 'juniper':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
 			self.net_connect.commit(and_quit=True)
-#			print(output)
 		elif self.hardware_vendor == 'vyatta':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
 			self.net_connect.commit()
-#			print(output)
 		elif self.hardware_vendor == 'f5':
 			output = self.net_connect.send_config_set(commands,enter_config_mode=False,exit_config_mode=False)
 			save = self.net_connect.send_command('save sys config')
-#			print(output)
-#			print(save)
+		elif self.hardware_vendor == 'palo alto':
+			output = self.net_connect.send_config_set(commands,enter_config_mode=True)
 		self.net_connect.disconnect()
 
 	def pull_cfgs(self,command):
@@ -113,6 +113,8 @@ class BaseNode(object):
 			command = 'show configuration'
 		elif(self.hardware_vendor == 'vyatta'):
 			command = 'show configuration commands'
+		elif(self.hardware_vendor == 'citrix'):
+			command = 'show ns runningConfig | grep -v modified | grep -v password | grep -v encryptionParams'
 		elif self.hardware_vendor == 'f5':
 			command = 'list ltm one-line'
 			self.scpconnect()
@@ -121,6 +123,8 @@ class BaseNode(object):
 			self.scp_connect.scp_get_file('/var/local/ucs/config.ucs', '{}/backup-configs/{}'.format(self.get_home_directory(),self.name))
 			self.scp_connect.close()
 			self.net_connect.disconnect()
+		elif self.hardware_vendor == 'palo alto':
+			command = ['show']
 		if self.hardware_vendor != 'juniper' or self.hardware_vendor != 'f5':
 			self.connect()
 			self.write_to_file(command,scp_flag,method)
@@ -147,6 +151,10 @@ class BaseNode(object):
 			command = 'show running-config'
 		elif self.hardware_vendor == 'f5':
 			command = 'list one-line'
+		elif self.hardware_vendor == 'citrix':
+			command = 'show ns runningConfig'
+		elif self.hardware_vendor == 'palo alto':
+			command = ['show']
 		self.connect()
 		self.write_to_file(command,scp_flag,method)
 		self.net_connect.disconnect()
@@ -174,7 +182,13 @@ class BaseNode(object):
 				extention = '.conf'
 			self.check_and_mkdir(scp_flag,method)
 			with open('{}/backup-configs/{}/{}{}'.format(self.get_home_directory(),self.get_subdir(scp_flag),self.name,extention), "w") as file:
-				output = self.net_connect.send_command(command)
+				if self.hardware_vendor != 'palo alto':
+					output = self.net_connect.send_command(command)
+				else:
+					set_cli = self.net_connect.send_command('set cli config-output-format set')
+					output = self.net_connect.send_config_set(command,exit_config_mode=False)
+					configs = output.splitlines()[3:-2]
+					output = '\n'.join(configs)
 				file.write(output)
 				file.close()
 		elif method == 'get_config':

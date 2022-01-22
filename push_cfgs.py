@@ -2,17 +2,20 @@
 	This module controls the push of the templates.
 """
 import initialize
+import os
 from lib.objects.basenode import BaseNode
 from processdb import process_nodes
 from processdb import process_templates
 from search import search_node
 from search import search_template
 from mediator import mediator
+from multithread import multithread_engine
 from render import render
 from node_create import node_create
 from confirm import confirm
 
 def push_cfgs(args):
+	argument_confirm = args.confirm
 	argument_node = args.node
 	auditcreeper = False
 	commands = initialize.configuration
@@ -47,56 +50,70 @@ def push_cfgs(args):
 		:param with_remediation: Current function to remediate or not remediate.  
 		:type ext: bool 
 	"""
-	if(args.file is None):
-		template_list = []
-		auditcreeper = True
-	else:
-		template = args.file + ext
-		template_list = []
-		template_list.append(template)
-	node_object = process_nodes()
-	node_template = process_templates()
-	match_node = search_node(argument_node,node_object)
-	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper)
-	"""
-		:param node_object: All node(s) in the database with all attributes.
-		:type node_object: list
-
-		:param node_template: All templates based on hardware_vendor and device type.
-		:type node_template: list
-
-		:param match_node: Nodes that matches the arguements passed in by user.
-		:type match_node: list
-
-		:param match_template: Return a list of 'match' and/or 'no match'.
-		:type match_template: list 
-	"""
-	if len(match_node) == 0:
-		print('+ No matching node(s) found in database.')
-		print('')
-	elif 'NO MATCH' in match_template:
-		print('+ No matching template(s) found in database.')
-		print('')
-	else:
-		node_create(match_node,node_object)
-		for index in initialize.element:
-			if node_object[index]['hardware_vendor'] == 'cisco':
-				get_diff = True
-				break
-		if get_diff:
-			mediator(template_list,node_object,auditcreeper,output,with_remediation)	
+	try:
+		if argument_confirm is None or argument_confirm.lower() == 'true':
+			confirm_flag = True 
+		elif argument_confirm.lower() == 'false':
+			confirm_flag = False
+			authentication = False
+			initialize.password = os.environ.get('NETWORK_PASSWORD')
+		if(args.file is None):
+			template_list = []
+			auditcreeper = True
 		else:
-			render(template_list,node_object,auditcreeper,output,with_remediation)
-		for index in initialize.element:
-			redirect.append('push_cfgs')
-		for index in range(len(initialize.element)):
-			if len(commands[index]) != 0:
-				push_cfgs = True
-				break
+			template = args.file + ext
+			template_list = []
+			template_list.append(template)
+		node_object = process_nodes()
+		node_template = process_templates()
+		match_node = search_node(argument_node,node_object)
+		match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper)
+		"""
+			:param node_object: All node(s) in the database with all attributes.
+			:type node_object: list
+	
+			:param node_template: All templates based on hardware_vendor and device type.
+			:type node_template: list
+	
+			:param match_node: Nodes that matches the arguements passed in by user.
+			:type match_node: list
+	
+			:param match_template: Return a list of 'match' and/or 'no match'.
+			:type match_template: list 
+		"""
+		if len(match_node) == 0:
+			print('+ No matching node(s) found in database.')
+			print('')
+		elif 'NO MATCH' in match_template:
+			print('+ No matching template(s) found in database.')
+			print('')
+		else:
+			node_create(match_node,node_object)
+			for index in initialize.element:
+				if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'citrix':
+					get_diff = True
+					break
+			if get_diff:
+				mediator(template_list,node_object,auditcreeper,output,with_remediation)	
 			else:
-				push_cfgs = False
-		if push_cfgs:
-			confirm(redirect,commands,authentication)
-		print('')
+				render(template_list,node_object,auditcreeper,output,with_remediation)
+			for index in initialize.element:
+				redirect.append('push_cfgs')
+			for index in range(len(initialize.element)):
+				if len(commands[index]) != 0:
+					push_cfgs = True
+					break
+				else:
+					push_cfgs = False
+			if push_cfgs and confirm_flag:
+				confirm(redirect,commands,authentication)
+			elif push_cfgs and not confirm_flag:
+				multithread_engine(initialize.ntw_device,redirect,commands,authentication)
+			else:
+				pass
+			print('')
+	except Exception as error:
+		print('ExceptionError: an exception occured')
+		print(error)
 
 	return None
