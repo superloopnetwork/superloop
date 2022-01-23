@@ -36,7 +36,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			init_config = file.readlines()
 		for config_line in init_config:
 			strip_config = config_line.strip('\n')
-			if(strip_config == '' or strip_config == ' ' or strip_config == "!"):
+			if strip_config == '' or strip_config == ' ' or strip_config == '!'):
 				continue	
 			else:
 				rendered_config.append(strip_config)	
@@ -44,7 +44,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			init_config = file.readlines()
 		for config_line in init_config:
 			strip_config = config_line.strip('\n')
-			if(strip_config == '' or strip_config == ' ' or strip_config == "!"):
+			if strip_config == '' or strip_config == ' ' or strip_config == '!' or strip_config == '! ':
 				continue	
 			else:
 				backup_config.append(strip_config)	
