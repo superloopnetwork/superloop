@@ -1,5 +1,5 @@
 """
-	This mediator is a generic audit diff for various hardware vendors including Cisco and F5.
+	This mediator is a generic audit diff for various hardware vendors including Cisco, Citrix and F5.
 """
 import re
 import initialize
@@ -32,19 +32,22 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 		:param commands: ... Configurations generated from the diff'ed output.
 		:type commands: list
 		"""
-		f = open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['name'],template.split('.')[0]) + ".conf", "r")
-		init_config = f.readlines()
+		with open("{}/rendered-configs/{}.{}".format(home_directory,node_object[index]['name'],template.split('.')[0]) + ".conf", "r") as file:
+			init_config = file.readlines()
 		for config_line in init_config:
 			strip_config = config_line.strip('\n')
-			if(strip_config == '' or strip_config == "!"):
+			if(strip_config == '' or strip_config == ' ' or strip_config == "!"):
 				continue	
 			else:
 				rendered_config.append(strip_config)	
-		f = open("{}/backup-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", "r")
-		init_config = f.readlines()
+		with open("{}/backup-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", "r") as file:
+			init_config = file.readlines()
 		for config_line in init_config:
 			strip_config = config_line.strip('\n')
-			backup_config.append(strip_config)	
+			if(strip_config == '' or strip_config == ' ' or strip_config == "!"):
+				continue	
+			else:
+				backup_config.append(strip_config)	
 		directory = get_template_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
 		f = open("{}".format(directory) + template, "r")
 		parse_audit = f.readline()
