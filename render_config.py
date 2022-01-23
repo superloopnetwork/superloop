@@ -71,7 +71,11 @@ def render_config(args):
 		print('+ No matching template(s) found in database.')
 		print()
 	else:
-		secrets = get_secrets()
-		render(template_list,node_object,auditcreeper,output,with_remediation,secrets)
+		"""
+			Uncomment the secrets below if you are using hashicorp vault. You will need to setup the credentials.
+		"""
+#		secrets = get_secrets()
+#		render(template_list,node_object,auditcreeper,output,with_remediation,secrets)
+		render(template_list,node_object,auditcreeper,output,with_remediation)
 
 	return None

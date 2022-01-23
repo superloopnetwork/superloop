@@ -74,7 +74,7 @@ class BaseNode(object):
 	
 		return device_type['{}'.format(self.platform_name)]
 
-	def push_cfgs(self,commands):
+	def push_cfgs(self,password,commands):
 		self.connect()
 		output = self.net_connect.enable()
 		if self.hardware_vendor == 'cisco' and self.opersys == 'ios':
@@ -100,7 +100,7 @@ class BaseNode(object):
 			output = self.net_connect.send_config_set(commands,enter_config_mode=True)
 		self.net_connect.disconnect()
 
-	def pull_cfgs(self,command):
+	def pull_cfgs(self,password,command):
 		scp_flag = False
 		method = 'pull_cfgs'
 		if self.hardware_vendor == 'cisco' and self.opersys == 'ios':
@@ -130,7 +130,7 @@ class BaseNode(object):
 			self.write_to_file(command,scp_flag,method)
 			self.net_connect.disconnect()
 
-	def exec_cmd(self,command):
+	def exec_cmd(self,password,command):
 		self.connect()
 		output = self.net_connect.send_command(command)
 		output = output.replace('\n','\n{}: '.format(self.name))
@@ -144,7 +144,7 @@ class BaseNode(object):
 
 		return home_directory
 
-	def get_config(self,command):
+	def get_config(self,password,command):
 		scp_flag = False
 		method = 'get_config'
 		if self.hardware_vendor == 'cisco':
@@ -159,7 +159,7 @@ class BaseNode(object):
 		self.write_to_file(command,scp_flag,method)
 		self.net_connect.disconnect()
 
-	def get_diff(self,commands):
+	def get_diff(self,password,commands):
 		scp_flag = False
 		method = 'get_diff'
 		self.connect()

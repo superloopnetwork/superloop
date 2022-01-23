@@ -71,7 +71,10 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 			template_list = get_sorted_juniper_template_list(template_list)
 			rendered_config.append('load replace terminal')
 		for template in template_list:
-			secrets = get_secrets()
+			"""
+				Uncomment the secrets below if you are using hashicorp vault. You will need to setup the credentials.
+			"""
+#			secrets = get_secrets()
 			process_jinja2_template(node_object,index,template,with_remediation)
 			"""
 				Compiling the rendered configs from template and preparing

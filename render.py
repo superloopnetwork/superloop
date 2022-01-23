@@ -12,6 +12,10 @@ from get_property import get_updated_list
 from parse_cmd import parse_commands
 
 def render(template_list,node_object,auditcreeper,output,with_remediation):
+	"""
+		Uncomment the below function and replace with the above define function to include secrets if hashicorp is used.
+	"""
+#def render(template_list,node_object,auditcreeper,output,with_remediation,secrets):
 	global with_remediate
 	with_remediate = with_remediation
 	template_list_copy = template_list
@@ -26,7 +30,7 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 			if(output):
 				print("{}".format(config))
 			with open('{}/rendered-configs/{}.{}'.format(get_home_directory(),node_object[index]['name'],template.replace('jinja2','')) + 'conf','r') as file:
-				init_config = f.readlines()
+				init_config = file.readlines()
 			"""
 				The below parse_commands() function will only get executed if
 				it needs to store commands in the global variable initialize.configuration

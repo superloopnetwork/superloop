@@ -51,6 +51,7 @@ def main():
 	push_cfgs_cmd.set_defaults(func=push_cfgs)
 	push_cfgs_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
 	push_cfgs_cmd.add_argument('-f','--file', dest='file', help='Specify template file to audit against [exclude *.jinja2 extension].')
+	push_cfgs_cmd.add_argument('-c','--confirm', dest='confirm', help='Skip confirmation [default is True].')
 	push_local_cmd = push_subparsers.add_parser('local')
 	push_local_cmd.set_defaults(func=push_local)
 	push_local_cmd.add_argument('filename', help='Specify local filename to be pushed.')
