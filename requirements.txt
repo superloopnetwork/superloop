@@ -1,5 +1,6 @@
 ciscoconfparse==1.5.5
 commentjson==0.8.3
+hvac==0.11.2
 Jinja2==2.11.3
 netmiko==3.1.1
 pysnmp==4.4.12

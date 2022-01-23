@@ -1,6 +1,7 @@
 """
 	This module controls the rendering of templates.
 """
+from get_property import get_secrets
 from lib.objects.basenode import BaseNode
 from processdb import process_nodes
 from processdb import process_templates
@@ -18,7 +19,7 @@ def render_config(args):
 	commands = initialize.configuration
 	ext = '.jinja2'
 	output = True
-	with_remediation = False
+	with_remediation = True 
 	"""
 		:param argument_node: Argument accepted as regular expression.
 		:type augument_node: str
@@ -70,6 +71,7 @@ def render_config(args):
 		print('+ No matching template(s) found in database.')
 		print()
 	else:
-		render(template_list,node_object,auditcreeper,output,with_remediation)
+		secrets = get_secrets()
+		render(template_list,node_object,auditcreeper,output,with_remediation,secrets)
 
 	return None
