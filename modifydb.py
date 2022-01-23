@@ -20,7 +20,7 @@ def append(args):
 	"""
 		Check if new node currently exist in database.
 	"""
-	print(database)
+#	print(database)
 	for node in database:
 		if mgmt_ip4 == node['mgmt_ip4']:
 			match_node.append('MATCH')
