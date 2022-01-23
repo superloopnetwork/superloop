@@ -36,7 +36,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			init_config = file.readlines()
 		for config_line in init_config:
 			strip_config = config_line.strip('\n')
-			if strip_config == '' or strip_config == ' ' or strip_config == '!'):
+			if strip_config == '' or strip_config == ' ' or strip_config == '!':
 				continue	
 			else:
 				rendered_config.append(strip_config)	
@@ -49,8 +49,8 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			else:
 				backup_config.append(strip_config)	
 		directory = get_template_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
-		f = open("{}".format(directory) + template, "r")
-		parse_audit = f.readline()
+		with open("{}".format(directory) + template, "r") as file:
+			parse_audit = file.readline()
 		"""
 			This will take each element from the audit_filter list and search for the matched lines in backup_config.
 		"""
@@ -81,7 +81,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			If there are no diffs and only and audit diff is executed, (none) will be printed to show users the result. However, if there are no diffs but a push cfgs
 			if executed resulting in output set as false, an empty list is appended.
 		"""
-		if(len(push_configs) == 0):
+		if len(push_configs) == 0:
 			if output:
 				print("{}{} (none)".format(directory,template))
 				print('')
@@ -104,9 +104,9 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 					if re.search(r'^no',line) or re.search(r'\sno',line):
 						line = re.sub("no","",line)
 						print("-{}".format(line))
-					elif(len(search) == 0):
+					elif len(search) == 0:
 						print("+ {}".format(line))
-					elif(len(search) > 1):
+					elif len(search) > 1:
 						print("+ {}".format(line))
 					else:
 						print("  {}".format(line))
@@ -131,7 +131,7 @@ def parse_audit_filter(node_object,index,parse_backup_configs,audit_filter):
 		current_template = parse_backup_configs.find_objects(r"^{}".format(audit))
 		for audit_string in current_template:
 			filtered_backup_config.append(audit_string.text)
-			if(audit_string.is_parent):
+			if audit_string.is_parent:
 				for child in audit_string.all_children:
 					filtered_backup_config.append(child.text)
 
