@@ -65,7 +65,6 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				parse_backup_configs,
 				audit_filter
 		)
-		
 		"""
 			sync_diff() will diff out the filtered_backup_config from the rendered_configs and store whatever commands that has deltas.
 		"""
@@ -78,8 +77,27 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				debug=False
 		)
 		"""
+			Calculating the percentage of config lines from the template that matches the running-configuration of the device. This will 
+			provide an accurate reading config standardization. 
+		"""
+		total_template_lines = len(rendered_config)
+		total_filtered_backup_config_lines = len(filtered_backup_config)
+		total_backup_config_lines = len(backup_config)
+		total_push_config_lines = len(push_configs)
+		"""
+		:param total_template_lines: Total number of lines in the template.
+		:type total_template_lines: int
+
+		:param total_filtered_backup_config_lines: Total number of lines in the filtered backup config. 
+		:type total_filtered_backup_config_lines: int
+
+		:param total_backup_config_lines: Total number of lines in the backup config.
+		:type total_backup_config_lines: int
+		"""
+
+		"""
 			If there are no diffs and only and audit diff is executed, (none) will be printed to show users the result. However, if there are no diffs but a push cfgs
-			if executed resulting in output set as false, an empty list is appended.
+			is executed, not configs would be pushed as an empty list is appended.
 		"""
 		if len(push_configs) == 0:
 			if output:
@@ -95,7 +113,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				If an audit diff is executed, the diff is outputed to user. If a push cfgs is executed against Cisco like platforms, the commands from the diff are executed
 				with the negation (no). This is to maintain the sequence of the the commands in order to match the jinja2 templates. What you see on the template is what the
 				users want exactly as the running-configurations. The with_remediation flag is no longer required on the template itself as it may cause disruptions to
-				services. For example, blowing out an entire logging configs (no logging) and readding all the logging host back on.
+				services. For example, blowing out an entire logging configs (no logging) and re-adding all the logging host back on.
 			"""
 			if output:
 				print("{}{}".format(directory,template))
@@ -110,6 +128,12 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 						print("+ {}".format(line))
 					else:
 						print("  {}".format(line))
+						total_push_config_lines = total_push_config_lines - 1
+								
+				matched_lines = total_filtered_backup_config_lines - total_push_config_lines
+				matched_percentage = round(matched_lines/total_filtered_backup_config_lines*100,2)
+				print('')
+				print('+ config standardization: {}%'.format(matched_percentage))
 			else:
 				if node_object[index]['hardware_vendor'] == 'cisco':
 					for line in push_configs:
