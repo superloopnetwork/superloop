@@ -133,7 +133,6 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 					else:
 						print("  {}".format(line))
 						total_push_config_lines = total_push_config_lines - 1
-								
 				matched_lines = total_filtered_backup_config_lines - total_push_config_lines
 				matched_percentage = round(matched_lines/total_filtered_backup_config_lines*100,2)
 				print('')
