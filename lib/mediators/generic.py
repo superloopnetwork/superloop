@@ -36,6 +36,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			init_config = file.readlines()
 		for config_line in init_config:
 			strip_config = config_line.strip('\n')
+			strip_config = strip_config.rstrip()
 			if strip_config == '' or strip_config == ' ' or strip_config == '!':
 				continue	
 			else:
@@ -44,6 +45,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			init_config = file.readlines()
 		for config_line in init_config:
 			strip_config = config_line.strip('\n')
+			strip_config = strip_config.rstrip()
 			if strip_config == '' or strip_config == ' ' or strip_config == '!' or strip_config == '! ':
 				continue	
 			else:
@@ -76,7 +78,6 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				remove_lines=True, 
 				debug=False
 		)
-		push_configs = list(dict.fromkeys(push_configs))
 		"""
 			Calculating the percentage of config lines from the template that matches the running-configuration of the device. This will 
 			provide an accurate reading config standardization. 
@@ -119,7 +120,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			if output:
 				print("{}{}".format(directory,template))
 				for line in push_configs:
-					search = parse_backup_configs.find_objects(r"^{}".format(line))
+					search = parse_backup_configs.find_objects(r"^{}".format(line),,exactmatch=True)
 					if re.search(r'^no',line) or re.search(r'\sno',line):
 						line = re.sub("no","",line)
 						print("-{}".format(line))
