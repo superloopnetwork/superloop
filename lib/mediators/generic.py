@@ -127,6 +127,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 						total_push_config_lines = total_push_config_lines - 1
 					elif len(search) == 0:
 						print("+ {}".format(line))
+						total_push_config_lines = total_push_config_lines - 1
 					elif len(search) > 1:
 						print("+ {}".format(line))
 						total_push_config_lines = total_push_config_lines - 1
