@@ -57,7 +57,8 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			This will take each element from the audit_filter list and search for the matched lines in backup_config.
 		"""
 		audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
-		parse_backup_configs = CiscoConfParse("{}/backup-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", syntax=get_syntax(node_object,index))
+#		parse_backup_configs = CiscoConfParse("{}/backup-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", syntax=get_syntax(node_object,index))
+		parse_backup_configs = CiscoConfParse(backup_config, syntax=get_syntax(node_object,index))
 		"""
 			Matched entries are then appended to the filter_backup_config variable. parse_audit_filter() call will find all parent/child.
 		"""
@@ -120,7 +121,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			if output:
 				print("{}{}".format(directory,template))
 				for line in push_configs:
-					search = parse_backup_configs.find_objects(r"^{}".format(line),exactmatch=True)
+					search = parse_backup_configs.find_objects(r"^{}".format(re.escape(line)),exactmatch=True)
 					if re.search(r'^no',line) or re.search(r'\sno',line):
 						line = re.sub("no","",line)
 						print("-{}".format(line))
