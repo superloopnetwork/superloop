@@ -121,7 +121,10 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 			if output:
 				print("{}{}".format(directory,template))
 				for line in push_configs:
-					search = parse_backup_configs.find_objects(r"^{}".format(re.escape(line)),exactmatch=True)
+					if '+' in line:
+						line = line.replace('+','\+')
+					search = parse_backup_configs.find_objects(r"^{}".format(line),exactmatch=True)
+						line = line.replace('\+','+')
 					if re.search(r'^no',line) or re.search(r'\sno',line):
 						line = re.sub("no","",line)
 						print("-{}".format(line))
