@@ -209,13 +209,9 @@ root@devvm:~/database# cat nodes.yaml
   updated_at: '2021-02-01 15:44:23'
   updated_by: root
 ```  
-Credentials used to connect to nodes are via OS environment varilables. This eliminates any files associated to the application 'superloop' hardcoded with the username and password and thus, reduces the risk of being leaked/hacked. To setup the OS environment variables, the easiest way is to create a hidden file like ```.secret``` placed in your home directory. This file absolutely needs to be locked down to the service account owner. Set permission so only the service account owner where superloop is executed can read/write ```chmod 600 .secret```.
-
-Your file should look like this:
+Credentials used to connect to nodes are via the OS environment varilable, $USER. It will prompt you for your password
 ```
-root@devvm:~# cat .secret
-export USERNAME="username"
-export PASSWORD="password"
+export USERNAME=username
 export SNMP_COMMUNITY_STRING="snmp_k3y"
 ```
 * Please replace the fields with the appropriate values
