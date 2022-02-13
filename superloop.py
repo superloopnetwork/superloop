@@ -3,7 +3,6 @@
 	Main executable file for superloop. A symbolic link should be created as a global command for ease of use.	
 """
 import sys
-sys.path.append('/root/superloop/')
 import argparse
 import initialize
 import os
@@ -20,6 +19,8 @@ from modifydb import discover
 from modifydb import remove 
 from modifydb import update 
 from node_list import node_list
+
+sys.path.append('/root/superloop/')
 
 def main():
 #	try:
