@@ -24,6 +24,23 @@ def parse_commands(node_object,init_config,set_notation):
 
 	return commands
 
+def parse_negation_commands(push_configs):
+	command_split = []
+	commands = []
+	for line in push_configs:
+		command_split = line.split()
+		"""
+			The below if statement will negate binding configurations associated with policy on the Citrix Netscaler.
+		"""
+		if command_split[0] == 'no' and command_split[1] == 'bind' and command_split[6] == '-index':
+			command_split[1] = 'unbind'
+			command = ' '.join(command_split[1:6])
+			commands.append(command)
+		else:
+			commands.append(line)
+		
+	return commands
+
 def parse_firewall_acl(node_policy,policy):
 	"""
 		This function will generate firewall acls based on the hardware_vendor and os.
