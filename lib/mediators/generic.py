@@ -8,6 +8,7 @@ from ciscoconfparse import CiscoConfParse
 from get_property import get_template_directory
 from get_property import get_syntax
 from get_property import get_sorted_juniper_template_list 
+from parse_cmd import parse_negation_commands
 
 home_directory = os.environ.get('HOME')
 
