@@ -35,7 +35,7 @@ def extract_nodes(node_object):
 
 	return node_list	
 
-def search_template(template_list,match_node,node_template,node_object,auditcreeper):
+def search_template(template_list,safe_push_list,match_node,node_template,node_object,auditcreeper,push_cfgs):
 	"""
 		This function will take the search results from the list of nodes 
 		and run it against node_object to determine the hardware vendor and type 
@@ -62,16 +62,34 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 						if auditcreeper:
 							template_node_list = []
 							for template_dir_name in node_temp['templates']:
-								template_name = template_dir_name.split('/')[-1]
+								template_name = list(template_dir_name)[0].split('/')[-1]
 								template_node_list.append(template_name)
+								safe_push = list(template_dir_name.values())[0]
+								safe_push_list.append(safe_push)
 							template_list.append(template_node_list)
+							if 'disabled' in safe_push_list and push_cfgs:
+								disabled_template_index = safe_push_list.index('disabled')
+								print('Template {} has been disabled for {}.'.format(template_node_list[disabled_template_index],node_obj['name']))
+								exit()
 						else:
 							directory = get_template_directory(node_obj['hardware_vendor'],node_obj['opersys'],node_obj['type'])
 							file = directory + template_list[element]
 							template_index = 0
+							template_node_list = []
 							for template_path in node_temp['templates']:
-								node_temp['templates'][template_index] = template_path.replace('~','{}'.format(get_home_directory()))
+								template_name = list(template_path)[0].split('/')[-1]
+								template_node_list.append(template_name)
+								node_temp['templates'][template_index] = list(template_path)[0].replace('~','{}'.format(get_home_directory()))
+								safe_push = list(template_path.values())[0]
+								safe_push_list.append(safe_push)
 								template_index = template_index + 1
+							try:
+								template_index = template_node_list.index(template_list[element])
+								if safe_push_list[template_index] != 'enabled' and push_cfgs:
+									print('Template {} has been disabled for {}.'.format(template_node_list[template_index],node_obj['name']))
+									exit()
+							except Exception as error:
+								pass
 							if file in node_temp['templates']:
 								search_result.append("MATCH")	
 							else:
@@ -81,7 +99,6 @@ def search_template(template_list,match_node,node_template,node_object,auditcree
 						continue	
 			else:
 				continue	
-
 	return search_result 
 
 def search_policy(policy_list,match_node,node_policy,node_object,auditcreeper):

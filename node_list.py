@@ -15,6 +15,8 @@ def node_list(args):
 	argument_node = args.name
 	auditcreeper = True
 	element_position = 1
+	push_cfgs = False
+	safe_push_list = []
 	template_list = []
 	template_list_copy = template_list
 	"""
@@ -25,19 +27,25 @@ def node_list(args):
 		:type auditcreeper: bool
 		
 		:param element_position: Keeps track of the position.
-		:type element_position: int 
+		:type element_position: int
+
+		:param push_cfgs: This flag is to determine if a push is required for Cisco like platforms. Juniper will continue to push configs no matter if there are no diffs.
+		:type ext: bool
+
+		:param safe_push_list: A list of enable/disabled strings. This corresponds to templates that are safe to push (enable) vs. templates that are not safe to push (disabled).
+		:type ext: list
 		
-		:param template_list: Initializing list of templates
+		:param template_list: Initializing list of templates.
 		:type template_list: list
 		
-		:param template_list_copy: Memory reference to template_list
+		:param template_list_copy: Memory reference to template_list.
 		:type ext: list
 		
 	"""
 	node_object = process_nodes()
 	match_node = search_node(argument_node,node_object)
 	node_template = process_templates()
-	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper)
+	match_template = search_template(template_list,safe_push_list,match_node,node_template,node_object,auditcreeper,push_cfgs)
 	"""
 		:param node_object: All node(s) in the database with all attributes.
 		:type node_object: list

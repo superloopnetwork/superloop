@@ -111,7 +111,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				initialize.configuration.append([])
 				print('There are no diffs to be pushed for template {} on {}'.format(template,node_object[index]['name']))
 				if len(initialize.element) == 0:
-					break
+					pass
 		else:
 			"""
 				If an audit diff is executed, the diff is outputed to user. If a push cfgs is executed against Cisco like platforms, the commands from the diff are executed
@@ -139,10 +139,10 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 					else:
 						print("  {}".format(line))
 						total_push_config_lines = total_push_config_lines - 1
-				matched_lines = total_filtered_backup_config_lines - total_push_config_lines
-				matched_percentage = round(matched_lines/total_filtered_backup_config_lines*100,2)
-				print('')
-				print('+ config standardization: {}%'.format(matched_percentage))
+#				matched_lines = total_filtered_backup_config_lines - total_push_config_lines
+#				matched_percentage = round(matched_lines/total_filtered_backup_config_lines*100,2)
+#				print('')
+#				print('+ config standardization: {}%'.format(matched_percentage))
 			else:
 				if node_object[index]['hardware_vendor'] == 'cisco':
 					for line in push_configs:

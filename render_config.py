@@ -19,6 +19,8 @@ def render_config(args):
 	commands = initialize.configuration
 	ext = '.jinja2'
 	output = True
+	push_cfgs = False
+	safe_push_list = []
 	with_remediation = True 
 	"""
 		:param argument_node: Argument accepted as regular expression.
@@ -36,6 +38,12 @@ def render_config(args):
 		:param output: Flag to output to stdout.  
 		:type ext: bool 
 		
+		:param push_cfgs: This flag is to determine if a push is required for Cisco like platforms. Juniper will continue to push configs no matter if there are no diffs. 
+		:type ext: bool
+
+		:param safe_push_list: A list of enable/disabled strings. This corresponds to templates that are safe to push (enable) vs. templates that are not safe to push (disabled).
+		:type ext: list
+
 		:param with_remediation: Current function to remediate or not remediate.  
 		:type ext: bool 
 	"""
@@ -49,7 +57,7 @@ def render_config(args):
 	node_object = process_nodes()
 	node_template = process_templates()
 	match_node = search_node(argument_node,node_object)
-	match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper)
+	match_template = search_template(template_list,safe_push_list,match_node,node_template,node_object,auditcreeper,push_cfgs)
 	"""
 		:param node_object: All node(s) in the database with all attributes.
 		:type node_object: list

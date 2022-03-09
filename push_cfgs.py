@@ -22,7 +22,8 @@ def push_cfgs(args):
 	ext = '.jinja2'
 	output = False 
 	redirect = []
-	push_cfgs = False
+	safe_push_list = []
+	push_cfgs = True
 	with_remediation = True
 	authentication = False
 	"""
@@ -36,14 +37,17 @@ def push_cfgs(args):
 		:type commands: list
 		
 		:param ext: File extention
-		:type ext: str 
+		:type ext: str
 		
-		:param output: Flag to output to stdout.  
-		:type ext: bool 
+		:param output: Flag to output to stdout.
+		:type ext: bool
 		
 		:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
 		:type alt_key_file: list
 		
+		:param safe_push_list: A list of enable/disabled strings. This corresponds to templates that are safe to push (enable) vs. templates that are not safe to push (disabled).
+		:type ext: list
+
 		:param push_cfgs: This flag is to determine if a push is required for Cisco like platforms. Juniper will continue to push configs no matter if there are no diffs. 
 		:type ext: bool 
 
@@ -67,7 +71,7 @@ def push_cfgs(args):
 		node_object = process_nodes()
 		node_template = process_templates()
 		match_node = search_node(argument_node,node_object)
-		match_template = search_template(template_list,match_node,node_template,node_object,auditcreeper)
+		match_template = search_template(template_list,safe_push_list,match_node,node_template,node_object,auditcreeper,push_cfgs)
 		"""
 			:param node_object: All node(s) in the database with all attributes.
 			:type node_object: list
@@ -87,6 +91,8 @@ def push_cfgs(args):
 		elif 'NO MATCH' in match_template:
 			print('+ No matching template(s) found in database.')
 			print('')
+#		elif safe_push_list:
+#			pass
 		else:
 			node_create(match_node,node_object)
 			for index in initialize.element:
