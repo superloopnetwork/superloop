@@ -111,7 +111,7 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				initialize.configuration.append([])
 				print('There are no diffs to be pushed for template {} on {}'.format(template,node_object[index]['name']))
 				if len(initialize.element) == 0:
-					pass
+					break	
 		else:
 			"""
 				If an audit diff is executed, the diff is outputed to user. If a push cfgs is executed against Cisco like platforms, the commands from the diff are executed
