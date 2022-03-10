@@ -44,7 +44,12 @@ def authenticate():
 	if 'NETWORK_PASSWORD' in os.environ:
 		initialize.password = os.environ.get('NETWORK_PASSWORD')
 	else:
-		initialize.password = getpass()
+		try:
+			initialize.password = getpass()
+		except KeyboardInterrupt as error:
+			print('')
+			print('Terminating...')
+			exit()
 
 	return initialize.password
 
