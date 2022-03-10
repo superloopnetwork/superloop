@@ -155,7 +155,7 @@ def node_element(match_node,node_object):
 	index = 0
 	for node in match_node:
 		for node_obj in node_object:
-			if(node in node_obj['name']):
+			if node in node_obj['name']:
 				index = node_object.index(node_obj)
 				initialize.element.append(index)
 
