@@ -88,53 +88,10 @@ Before we begin, I've constructed this application for easy database management 
   1. nodes.yaml
   2. templates.yaml
 
-nodes.yaml acts as the inventory for all network devices. When you add a device, every attribute of the node will be discovered automatically so there is no need to populate it manually.
+nodes.yaml acts as the inventory for all network devices. When a device is added, every attribute of the node will be discovered automatically so there is no need to populate it manually. In order to discover the device, the SNMP community string must been set:
 ```
-root@devvm:~# superloop host remove core.sw.superloop.ktch
-- Node successfully removed from database.
+root@devvm:~# export SNMP_COMMUNITY_STRING="snmp_k3y"
 root@devvm:~# superloop host add core.sw.superloop.ktch   
-+ Discovering OSPF data. 
-+ .... neighbor 10.50.30.10 [complete]
-+ Discovering switchport interfaces. 
-+ .... Vlan1 [complete]
-+ .... Vlan20 [complete]
-+ .... Vlan30 [complete]
-+ .... Vlan40 [complete]
-+ .... Vlan50 [complete]
-+ .... Port-channel6 [complete]
-+ .... StackPort1 [complete]
-+ .... StackSub-St1-1 [complete]
-+ .... StackSub-St1-2 [complete]
-+ .... GigabitEthernet1/0/1 [complete]
-+ .... GigabitEthernet1/0/2 [complete]
-+ .... GigabitEthernet1/0/3 [complete]
-+ .... GigabitEthernet1/0/4 [complete]
-+ .... GigabitEthernet1/0/5 [complete]
-+ .... GigabitEthernet1/0/6 [complete]
-+ .... GigabitEthernet1/0/7 [complete]
-+ .... GigabitEthernet1/0/8 [complete]
-+ .... GigabitEthernet1/0/9 [complete]
-+ .... GigabitEthernet1/0/10 [complete]
-+ .... GigabitEthernet1/0/11 [complete]
-+ .... GigabitEthernet1/0/12 [complete]
-+ .... GigabitEthernet1/0/13 [complete]
-+ .... GigabitEthernet1/0/14 [complete]
-+ .... GigabitEthernet1/0/15 [complete]
-+ .... GigabitEthernet1/0/16 [complete]
-+ .... GigabitEthernet1/0/17 [complete]
-+ .... GigabitEthernet1/0/18 [complete]
-+ .... GigabitEthernet1/0/19 [complete]
-+ .... GigabitEthernet1/0/20 [complete]
-+ .... GigabitEthernet1/0/21 [complete]
-+ .... GigabitEthernet1/0/22 [complete]
-+ .... GigabitEthernet1/0/23 [complete]
-+ .... GigabitEthernet1/0/24 [complete]
-+ .... GigabitEthernet1/0/25 [complete]
-+ .... GigabitEthernet1/0/26 [complete]
-+ .... GigabitEthernet1/0/27 [complete]
-+ .... GigabitEthernet1/0/28 [complete]
-+ .... Null0 [complete]
-+ .... Loopback0 [complete]
 + SNMP discovery successful.
 + New node appended to database.
 ```
@@ -212,16 +169,7 @@ root@devvm:~/database# cat nodes.yaml
 Credentials used to connect to nodes are via the OS environment varilable, $USER. It will prompt you for your password
 ```
 export USERNAME=username
-export SNMP_COMMUNITY_STRING="snmp_k3y"
 ```
-* Please replace the fields with the appropriate values
-
-Now open up your ```.bashrc``` file from your home directory ```vi ~/.bashrc``` and place the below code at the end of the file:
-```
-source /{home_directory}/.secret
-```
-Disconnect from your ssh session and reconnect again for changes to take effect. The environment variables have now been loaded.
-
 templates.yaml is a database file that consist of all the jinja2 templates. You will need to include the full path. Here is a sample of how it should look like below. Do not change the format as the application reads it in a specific method. Only change the properties.
 ```
 root@devvm:~/database# cat templates.yaml 
