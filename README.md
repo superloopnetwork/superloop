@@ -1,5 +1,5 @@
 # superloop
-Inspired by a wide array of toolsets (unamed) used and developed by a leading social media tech company in the Bay Area for network automation, I have created my own version of framework.
+Inspired by a wide array of toolsets (unamed) used and developed by the world's leading social media tech company in the Bay Area for network automation, I have created my own version of the framework.
 
 ## Prerequisites
   1. Python 3.6 or higher.
@@ -19,6 +19,11 @@ Inspired by a wide array of toolsets (unamed) used and developed by a leading so
 | Cisco ASA  |       x      |      x      |       x     |    x   |      x      |      x     |       x       |        x        |            |      x      |
 | Juniper OS |       x      |      x      |       x     |    x   |      x      |      x     |       x       |        x        |            |      x      |
 |F5 BigIP LTM|       x      |      x      |       x     |    x   |      x      |      x     |       x       |        x        |      -     |      x      |
+
+## Overview
+
+![superloop gitops_operational_framework](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_gitops_operational_framework.png)
+
 
 ## Install
 
