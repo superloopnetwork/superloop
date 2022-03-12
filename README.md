@@ -9,6 +9,7 @@ Inspired by a wide array of toolsets (unamed) used and developed by the world's 
   5. yaml - YAML is a human-readable data-serialization language (https://en.wikipedia.org/wiki/YAML).
   6. libyaml-cpp-dev - C parser for yaml (xargs apt-get install < requirements.apt)
   7. jinja2 - template engine for Python (https://jinja.palletsprojects.com/en/2.11.x/)
+  8. hvac - Python client for hashicorp vault (https://pypi.org/project/hvac/).
 
 ## Support
 
