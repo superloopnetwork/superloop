@@ -47,7 +47,7 @@ IMPORTANT: To simplify the execution of superloop application, please do the fol
 
 Create a symbolic link of 'superloop.py' and place it in '/usr/local/bin/'. Set the permission to 755. (replace python3.x with your correct python version)
 ```
-$ ln -s /usr/local/superloop/superloop/superloop.py /usr/local/bin/superloop
+$ ln -s /usr/local/superloop/superloop.py /usr/local/bin/superloop
 $ chmod 755 /usr/local/bin/superloop
 ```
 Now uncomment the following code within ```/usr/local/bin/superloop``` near the top:
