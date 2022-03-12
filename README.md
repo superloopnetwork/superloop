@@ -1,5 +1,5 @@
 # superloop
-Inspired by a wide array of toolsets (unamed) used and developed by the world's leading social media tech company in the Bay Area for network automation, I have created my own version of the framework.
+Inspired by the world's leading social media tech company (Facebook) for network automation, I have created my own version of the framework.
 
 ## Prerequisites
   1. Python 3.6 or higher.
