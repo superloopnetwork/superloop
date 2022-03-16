@@ -76,6 +76,7 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 							file = directory + template_list[element]
 							template_index = 0
 							template_node_list = []
+							node_templates = node_temp['templates'].copy()
 							for template_path in node_temp['templates']:
 								template_name = list(template_path)[0].split('/')[-1]
 								template_node_list.append(template_name)
@@ -92,9 +93,11 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 								pass
 							if file in node_temp['templates']:
 								search_result.append("MATCH")	
+								node_temp['templates'] = node_templates.copy()
 							else:
 								print('+ No associating template {}'.format(template_list[element]) + ' for node {}'.format(node))
 								search_result.append("NO MATCH")
+								node_temp['templates'] = node_templates.copy()
 					else:
 						continue	
 			else:
