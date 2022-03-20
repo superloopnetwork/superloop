@@ -57,6 +57,8 @@ def get_template_directory(hardware_vendor,opersys,device_type):
 		directory = '{}/superloop_code/templates/hardware_vendors/juniper/junos/vfirewall/'.format(get_home_directory())
 	elif hardware_vendor == 'juniper' and opersys == 'junos' and device_type == 'router':
 		directory = '{}/superloop_code/templates/hardware_vendors/juniper/junos/router/'.format(get_home_directory())
+	elif hardware_vendor == 'citrix' and opersys == 'netscaler' and device_type == 'loadbalancer':
+		directory = '{}/superloop_code/templates/hardware_vendors/citrix/netscaler/vpx/'.format(get_home_directory())
 	elif hardware_vendor == 'f5' and opersys == 'tmsh' and device_type == 'loadbalancer':
 		directory = '{}/superloop_code/templates/hardware_vendors/f5/tmsh/ltm/'.format(get_home_directory())
 
