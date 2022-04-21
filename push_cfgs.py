@@ -91,8 +91,6 @@ def push_cfgs(args):
 		elif 'NO MATCH' in match_template:
 			print('+ No matching template(s) found in database.')
 			print('')
-#		elif safe_push_list:
-#			pass
 		else:
 			node_create(match_node,node_object)
 			for index in initialize.element:

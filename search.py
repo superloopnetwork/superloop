@@ -66,11 +66,24 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 								template_node_list.append(template_name)
 								safe_push = list(template_dir_name.values())[0]
 								safe_push_list.append(safe_push)
-							template_list.append(template_node_list)
 							if 'disabled' in safe_push_list and push_cfgs:
-								disabled_template_index = safe_push_list.index('disabled')
-								print('Template {} has been disabled for {}.'.format(template_node_list[disabled_template_index],node_obj['name']))
+								run_time = 1
+								first_run = True
+								disabled_templates = disabled_safe_push_element(safe_push_list,template_node_list,node_obj)
+								for index in disabled_templates:
+									if first_run:
+										template_node_list.pop(index)
+										first_run = False
+									else:
+										template_node_list.pop(index - run_time)
+										run_time = run_time + 1
+							"""
+								If all templates are disabled.
+							"""
+							if len(template_node_list) == 0:
 								exit()
+							template_list.append(template_node_list)
+							del safe_push_list[:]
 						else:
 							directory = get_template_directory(node_obj['hardware_vendor'],node_obj['opersys'],node_obj['type'])
 							file = directory + template_list[element]
@@ -163,3 +176,19 @@ def node_element(match_node,node_object):
 				initialize.element.append(index)
 
 	return None
+
+def disabled_safe_push_element(safe_push_list,template_node_list,node_obj):
+	"""
+		This function appends the position index of the match results (match_node) against 
+ 		the overall node_objects. This function call is only needed when search_template
+ 		function is not used.
+	"""
+	index = 0
+	disabled_templates = []
+	for element in safe_push_list:
+		if element == 'disabled':
+			print('Template {} has been disabled for {}.'.format(template_node_list[index],node_obj['name']))
+			disabled_templates.append(index)
+		index = index + 1
+
+	return disabled_templates 
