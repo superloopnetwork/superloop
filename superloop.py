@@ -60,7 +60,7 @@ def main():
 	push_acl_cmd = push_subparsers.add_parser('acl')
 	push_acl_cmd.set_defaults(func=push_acl)
 	push_acl_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
-	push_acl_cmd.add_argument('-f','--file', dest='file', help='Specify template file to audit against [exclude *.jinja2 extension].')
+	push_acl_cmd.add_argument('-p','--policy', dest='policy', help='Specify the policy file to match against [exclude *.json extension].')
 	
 	ssh_cmd = subparsers.add_parser('ssh')
 	ssh_cmd.set_defaults(func=ssh_connect)

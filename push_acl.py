@@ -19,6 +19,8 @@ def push_acl(args):
 	commands = initialize.configuration
 	ext = '.json'
 	output = False 
+	policy_list = []
+	safe_push_list = []
 	"""
 		:param argument_node: Argument accepted as regular expression.
 		:type augument_node: str
@@ -34,18 +36,22 @@ def push_acl(args):
 		
 		:param output: Flag to output to stdout.  
 		:type ext: bool 
+
+		:param policy_list: This stores a collection of polic(y/ies).  
+		:type ext: list
+
+		:param safe_push_list: A list of enable/disabled strings. This corresponds to templates that are safe to push (enable) vs. templates that are not safe to push (disabled).
+		:type ext: list
 	"""
-	if(args.file is None):
-		policy_list = []
+	if(args.policy is None):
 		auditcreeper = True
 	else:
-		policy = args.file + ext
-		policy_list = []
+		policy = args.policy + ext
 		policy_list.append(policy)
 	node_object = process_nodes()
 	node_policy = process_policies()
 	match_node = search_node(argument_node,node_object)
-	match_policy = search_policy(policy_list,match_node,node_policy,node_object,auditcreeper)
+	match_policy = search_policy(policy_list,safe_push_list,match_node,node_policy,node_object,auditcreeper)
 	"""
 		:param node_object: All node(s) in the database with all attributes.
 		:type node_object: list
@@ -68,14 +74,10 @@ def push_acl(args):
 	### AGAINST NONE ARGS.FILE ARGUEMENT
 	if(auditcreeper and len(match_policy) != 0):
 		policy_list = policy_list_copy[0]
-
-	if(len(match_node) == 0):
-		print("[!] [INVALID MATCHING NODE(S) AGAINST DATABASE]")
-		print("")
-	elif((len(match_policy) == 0) or ('NO MATCH' in match_policy)):
-		print("[!] [INVALID FIREWALL NODE(S) ASSOCIATING WITH INVALID POLICY/POLICIES]")
-		print("")
-
+	if len(match_node) == 0:
+		print('+ No matching node(s) found in database.')
+	elif 'NO MATCH' in match_policy:
+		print('+ No matching policy(ies) found in database.')
 	else:
 		node_create(match_node,node_object)
 		policies(policy_list,node_policy,policy_list_copy,auditcreeper)

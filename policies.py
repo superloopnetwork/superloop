@@ -7,10 +7,13 @@ import initialize
 from parse_cmd import parse_firewall_acl
 from get_property import get_updated_list
 
-def policies(policy_list,node_policy,policy_list_copy,auditcreeper_flag):
+def policies(policy_list,node_policy,policy_list_copy,auditcreeper):
 
 	commands = []
 	redirect = []
+	policy_list_copy = policy_list
+	if auditcreeper:
+		policy_list = policy_list_copy[0]
 	"""
 		:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
 		:type alt_key_file: list
@@ -20,13 +23,17 @@ def policies(policy_list,node_policy,policy_list_copy,auditcreeper_flag):
 	"""
 	for index in initialize.element_policy:
 		redirect.append('push_acl')
-		# THE BELOW FORLOOP TAKES CARE OF THE CONFIGS FOR EACH POLICY TERM PER FIREWALL NODES
+		""" 
+			The below forloop takes care of the configs for each policy term per firewall node(s).
+		"""
 		for policy in policy_list:
-			###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
-			print("{}".format(node_policy[index]['name']))
-			print("{}".format(policy))
+			"""
+				Un-comment the below print statement for debuging purposes.
+			"""
+#			print("{}".format(node_policy[index]['name']))
+#			print("{}".format(policy))
 			parse_firewall_acl(node_policy[index],policy)
-			if auditcreeper_flag:
+			if auditcreeper:
 				policy_list = get_updated_list(policy_list_copy)
 
 	return commands

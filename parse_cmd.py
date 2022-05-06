@@ -59,6 +59,7 @@ def parse_firewall_acl(node_policy,policy):
 		regular expression.
 	"""
 	directory = get_policy_directory(node_policy['hardware_vendor'],node_policy['opersys'],node_policy['type'])
+#	print(directory)
 	acl_list = process_json(node_policy['hardware_vendor'],node_policy['opersys'],node_policy['type'],policy)
 	with open('{}'.format(directory) + policy, 'r') as file:
 #	f = open("{}".format(directory) + policy, "r")
@@ -67,11 +68,11 @@ def parse_firewall_acl(node_policy,policy):
 	"""
 		Uncomment the below print statement for debugging purposes
 	"""
-	#print("PATH_FILTER: {}".format(path))
+#	print("PATH_FILTER: {}".format(path))
 	"""
 		Uncomment the below print statement for debugging purposes
 	"""
-	#print("ACL_LIST inside parse_firewall_acl: {}".format(acl_list))
+#	print("ACL_LIST inside parse_firewall_acl: {}".format(acl_list))
 	for acl in acl_list:
 		term = acl['term']
 		source_address = acl['source']
@@ -93,15 +94,15 @@ def object_group(path,object_group_search):
 		object_group_string = file.read()
 		object_group_list = object_group_string.split('\n')
 	if '{} ='.format(object_group_search) in set(object_group_list):
-		print('TRUE')
+#		print('TRUE')
 		element = object_group_list.index('{} ='.format(object_group_search))
 		element = element + 1
 		print('{}'.format(object_group_list[element]))
 		while object_group_list[element] != "":
 			subnets.append(object_group_list[element])
 			element = element + 1
-		print(subnets)
-	else:
-		print('FALSE')
+#		print(subnets)
+#	else:
+#		print('FALSE')
 
 	return None

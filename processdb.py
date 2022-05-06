@@ -35,7 +35,8 @@ def process_policies():
 	return policy_object 
 
 def process_json(hardware_vendor,opersys,device_type,policy_file):
-	if hardware_vendor == 'cisco' and  opersys == 'ios' and device_type == 'firewall':
+	data = []
+	if hardware_vendor == 'cisco' and  opersys == 'asa' and device_type == 'firewall':
 		with open("{}/superloop_code/policy/cisco/ios/firewall/{}".format(get_home_directory(),policy_file), 'r') as json_file:
 			data = commentjson.load(json_file)
 

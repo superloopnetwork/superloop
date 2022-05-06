@@ -66,9 +66,9 @@ def get_template_directory(hardware_vendor,opersys,device_type):
 
 def get_policy_directory(hardware_vendor,opersys,device_type):
 	directory = ''
-	if hardware_vendor == 'cisco' and os == 'ios' and device_type == 'firewall':
+	if hardware_vendor == 'cisco' and opersys == 'asa' and device_type == 'firewall':
 		directory = '{}/superloop_code/policy/cisco/ios/firewall/'.format(get_home_directory())
-	elif hardware_vendor == 'juniper' and os == 'junos' and device_type == 'vfirewall':
+	elif hardware_vendor == 'juniper' and opersys == 'junos' and device_type == 'vfirewall':
 		directory = '{}/superloop_code/policy/juniper/junos/firewall/'.format(get_home_directory())
 
 	return directory

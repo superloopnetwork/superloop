@@ -117,45 +117,85 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 				continue	
 	return search_result 
 
-def search_policy(policy_list,match_node,node_policy,node_object,auditcreeper):
+def search_policy(policy_list,safe_push_list,match_node,node_policy,node_object,auditcreeper):
 	"""
 		This function will take the search results from the list of nodes 
 		and run it against node_object to determine the hardware vendor, operating system and type 
 		and compare with the node_policy database to match. If a node is not 
 		deemed as a firewall, it will not allow a policy push.
 	"""
-	element = 0
-	index = 0
-	policy_index = 0
 	search_result = []
+	index = 0
+	element = 0
 	for node in match_node:
 		for node_obj in node_object:
 			if node == node_obj['name']:
 				"""
-					This section will pull out all the templates belonging to the specific
-					hardware vendor, operating system and type from the template database.
+					index variable gets the position in the list and appends it to the global variable 'element'.
+				"""
+				index = node_object.index(node_obj)
+				initialize.element.append(index)
+				"""
+					This section will pull out all the policies belonging to the specific
+					hardware vendor, operating system and type from the policy database.
 				"""
 				for node_pol in node_policy:
+#					if node_obj['hardware_vendor'] == node_pol['hardware_vendor'] and node_obj['opersys'] == node_pol['opersys'] and node_obj['type'] == node_pol['type']:
 					if node == node_pol['name']:
-						index = node_object.index(node_obj)
-						initialize.element.append(index)
 						policy_index = node_policy.index(node_pol)
 						initialize.element_policy.append(policy_index)
 						if auditcreeper:
 							policy_node_list = []
 							for policy_dir_name in node_pol['policy']:
-								policy_name = policy_dir_name.split('/')[-1]
+								policy_name = list(policy_dir_name)[0].split('/')[-1]
 								policy_node_list.append(policy_name)
+								safe_push = list(policy_dir_name.values())[0]
+								safe_push_list.append(safe_push)
+							if 'disabled' in safe_push_list:
+								run_time = 1
+								first_run = True
+								disabled_policies = disabled_safe_push_element(safe_push_list,policy_node_list,node_obj)
+								for index in disabled_policies:
+									if first_run:
+										policy_node_list.pop(index)
+										first_run = False
+									else:
+										policy_node_list.pop(index - run_time)
+										run_time = run_time + 1
+							"""
+								If all policies are disabled.
+							"""
+							if len(policy_node_list) == 0:
+								exit()
 							policy_list.append(policy_node_list)
-							search_result.append("MATCH")	
+							del safe_push_list[:]
 						else:
-							directory = get_policy_directory(node_pol['hardware_vendor'],node_obj['opersys'],node_obj['type'])
+							directory = get_policy_directory(node_obj['hardware_vendor'],node_obj['opersys'],node_obj['type'])
 							file = directory + policy_list[element]
+							policy_index = 0
+							policy_node_list = []
+							node_policy = node_pol['policy'].copy()
+							for policy_path in node_pol['policy']:
+								policy_name = list(policy_path)[0].split('/')[-1]
+								policy_node_list.append(policy_name)
+								node_pol['policy'][policy_index] = list(policy_path)[0].replace('~','{}'.format(get_home_directory()))
+								safe_push = list(policy_path.values())[0]
+								safe_push_list.append(safe_push)
+								policy_index = policy_index + 1
+							try:
+								policy_index = policy_node_list.index(policy_list[element])
+								if safe_push_list[policy_index] != 'enabled':
+									print('Policy {} has been disabled for {}.'.format(policy_node_list[policy_index],node_obj['name']))
+									exit()
+							except Exception as error:
+								pass
 							if file in node_pol['policy']:
 								search_result.append("MATCH")	
+								node_pol['policy'] = node_policy.copy()
 							else:
-								print('+ No associating policy {}'.format(policy_list[element]) + ' for node {}]'.format(node))
-								search_result.append('NO MATCH')
+								print('+ No associating policy {}'.format(policy_list[element]) + ' for node {}'.format(node))
+								search_result.append("NO MATCH")
+								node_pol['policy'] = node_policy.copy()
 					else:
 						continue	
 			else:
