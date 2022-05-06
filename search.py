@@ -78,7 +78,7 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 										template_node_list.pop(index - run_time)
 										run_time = run_time + 1
 							"""
-								If all templates are disabled.
+								If all templates are disabled, exit.
 							"""
 							if len(template_node_list) == 0:
 								exit()
