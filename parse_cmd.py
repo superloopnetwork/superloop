@@ -62,9 +62,9 @@ def parse_firewall_acl(node_policy,policy):
 #	print(directory)
 	acl_list = process_json(node_policy['hardware_vendor'],node_policy['opersys'],node_policy['type'],policy)
 	with open('{}'.format(directory) + policy, 'r') as file:
-#	f = open("{}".format(directory) + policy, "r")
 		parse_include = file.readline()
 	path = eval(re.findall(PATH_FILTER_RE, parse_include)[0])
+	print(path)
 	"""
 		Uncomment the below print statement for debugging purposes
 	"""
