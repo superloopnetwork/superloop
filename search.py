@@ -117,7 +117,7 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 				continue	
 	return search_result 
 
-def search_policy(policy_list,safe_push_list,match_node,node_policy,node_object,auditcreeper):
+def search_policy(policy_list,safe_push_list,match_node,node_policy,node_object,auditcreeper,push_acl):
 	"""
 		This function will take the search results from the list of nodes 
 		and run it against node_object to determine the hardware vendor, operating system and type 
@@ -140,7 +140,6 @@ def search_policy(policy_list,safe_push_list,match_node,node_policy,node_object,
 					hardware vendor, operating system and type from the policy database.
 				"""
 				for node_pol in node_policy:
-#					if node_obj['hardware_vendor'] == node_pol['hardware_vendor'] and node_obj['opersys'] == node_pol['opersys'] and node_obj['type'] == node_pol['type']:
 					if node == node_pol['name']:
 						policy_index = node_policy.index(node_pol)
 						initialize.element_policy.append(policy_index)
@@ -151,7 +150,7 @@ def search_policy(policy_list,safe_push_list,match_node,node_policy,node_object,
 								policy_node_list.append(policy_name)
 								safe_push = list(policy_dir_name.values())[0]
 								safe_push_list.append(safe_push)
-							if 'disabled' in safe_push_list:
+							if 'disabled' in safe_push_list and push_acl:
 								run_time = 1
 								first_run = True
 								disabled_policies = disabled_safe_push_element(safe_push_list,policy_node_list,node_obj)
