@@ -85,11 +85,5 @@ def acl_config(args):
 	else:
 		node_create(match_node,node_object)
 		policies(policy_list,node_policy,policy_list_copy,auditcreeper)
-		"""
-			Uncomment the secrets below if you are using hashicorp vault. You will need to setup the credentials.
-		"""
-#		secrets = get_secrets()
-#		render(policy_list,node_object,auditcreeper,output,with_remediation,secrets)
-#		render(policy_list,node_object,auditcreeper,output,with_remediation)
 
 	return None
