@@ -1,4 +1,4 @@
-import initialize
+
 import ipaddress
 import re
 from processdb import process_json
@@ -82,6 +82,7 @@ def parse_firewall_acl(node_policy,policy):
 		Uncomment the below print statement for debugging purposes
 	"""
 #	print("ACL_LIST inside parse_firewall_acl: {}".format(acl_list))
+	create_object_groups(path,set_address,set_address_group)
 	for acl in acl_list:
 		term = acl['term']
 		to_zone = acl['to_zone']	
@@ -97,9 +98,8 @@ def parse_firewall_acl(node_policy,policy):
 		tag = acl['tag']
 		action = acl['action']
 		description = acl['description']
-		source_object_group = object_group(path,source_address,set_address,set_address_group)
-		destination_object_group = object_group(path,destination_address,set_address,set_address_group)
-		if node_policy['hardware_vendor'] == 'cisco' or node_policy['hardware_vendor'] == 'juniper' or node_policy['hardware_vendor'] == 'palo_alto':
+		exist = check_acl_group_exist(path,term,source_address,destination_address)
+		if exist and node_policy['hardware_vendor'] == 'cisco' or node_policy['hardware_vendor'] == 'juniper' or node_policy['hardware_vendor'] == 'palo_alto':
 			config_list.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone))
 			config_list.append('set rulebase security rules \"{}\" from {}'.format(term,from_zone))
 			config_list.append('set rulebase security rules \"{}\" source {}'.format(term,source_address))
@@ -115,82 +115,63 @@ def parse_firewall_acl(node_policy,policy):
 	"""
 		Removing any duplicates set_address from list.
 	"""
-	set_address = list(set(set_address))
+	set_address = list(dict.fromkeys(set_address))
 	for address in set_address:
 		print(address)
-	set_address_group = list(set(set_address_group))
+	set_address_group = list(dict.fromkeys(set_address_group))
 	for group in set_address_group:
 		print(group)
 	for config_line in config_list:
-		print(config_line)
+		print(config_line.replace('\'',' ').replace(',','').replace('   ',' '))
 	return None 
 
-def object_group(path,object_group_acl,set_address,set_address_group):
-	"""
-		:param object_group_acl: List of the object group(s) specified in the policy file.
-		:type object_group_acl: list
-
-		:param all_object_group_list: The entire NETWORKS.net file in a list.
-		:type all_object_group_list: list
-    """
+def create_object_groups(path,set_address,set_address_group):
 	with open('{}'.format(path), 'r') as file:
 		object_group_string = file.read()
 		all_object_groups_list = object_group_string.split('\n')
-	for object_group in object_group_acl:
-		"""
-			The below code will collect all the hosts address that are inputed.
-		"""
-		ipv4 = check_ipv4_address('{}'.format(object_group))
-		ip_address = object_group.split('/')[0]
-		if re.match("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",ip_address):
-			if ipv4:
-				netmask = object_group.split('/')[1]
-				if netmask == '32':
-					set_address.append('set address H-{} ip-netmask {}'.format(object_group,object_group))
-				else:
-					set_address.append('set address N-{} ip-netmask {}'.format(object_group,object_group))
-			else:
-				print('+ The IP address {} is not valid. Please correct it in the policy file.'.format(ip_address))
-				exit()
-		else:
-			if '{} ='.format(object_group) in set(all_object_groups_list):
-				element = all_object_groups_list.index('{} ='.format(object_group))
-				element = element + 1
-				list_group = ''
-				str_set_address_group = 'set address-group {} static ['.format(object_group)
-				str_end_bracket = ']'
-				address_group = []
-				while all_object_groups_list[element] != '':
-					ipv4 = check_ipv4_address('{}'.format(all_object_groups_list[element]))
-					netmask = all_object_groups_list[element].split('/')[1]
+	for object_group in all_object_groups_list:
+		if '=' in object_group:
+			element = all_object_groups_list.index('{}'.format(object_group))
+			element = element + 1
+			list_group = ''
+			str_set_address_group = 'set address-group {} static ['.format(object_group)
+			str_end_bracket = ']'
+			address_group = []
+			while all_object_groups_list[element] != '':
+				str_set_address_host = 'set address H-{} ip-netmask {}'.format(all_object_groups_list[element],all_object_groups_list[element])
+				str_set_address_network = 'set address N-{} ip-netmask {}'.format(all_object_groups_list[element],all_object_groups_list[element])
+				ipv4 = check_ipv4_address('{}'.format(all_object_groups_list[element]))
+				if "/" in all_object_groups_list[element]:
 					if ipv4:
+						ip_address = all_object_groups_list[element].split('/')[0]
+						netmask = all_object_groups_list[element].split('/')[1]
 						"""
 							The below code will check if it's a host or a network and create the neccessary address for it beginning with H for host or N for network.
 						"""
 						if netmask == '32':
-							set_address.append('set address H-{} ip-netmask {}'.format(all_object_groups_list[element],all_object_groups_list[element]))
-							address_group.append('{}'.format(all_object_groups_list[element]))
+							set_address.append(str_set_address_host)
+							address_group.append(all_object_groups_list[element])
 						else:
-							set_address.append('set address N-{} ip-netmask {}'.format(all_object_groups_list[element],all_object_groups_list[element]))
-							address_group.append('{}'.format(all_object_groups_list[element]))
+							set_address.append(str_set_address_network)
+							address_group.append(all_object_groups_list[element])
 						element = element + 1
 					else:
-						print('+ The IP address {} is not valid. Please correct it in the NETWORKS.net file.'.format(all_object_groups_list[element]))
+						print('+ IP address \'{}\' is invalid. Please correct the address in the NETWORKS.net file.'.format(all_object_groups_list[element]))
 						exit()
-						
-				"""
-					Building the address_group so it can be appended to the set_address_group
-				"""
-				for group in address_group:
-					index_position = address_group.index(group)
-					if len(address_group) - 1 == index_position:
-						list_group = list_group + '{}'.format(group)
+				else:
+					if '{} ='.format(all_object_groups_list[element]) in all_object_groups_list:
+						address_group.append(all_object_groups_list[element])
+						element = element + 1
 					else:
-						list_group = list_group + '{} '.format(group)
-				set_address_group.append('{} {} {}'.format(str_set_address_group,list_group,str_end_bracket))
-			elif '{} ='.format(object_group) not in set(all_object_groups_list):
-				print('+ The object-group \'{}\' does not exist in the NETWORKS.net file.'.format(object_group))
-				exit()
+						print('+ object-group \'{}\' was not found in NETWORKS.net file. Please create or correct the name.'.format(all_object_groups_list[element]))
+						exit()
+			for group in address_group:
+				index_position = address_group.index(group)
+				if len(address_group) - 1 == index_position:
+					list_group = list_group + '{}'.format(group)
+				else:
+					list_group = list_group + '{} '.format(group)
+			set_address_group.append('{} {} {}'.format(str_set_address_group,list_group,str_end_bracket))
 	return None
 
 def check_ipv4_address(ipv4_address):
@@ -199,3 +180,23 @@ def check_ipv4_address(ipv4_address):
 		return True
 	except ValueError:
 		return False
+
+def check_acl_group_exist(path,term,source_address,destination_address):
+	with open('{}'.format(path), 'r') as file:
+		object_group_string = file.read()
+		all_object_groups_list = object_group_string.split('\n')
+	for source in source_address:
+		if '{} ='.format(source) in all_object_groups_list or source in all_object_groups_list:
+			continue
+		else:
+			print('+ Source object \'{}\' in policy file under term; \'{}\', does not exist in the NETWORKS.net file. Please ensure the object is present.'.format(source,term))
+			exit()
+	for destination in destination_address:
+		if '{} ='.format(destination) in all_object_groups_list or destination in all_object_groups_list:
+			continue
+		else:
+			print('+ Destination object \'{}\' in policy file under term; \'{}\', does not exist in the NETWORKS.net file. Please ensure the object is present.'.format(destination,term))
+			exit()
+
+	return True
+
