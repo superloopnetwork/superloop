@@ -53,6 +53,8 @@ def parse_firewall_acl(node_policy,policy):
 	PATH_FILTER_RE = r"\'.+\'"
 	set_address = []
 	set_address_group = []
+	set_service = []
+	set_service_group = []
 	"""
 		:param acl_list: Entire ACLs from the polic(y/ies) per file.
 		:type acl_list: list
@@ -84,7 +86,7 @@ def parse_firewall_acl(node_policy,policy):
 	"""
 #	print("ACL_LIST inside parse_firewall_acl: {}".format(acl_list))
 	create_object_group_network(path,set_address,set_address_group)
-	create_object_group_service(set_address,set_address_group)
+	create_object_group_service(set_service,set_service_group)
 	for acl in acl_list:
 		term = acl['term']
 		to_zone = acl['to_zone']	
@@ -117,12 +119,18 @@ def parse_firewall_acl(node_policy,policy):
 	"""
 		Removing any duplicates set_address from list.
 	"""
+	set_service_group = list(dict.fromkeys(set_service_group))
+	for service_group in set_service_group:
+		print(service_group)
+	set_service = list(dict.fromkeys(set_service))
+	for service in set_service:
+		print(service)
+	set_address_group = list(dict.fromkeys(set_address_group))
+	for address_group in set_address_group:
+		print(address_group)
 	set_address = list(dict.fromkeys(set_address))
 	for address in set_address:
 		print(address)
-	set_address_group = list(dict.fromkeys(set_address_group))
-	for group in set_address_group:
-		print(group)
 	for config_line in config_list:
 		print(config_line.replace('\'',' ').replace(',','').replace('   ',' '))
 	return None 
@@ -136,7 +144,8 @@ def create_object_group_network(path,set_address,set_address_group):
 			element = all_object_group_network_list.index('{}'.format(object_group))
 			element = element + 1
 			list_group = ''
-			str_set_address_group = 'set address-group {} static ['.format(object_group)
+			str_set_address_group = 'set address-group {}static ['.format(object_group).replace('=','')
+			str_set_address_group_single = 'set address-group {}static'.format(object_group).replace('=','')
 			str_end_bracket = ']'
 			address_group = []
 			while all_object_group_network_list[element] != '':
@@ -167,30 +176,50 @@ def create_object_group_network(path,set_address,set_address_group):
 					else:
 						print('+ object-group \'{}\' was not found in NETWORKS.net file. Please create or correct the name.'.format(all_object_group_network_list[element]))
 						exit()
-			for group in address_group:
-				index_position = address_group.index(group)
-				if len(address_group) - 1 == index_position:
-					list_group = list_group + '{}'.format(group)
-				else:
-					list_group = list_group + '{} '.format(group)
-			set_address_group.append('{} {} {}'.format(str_set_address_group,list_group,str_end_bracket))
+			if len(address_group) > 1:
+				for group in address_group:
+					index_position = address_group.index(group)
+					if len(address_group) - 1 == index_position:
+						list_group = list_group + '{}'.format(group)
+					else:
+						list_group = list_group + '{} '.format(group)
+				set_address_group.append('{} {} {}'.format(str_set_address_group,list_group,str_end_bracket))
+			else:
+				set_address_group.append('{} {}'.format(str_set_address_group_single,address_group[0]))
+				
 	return None
 
 def create_object_group_service(set_service,set_service_group):
 	path = '~/superloop_code/policy/SERVICES.net'.replace('~','{}'.format(get_home_directory()))
 	with open('{}'.format(path), 'r') as file:
 		object_group_service_string = file.read()
-		all_object_groups_service_list = object_group_service_string.split('\n')
-	for object_group in all_object_groups_service_list:
+		all_object_group_service_list = object_group_service_string.split('\n')
+	for object_group in all_object_group_service_list:
 		if '=' in object_group:
 			element = all_object_group_service_list.index('{}'.format(object_group))
 			element = element + 1
 			list_group = ''
-			str_set_service_group = 'set service-group {} static ['.format(object_group)
+			str_set_service_group = 'set service-group {}static ['.format(object_group).replace('=','')
+			str_set_service_group_single = 'set service-group {}static'.format(object_group).replace('=','')
 			str_end_bracket = ']'
 			address_group = []
 			while all_object_group_service_list[element] != '':
-				
+				protocol = all_object_group_service_list[element].split('_')[0].lower()
+				port = all_object_group_service_list[element].split('_')[1]
+				str_set_service = 'set service {} protocol {} port {}'.format(all_object_group_service_list[element],protocol,port)
+				set_service.append(str_set_service)	
+				address_group.append(all_object_group_service_list[element])
+				element = element + 1
+			if len(address_group) > 1:
+				for group in address_group:
+					index_position = address_group.index(group)
+					if len(address_group) - 1 == index_position:
+						list_group = list_group + '{}'.format(group)
+					else:
+						list_group = list_group + '{} '.format(group)
+				set_service_group.append('{} {} {}'.format(str_set_service_group,list_group,str_end_bracket))
+			else:
+				set_service_group.append('{} {}'.format(str_set_service_group_single,address_group[0]))
 			
 	return None
 
