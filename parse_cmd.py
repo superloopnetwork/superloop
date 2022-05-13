@@ -101,21 +101,45 @@ def parse_firewall_acl(node_policy,policy):
 		destination_hip = acl['destination_hip']
 		tag = acl['tag']
 		action = acl['action']
+		log_start = acl['log_start']
+		log_end = acl['log_end']
+		log_setting = acl['log_setting']
 		description = acl['description']
-		exist = check_acl_group_exist(path,term,source_address,destination_address)
+		exist = check_acl_group_exist(path,term,to_zone,from_zone,source_address,destination_address,application,service)
 		if exist and node_policy['hardware_vendor'] == 'cisco' or node_policy['hardware_vendor'] == 'juniper' or node_policy['hardware_vendor'] == 'palo_alto':
-			config_list.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone))
-			config_list.append('set rulebase security rules \"{}\" from {}'.format(term,from_zone))
-			config_list.append('set rulebase security rules \"{}\" source {}'.format(term,source_address))
-			config_list.append('set rulebase security rules \"{}\" destination {}'.format(term,destination_address))
+			if len(to_zone) > 1:
+				config_list.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone))
+			else:
+				config_list.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone[0]))
+			if len(from_zone) > 1:
+				config_list.append('set rulebase security rules \"{}\" from {}'.format(term,from_zone))
+			else:
+				config_list.append('set rulebase security rules \"{}\" from {}'.format(term,from_zone[0]))
+			if len(source_address) > 1:
+				config_list.append('set rulebase security rules \"{}\" source {}'.format(term,source_address))
+			else:
+				config_list.append('set rulebase security rules \"{}\" source {}'.format(term,source_address[0]))
+			if len(destination_address) > 1:
+				config_list.append('set rulebase security rules \"{}\" destination {}'.format(term,destination_address))
+			else:
+				config_list.append('set rulebase security rules \"{}\" destination {}'.format(term,destination_address[0]))
 			config_list.append('set rulebase security rules \"{}\" source-user {}'.format(term,source_user))
 			config_list.append('set rulebase security rules \"{}\" category {}'.format(term,category))
-			config_list.append('set rulebase security rules \"{}\" application {}'.format(term,application))
-			config_list.append('set rulebase security rules \"{}\" service {}'.format(term,service))
+			if len(application) > 1:
+				config_list.append('set rulebase security rules \"{}\" application {}'.format(term,application))
+			else:
+				config_list.append('set rulebase security rules \"{}\" application {}'.format(term,application[0]))
+			if len(application) > 1:
+				config_list.append('set rulebase security rules \"{}\" service {}'.format(term,service))
+			else:
+				config_list.append('set rulebase security rules \"{}\" service {}'.format(term,service[0]))
 			config_list.append('set rulebase security rules \"{}\" source-hip {}'.format(term,source_hip))
 			config_list.append('set rulebase security rules \"{}\" destination-hip {}'.format(term,destination_hip))
 			config_list.append('set rulebase security rules \"{}\" tag {}'.format(term,tag))
 			config_list.append('set rulebase security rules \"{}\" action {}'.format(term,action))
+			config_list.append('set rulebase security rules \"{}\" log-start {}'.format(term,log_start))
+			config_list.append('set rulebase security rules \"{}\" log-end {}'.format(term,log_end))
+			config_list.append('set rulebase security rules \"{}\" log-setting {}'.format(term,log_setting))
 	"""
 		Removing any duplicates set_address from list.
 	"""
@@ -231,21 +255,57 @@ def check_ipv4_address(ipv4_address):
 		return False
 	return None
 
-def check_acl_group_exist(path,term,source_address,destination_address):
+def check_acl_group_exist(path,term,to_zone,from_zone,source_address,destination_address,application,service):
+	path_application = '~/superloop_code/policy/APPLICATIONS.net'.replace('~','{}'.format(get_home_directory()))
+	path_service = '~/superloop_code/policy/SERVICES.net'.replace('~','{}'.format(get_home_directory()))
+	path_zone = '~/superloop_code/policy/ZONES.net'.replace('~','{}'.format(get_home_directory()))
 	with open('{}'.format(path), 'r') as file:
 		object_group_network_string = file.read()
 		all_object_group_network_list = object_group_network_string.split('\n')
+	with open('{}'.format(path_application), 'r') as file:
+		application_group_string = file.read()
+		all_application_group_list = application_group_string.split('\n')
+	with open('{}'.format(path_service), 'r') as file:
+		service_group_string = file.read()
+		all_service_group_list = service_group_string.split('\n')
+	with open('{}'.format(path_zone), 'r') as file:
+		zone_group_string = file.read()
+		all_zone_group_list = zone_group_string.split('\n')
 	for source in source_address:
-		if '{} ='.format(source) in all_object_group_network_list or source in all_object_group_network_list:
+		if '{} ='.format(source) in set(all_object_group_network_list) or source in set(all_object_group_network_list):
 			continue
 		else:
-			print('+ Source object \'{}\' in policy file under term; \'{}\', does not exist in the NETWORKS.net file. Please ensure the object is present.'.format(source,term))
+			print('+ source object \'{}\' in policy file under term; \'{}\', does not exist in the NETWORKS.net file. Please ensure the object is present.'.format(source,term))
 			exit()
 	for destination in destination_address:
-		if '{} ='.format(destination) in all_object_group_network_list or destination in all_object_group_network_list:
+		if '{} ='.format(destination) in set(all_object_group_network_list) or destination in set(all_object_group_network_list):
 			continue
 		else:
-			print('+ Destination object \'{}\' in policy file under term; \'{}\', does not exist in the NETWORKS.net file. Please ensure the object is present.'.format(destination,term))
+			print('+ destination object \'{}\' in policy file under term; \'{}\', does not exist in the NETWORKS.net file. Please ensure the object is present.'.format(destination,term))
+			exit()
+	for app in application:
+		if '{} ='.format(app) in set(all_application_group_list) or app in set(all_application_group_list):
+			continue
+		else:
+			print('+ application object \'{}\' in policy file under term; \'{}\', does not exist in the APPLICATIONS.net file. Please ensure the object is present.'.format(app,term))
+			exit()
+	for serv in service:
+		if '{} ='.format(serv) in set(all_service_group_list) or serv in set(all_service_group_list):
+			continue
+		else:
+			print('+ service object \'{}\' in policy file under term; \'{}\', does not exist in the SERVICES.net file. Please ensure the object is present.'.format(serv,term))
+			exit()
+	for zone in to_zone:
+		if '{} ='.format(zone) in set(all_zone_group_list) or zone in set(all_zone_group_list):
+			continue
+		else:
+			print('+ to_zone object \'{}\' in policy file under term; \'{}\', does not exist in the ZONES.net file. Please ensure the object is present.'.format(zone,term))
+			exit()
+	for zone in from_zone:
+		if '{} ='.format(zone) in set(all_zone_group_list) or zone in set(all_zone_group_list):
+			continue
+		else:
+			print('+ from_zone object \'{}\' in policy file under term; \'{}\', does not exist in the ZONES.net file. Please ensure the object is present.'.format(zone,term))
 			exit()
 
 	return True
