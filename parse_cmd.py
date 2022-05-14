@@ -51,7 +51,12 @@ def parse_firewall_acl(node_policy,policy):
 	commands = [] 
 	rulebase_security = []
 	directory = get_policy_directory(node_policy['hardware_vendor'],node_policy['opersys'],node_policy['type'])
-	PATH_FILTER_RE = r"\'.+\'"
+	NETWORK_PATH_FILTER_RE = r"\'.+NETWORKS.net\'"
+	SERVICES_PATH_FILTER_RE = r"\'.+SERVICES.net\'"
+	APPLICATIONS_PATH_FILTER_RE = r"\'.+APPLICATIONS.net\'"
+	SOURCE_DEVICE_PATH_FILTER_RE = r"\'.+SOURCE_DEVICE.net\'"
+	SOURCE_USER_PATH_FILTER_RE = r"\'.+SOURCE_USER.net\'"
+	ZONES_PATH_FILTER_RE = r"\'.+ZONES.net\'"
 	set_address = []
 	set_address_group = []
 	set_service = []
@@ -66,8 +71,8 @@ def parse_firewall_acl(node_policy,policy):
 		:param directory: Path to network objects file. Example: NETWORKS.net
 		:type directory: str
 
-		:param PATH_FILTER_RE: Path to network objects file. Example: NETWORKS.net
-		:type PATH_FILTER_RE: str
+		:param NETWORK_PATH_FILTER_RE: Path to network objects file. Example: NETWORKS.net
+		:type NETWORK_PATH_FILTER_RE: str
 	"""
 #	print(directory)
 	"""
@@ -75,19 +80,24 @@ def parse_firewall_acl(node_policy,policy):
 		regular expression.
 	"""
 	with open('{}'.format(directory) + policy, 'r') as file:
-		parse_include = file.readline()
-	path = eval(re.findall(PATH_FILTER_RE, parse_include)[0])
-#	print(path)
+		parse_include = file.read()
+	path_networks = eval(re.findall(NETWORK_PATH_FILTER_RE, parse_include)[0])
+	path_services = eval(re.findall(SERVICES_PATH_FILTER_RE, parse_include)[0])
+	path_applications = eval(re.findall(APPLICATIONS_PATH_FILTER_RE, parse_include)[0])
+	path_source_device = eval(re.findall(SOURCE_DEVICE_PATH_FILTER_RE, parse_include)[0])
+	path_source_user = eval(re.findall(SOURCE_USER_PATH_FILTER_RE, parse_include)[0])
+	path_zones = eval(re.findall(ZONES_PATH_FILTER_RE, parse_include)[0])
+#	print(path_networks)
 	"""
 		Uncomment the below print statement for debugging purposes
 	"""
-#	print("PATH_FILTER: {}".format(path))
+#	print("PATH_FILTER: {}".format(path_networks))
 	"""
 		Uncomment the below print statement for debugging purposes
 	"""
 #	print("ACL_LIST inside parse_firewall_acl: {}".format(acl_list))
-	create_object_group_network(path,set_address,set_address_group)
-	create_object_group_service(set_service,set_service_group)
+	create_object_group_network(path_networks,set_address,set_address_group)
+	create_object_group_service(path_services,set_service,set_service_group)
 	for acl in acl_list:
 		term = acl['term']
 		to_zone = acl['to_zone']	
@@ -106,7 +116,7 @@ def parse_firewall_acl(node_policy,policy):
 		log_end = acl['log_end']
 		log_setting = acl['log_setting']
 		description = acl['description']
-		exist = check_acl_group_exist(path,term,to_zone,from_zone,source_address,destination_address,application,service)
+		exist = check_acl_group_exist(path_networks,path_services,path_applications,path_source_device,path_source_user,path_zones,term,to_zone,from_zone,source_address,destination_address,application,service)
 		if exist and node_policy['hardware_vendor'] == 'cisco' or node_policy['hardware_vendor'] == 'juniper' or node_policy['hardware_vendor'] == 'palo_alto':
 			if len(to_zone) > 1:
 				rulebase_security.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone))
@@ -166,8 +176,8 @@ def parse_firewall_acl(node_policy,policy):
 
 	return commands 
 
-def create_object_group_network(path,set_address,set_address_group):
-	with open('{}'.format(path), 'r') as file:
+def create_object_group_network(path_networks,set_address,set_address_group):
+	with open('{}'.format(path_networks), 'r') as file:
 		object_group_network_string = file.read()
 		all_object_group_network_list = object_group_network_string.split('\n')
 	for object_group in all_object_group_network_list:
@@ -220,9 +230,9 @@ def create_object_group_network(path,set_address,set_address_group):
 				
 	return None
 
-def create_object_group_service(set_service,set_service_group):
-	path = '~/superloop_code/policy/SERVICES.net'.replace('~','{}'.format(get_home_directory()))
-	with open('{}'.format(path), 'r') as file:
+def create_object_group_service(path_services,set_service,set_service_group):
+#	path = '~/superloop_code/policy/SERVICES.net'.replace('~','{}'.format(get_home_directory()))
+	with open('{}'.format(path_services), 'r') as file:
 		object_group_service_string = file.read()
 		all_object_group_service_list = object_group_service_string.split('\n')
 	for object_group in all_object_group_service_list:
@@ -262,20 +272,20 @@ def check_ipv4_address(ipv4_address):
 		return False
 	return None
 
-def check_acl_group_exist(path,term,to_zone,from_zone,source_address,destination_address,application,service):
-	path_application = '~/superloop_code/policy/APPLICATIONS.net'.replace('~','{}'.format(get_home_directory()))
-	path_service = '~/superloop_code/policy/SERVICES.net'.replace('~','{}'.format(get_home_directory()))
-	path_zone = '~/superloop_code/policy/ZONES.net'.replace('~','{}'.format(get_home_directory()))
-	with open('{}'.format(path), 'r') as file:
+def check_acl_group_exist(path_networks,path_services,path_applications,path_source_device,path_source_user,path_zones,term,to_zone,from_zone,source_address,destination_address,application,service):
+#	path_application = '~/superloop_code/policy/APPLICATIONS.net'.replace('~','{}'.format(get_home_directory()))
+#	path_service = '~/superloop_code/policy/SERVICES.net'.replace('~','{}'.format(get_home_directory()))
+#	path_zone = '~/superloop_code/policy/ZONES.net'.replace('~','{}'.format(get_home_directory()))
+	with open('{}'.format(path_networks), 'r') as file:
 		object_group_network_string = file.read()
 		all_object_group_network_list = object_group_network_string.split('\n')
-	with open('{}'.format(path_application), 'r') as file:
+	with open('{}'.format(path_applications), 'r') as file:
 		application_group_string = file.read()
 		all_application_group_list = application_group_string.split('\n')
-	with open('{}'.format(path_service), 'r') as file:
+	with open('{}'.format(path_services), 'r') as file:
 		service_group_string = file.read()
 		all_service_group_list = service_group_string.split('\n')
-	with open('{}'.format(path_zone), 'r') as file:
+	with open('{}'.format(path_zones), 'r') as file:
 		zone_group_string = file.read()
 		all_zone_group_list = zone_group_string.split('\n')
 	for source in source_address:
