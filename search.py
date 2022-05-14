@@ -141,8 +141,8 @@ def search_policy(policy_list,safe_push_list,match_node,node_policy,node_object,
 				"""
 				for node_pol in node_policy:
 					if node == node_pol['name']:
-						policy_index = node_policy.index(node_pol)
-						initialize.element_policy.append(policy_index)
+	#					policy_index = node_policy.index(node_pol)
+	#					initialize.element_policy.append(policy_index)
 						if auditcreeper:
 							policy_node_list = []
 							for policy_dir_name in node_pol['policy']:

@@ -1,7 +1,7 @@
 """
 	This module controls the pushing of the policies for firewalls.
 """
-from policies import policies
+from acl_render import acl_render
 import initialize
 from lib.objects.basenode import BaseNode
 from processdb import process_nodes

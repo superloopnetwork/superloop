@@ -3,7 +3,7 @@
 """
 from get_property import get_secrets
 from lib.objects.basenode import BaseNode
-from policies import policies
+from acl_render import acl_render
 from processdb import process_nodes
 from processdb import process_policies
 from search import search_node
@@ -14,9 +14,8 @@ from multithread import multithread_engine
 import initialize
 
 def acl_config(args):
-
 	argument_node = args.node
-	auditcreeper = False
+	auditcreeper = True 
 	commands = initialize.configuration
 	ext = '.json'
 	output = True
@@ -49,11 +48,11 @@ def acl_config(args):
 		:param with_remediation: Current function to remediate or not remediate.  
 		:type ext: bool 
 	"""
-	if(args.policy is None):
-		auditcreeper = True
-	else:
-		policy = args.policy + ext
-		policy_list.append(policy)
+#	if(args.policy is None):
+#		auditcreeper = True
+#	else:
+#	policy = args.policy + ext
+#	policy_list.append(policy)
 	node_object = process_nodes()
 	node_policy = process_policies()
 	match_node = search_node(argument_node,node_object)
@@ -76,7 +75,8 @@ def acl_config(args):
 	policy_list_copy = policy_list
 	### THE BELOW LENGTH OF MATCH_POLICY != 0 WILL TAKE CARE OF INVALID MATCH OF FIREWALL NODES
 	### AGAINST NONE ARGS.FILE ARGUEMENT
-	if(auditcreeper and len(match_policy) != 0):
+#	if(auditcreeper and len(match_policy) != 0):
+	if len(match_policy) != 0:
 		policy_list = policy_list_copy[0]
 	if len(match_node) == 0:
 		print('+ No matching node(s) found in database.')
@@ -84,6 +84,6 @@ def acl_config(args):
 		print('+ No matching policy(ies) found in database.')
 	else:
 		node_create(match_node,node_object)
-		policies(policy_list,node_policy,policy_list_copy,auditcreeper)
+		acl_render(policy_list,node_object,node_policy,policy_list_copy,auditcreeper)
 
 	return None

@@ -48,7 +48,8 @@ def parse_firewall_acl(node_policy,policy):
 		This function will generate firewall acls based on the hardware_vendor and os.
 	"""
 	acl_list = process_json(node_policy['hardware_vendor'],node_policy['opersys'],node_policy['type'],policy)
-	config_list = []
+	commands = [] 
+	rulebase_security = []
 	directory = get_policy_directory(node_policy['hardware_vendor'],node_policy['opersys'],node_policy['type'])
 	PATH_FILTER_RE = r"\'.+\'"
 	set_address = []
@@ -59,8 +60,8 @@ def parse_firewall_acl(node_policy,policy):
 		:param acl_list: Entire ACLs from the polic(y/ies) per file.
 		:type acl_list: list
 
-		:param config_list: ACL configurations storage.
-		:type config_list: list
+		:param rulebase_security: ACL configurations storage.
+		:type rulebase_security: list
 
 		:param directory: Path to network objects file. Example: NETWORKS.net
 		:type directory: str
@@ -108,56 +109,62 @@ def parse_firewall_acl(node_policy,policy):
 		exist = check_acl_group_exist(path,term,to_zone,from_zone,source_address,destination_address,application,service)
 		if exist and node_policy['hardware_vendor'] == 'cisco' or node_policy['hardware_vendor'] == 'juniper' or node_policy['hardware_vendor'] == 'palo_alto':
 			if len(to_zone) > 1:
-				config_list.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone))
+				rulebase_security.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone))
 			else:
-				config_list.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone[0]))
+				rulebase_security.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone[0]))
 			if len(from_zone) > 1:
-				config_list.append('set rulebase security rules \"{}\" from {}'.format(term,from_zone))
+				rulebase_security.append('set rulebase security rules \"{}\" from {}'.format(term,from_zone))
 			else:
-				config_list.append('set rulebase security rules \"{}\" from {}'.format(term,from_zone[0]))
+				rulebase_security.append('set rulebase security rules \"{}\" from {}'.format(term,from_zone[0]))
 			if len(source_address) > 1:
-				config_list.append('set rulebase security rules \"{}\" source {}'.format(term,source_address))
+				rulebase_security.append('set rulebase security rules \"{}\" source {}'.format(term,source_address))
 			else:
-				config_list.append('set rulebase security rules \"{}\" source {}'.format(term,source_address[0]))
+				rulebase_security.append('set rulebase security rules \"{}\" source {}'.format(term,source_address[0]))
 			if len(destination_address) > 1:
-				config_list.append('set rulebase security rules \"{}\" destination {}'.format(term,destination_address))
+				rulebase_security.append('set rulebase security rules \"{}\" destination {}'.format(term,destination_address))
 			else:
-				config_list.append('set rulebase security rules \"{}\" destination {}'.format(term,destination_address[0]))
-			config_list.append('set rulebase security rules \"{}\" source-user {}'.format(term,source_user))
-			config_list.append('set rulebase security rules \"{}\" category {}'.format(term,category))
+				rulebase_security.append('set rulebase security rules \"{}\" destination {}'.format(term,destination_address[0]))
+			rulebase_security.append('set rulebase security rules \"{}\" source-user {}'.format(term,source_user))
+			rulebase_security.append('set rulebase security rules \"{}\" category {}'.format(term,category))
 			if len(application) > 1:
-				config_list.append('set rulebase security rules \"{}\" application {}'.format(term,application))
+				rulebase_security.append('set rulebase security rules \"{}\" application {}'.format(term,application))
 			else:
-				config_list.append('set rulebase security rules \"{}\" application {}'.format(term,application[0]))
+				rulebase_security.append('set rulebase security rules \"{}\" application {}'.format(term,application[0]))
 			if len(application) > 1:
-				config_list.append('set rulebase security rules \"{}\" service {}'.format(term,service))
+				rulebase_security.append('set rulebase security rules \"{}\" service {}'.format(term,service))
 			else:
-				config_list.append('set rulebase security rules \"{}\" service {}'.format(term,service[0]))
-			config_list.append('set rulebase security rules \"{}\" source-hip {}'.format(term,source_hip))
-			config_list.append('set rulebase security rules \"{}\" destination-hip {}'.format(term,destination_hip))
-			config_list.append('set rulebase security rules \"{}\" tag {}'.format(term,tag))
-			config_list.append('set rulebase security rules \"{}\" action {}'.format(term,action))
-			config_list.append('set rulebase security rules \"{}\" log-start {}'.format(term,log_start))
-			config_list.append('set rulebase security rules \"{}\" log-end {}'.format(term,log_end))
-			config_list.append('set rulebase security rules \"{}\" log-setting {}'.format(term,log_setting))
+				rulebase_security.append('set rulebase security rules \"{}\" service {}'.format(term,service[0]))
+			rulebase_security.append('set rulebase security rules \"{}\" source-hip {}'.format(term,source_hip))
+			rulebase_security.append('set rulebase security rules \"{}\" destination-hip {}'.format(term,destination_hip))
+			rulebase_security.append('set rulebase security rules \"{}\" tag {}'.format(term,tag))
+			rulebase_security.append('set rulebase security rules \"{}\" action {}'.format(term,action))
+			rulebase_security.append('set rulebase security rules \"{}\" log-start {}'.format(term,log_start))
+			rulebase_security.append('set rulebase security rules \"{}\" log-end {}'.format(term,log_end))
+			rulebase_security.append('set rulebase security rules \"{}\" log-setting {}'.format(term,log_setting))
 	"""
 		Removing any duplicates set_address from list.
 	"""
 	set_service_group = list(dict.fromkeys(set_service_group))
 	for service_group in set_service_group:
-		print(service_group)
+#		print(service_group)
+		commands.append(service_group)
 	set_service = list(dict.fromkeys(set_service))
 	for service in set_service:
-		print(service)
+#		print(service)
+		commands.append(service)
 	set_address_group = list(dict.fromkeys(set_address_group))
 	for address_group in set_address_group:
-		print(address_group)
+#		print(address_group)
+		commands.append(address_group)
 	set_address = list(dict.fromkeys(set_address))
 	for address in set_address:
-		print(address)
-	for config_line in config_list:
-		print(config_line.replace('\'',' ').replace(',','').replace('   ',' '))
-	return None 
+#		print(address)
+		commands.append(address)
+	for config_line in rulebase_security:
+#		print(config_line.replace('\'',' ').replace(',','').replace('   ',' '))
+		commands.append(config_line.replace('\'',' ').replace(',','').replace('   ',' '))
+
+	return commands 
 
 def create_object_group_network(path,set_address,set_address_group):
 	with open('{}'.format(path), 'r') as file:

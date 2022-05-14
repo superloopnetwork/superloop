@@ -13,7 +13,6 @@ from multithread import multithread_engine
 import initialize
 
 def render_config(args):
-
 	argument_node = args.node
 	auditcreeper = False
 	commands = initialize.configuration

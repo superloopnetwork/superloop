@@ -35,7 +35,6 @@ def main():
 	acl_render_cmd = acl_subparsers.add_parser('render')
 	acl_render_cmd.set_defaults(func=acl_config)
 	acl_render_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
-	acl_render_cmd.add_argument('-f','--policy', dest='policy', help='Specify policy file to audit against [exclude *.json extension].')
 
 	audit_cmd = subparsers.add_parser('audit')
 	audit_subparser = audit_cmd.add_subparsers(dest='parser_audit')
