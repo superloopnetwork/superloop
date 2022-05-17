@@ -99,24 +99,28 @@ def parse_firewall_acl(node_policy,policy):
 	create_object_group_network(path_networks,set_address,set_address_group)
 	create_object_group_service(path_services,set_service,set_service_group)
 	for acl in acl_list:
-		term = acl['term']
-		to_zone = acl['to_zone']	
-		from_zone = acl['from_zone']	
-		source_address = acl['source']
-		destination_address = acl['destination']
-		source_user = acl['source_user']
-		category = acl['category']
-		application = acl['application']
-		service = acl['service']
-		source_hip = acl['source_hip']
-		destination_hip = acl['destination_hip']
-		tag = acl['tag']
-		action = acl['action']
-		log_start = acl['log_start']
-		log_end = acl['log_end']
-		log_setting = acl['log_setting']
-		description = acl['description']
-		exist = check_acl_group_exist(path_networks,path_services,path_applications,path_source_device,path_source_user,path_zones,term,to_zone,from_zone,source_address,destination_address,application,service)
+		term = acl.get('term',None)
+		to_zone = acl.get('to_zone',None)	
+		from_zone = acl.get('from_zone',None)
+		source_address = acl.get('source',None)
+		destination_address = acl.get('destination',None)
+		source_user = acl.get('source_user',None)
+		category = acl.get('category',None)
+		application = acl.get('application',None)
+		service = acl.get('service',None)
+		source_hip = acl.get('source_hip',None)
+		destination_hip = acl.get('destination_hip',None)
+		tag = acl.get('tag',None)
+		action = acl.get('action',None)
+		log_start = acl.get('log_start',None)
+		log_end = acl.get('log_end',None)
+		log_setting = acl.get('log_setting',None)
+		rule_type = acl.get('rule_type',None)
+		group_tag = acl.get('group_tag',None)
+		disabled = acl.get('disabled',None)
+		profile_setting = acl.get('profile_setting',None)
+		description = acl.get('description',None)
+		exist = check_acl_group_exist(path_networks,path_services,path_applications,path_source_device,path_source_user,path_zones,term,to_zone,from_zone,source_address,destination_address,source_user,category,application,service,source_hip,destination_hip)
 		if exist and node_policy['hardware_vendor'] == 'cisco' or node_policy['hardware_vendor'] == 'juniper' or node_policy['hardware_vendor'] == 'palo_alto':
 			if len(to_zone) > 1:
 				rulebase_security.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone))
@@ -148,9 +152,22 @@ def parse_firewall_acl(node_policy,policy):
 			rulebase_security.append('set rulebase security rules \"{}\" destination-hip {}'.format(term,destination_hip))
 			rulebase_security.append('set rulebase security rules \"{}\" tag {}'.format(term,tag))
 			rulebase_security.append('set rulebase security rules \"{}\" action {}'.format(term,action))
-			rulebase_security.append('set rulebase security rules \"{}\" log-start {}'.format(term,log_start))
-			rulebase_security.append('set rulebase security rules \"{}\" log-end {}'.format(term,log_end))
-			rulebase_security.append('set rulebase security rules \"{}\" log-setting {}'.format(term,log_setting))
+			if acl.get('description',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" description {}'.format(term,description))
+			if acl.get('log_start',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" log-start {}'.format(term,log_start))
+			if acl.get('log_end',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" log-end {}'.format(term,log_end))
+			if acl.get('log_setting',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" log-setting {}'.format(term,log_setting))
+			if acl.get('rule_type',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" rule type {}'.format(term,rule_type))
+			if acl.get('group_tag',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" group-tag {}'.format(term,group_tag))
+			if acl.get('disabled',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" disabled {}'.format(term,disabled))
+			if acl.get('profile_setting',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" profile-setting group {}'.format(term,profile_setting))
 	"""
 		Removing any duplicates set_address from list.
 	"""
@@ -272,10 +289,7 @@ def check_ipv4_address(ipv4_address):
 		return False
 	return None
 
-def check_acl_group_exist(path_networks,path_services,path_applications,path_source_device,path_source_user,path_zones,term,to_zone,from_zone,source_address,destination_address,application,service):
-#	path_application = '~/superloop_code/policy/APPLICATIONS.net'.replace('~','{}'.format(get_home_directory()))
-#	path_service = '~/superloop_code/policy/SERVICES.net'.replace('~','{}'.format(get_home_directory()))
-#	path_zone = '~/superloop_code/policy/ZONES.net'.replace('~','{}'.format(get_home_directory()))
+def check_acl_group_exist(path_networks,path_services,path_applications,path_source_device,path_source_user,path_zones,term,to_zone,from_zone,source_address,destination_address,source_user,category,application,service,source_hip,destination_hip):
 	with open('{}'.format(path_networks), 'r') as file:
 		object_group_network_string = file.read()
 		all_object_group_network_list = object_group_network_string.split('\n')
@@ -285,6 +299,12 @@ def check_acl_group_exist(path_networks,path_services,path_applications,path_sou
 	with open('{}'.format(path_services), 'r') as file:
 		service_group_string = file.read()
 		all_service_group_list = service_group_string.split('\n')
+	with open('{}'.format(path_source_user), 'r') as file:
+		source_user_group_string = file.read()
+		all_source_user_group_list = source_user_group_string.split('\n')
+	with open('{}'.format(path_source_device), 'r') as file:
+		source_hip_group_string = file.read()
+		all_souce_hip_group_list = source_hip_group_string.split('\n')
 	with open('{}'.format(path_zones), 'r') as file:
 		zone_group_string = file.read()
 		all_zone_group_list = zone_group_string.split('\n')
@@ -307,6 +327,12 @@ def check_acl_group_exist(path_networks,path_services,path_applications,path_sou
 			print('+ application object \'{}\' in policy file under term; \'{}\', does not exist in the APPLICATIONS.net file. Please ensure the object is present.'.format(app,term))
 			exit()
 	for serv in service:
+		if '{} ='.format(serv) in set(all_service_group_list) or serv in set(all_service_group_list):
+			continue
+		else:
+			print('+ service object \'{}\' in policy file under term; \'{}\', does not exist in the SERVICES.net file. Please ensure the object is present.'.format(serv,term))
+			exit()
+	for source_device in service:
 		if '{} ='.format(serv) in set(all_service_group_list) or serv in set(all_service_group_list):
 			continue
 		else:
