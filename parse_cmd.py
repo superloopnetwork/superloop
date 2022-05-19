@@ -253,6 +253,8 @@ def create_object_group_network(path_networks,set_address,set_address_group):
 			"""
 			if object_group == '':
 				continue
+			elif '#' in object_group:
+				continue
 			elif object_group == 'any':
 				continue
 			elif '/' in object_group:
@@ -305,6 +307,10 @@ def create_object_group_service(path_services,set_service,set_service_group):
 					set_service.append(str_set_service)	
 					address_group.append(all_object_group_service_list[element])
 					element = element + 1
+				elif all_object_group_service_list[element] == 'service-http' or all_object_group_service_list[element] == 'service-https':
+					address_group.append(all_object_group_service_list[element])
+					element = element + 1
+					continue
 				else:
 					if '{} ='.format(all_object_group_service_list[element]) in all_object_group_service_list:
 						address_group.append(all_object_group_service_list[element])
@@ -328,7 +334,11 @@ def create_object_group_service(path_services,set_service,set_service_group):
 			"""
 			if object_group == '':
 				continue
+			elif '#' in object_group: 
+				continue
 			elif object_group == 'any':
+				continue
+			elif object_group == 'service-http' or object_group == "service-https" or object_group == 'application-default':
 				continue
 			elif '_' in object_group:
 				address_group = []
