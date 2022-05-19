@@ -249,7 +249,7 @@ def create_object_group_network(path_networks,set_address,set_address_group):
 				set_address_group.append('{} {}'.format(str_set_address_group_single,address_group[0]))
 		else:
 			"""
-				The below section handles non object-groups. Non object-groups must be a valid IPv4 address. Strings will be ignored.
+				The below code handles non object-groups. Non object-groups must be a valid IPv4 address. Any other strings will be ignored.
 			"""
 			if object_group == '':
 				continue
@@ -286,6 +286,10 @@ def create_object_group_service(path_services,set_service,set_service_group):
 		all_object_group_service_list = object_group_service_string.split('\n')
 	for object_group in all_object_group_service_list:
 		if '=' in object_group:
+			"""
+				The below section will all object-groups. Object-groups are allowed to have a combination of services (ex. TCP_443) 
+				as well as reference to other object-groups.
+			"""
 			element = all_object_group_service_list.index('{}'.format(object_group))
 			element = element + 1
 			list_group = ''
@@ -319,6 +323,9 @@ def create_object_group_service(path_services,set_service,set_service_group):
 			else:
 				set_service_group.append('{} {}'.format(str_set_service_group_single,address_group[0]))
 		else:
+			"""
+				The below code handles non object-groups. Non object-groups must be a valid service (ex. TCP_443). Any other strings will be ignored.
+			"""
 			if object_group == '':
 				continue
 			elif object_group == 'any':
