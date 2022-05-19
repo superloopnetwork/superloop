@@ -199,6 +199,9 @@ def create_object_group_network(path_networks,set_address,set_address_group):
 		all_object_group_network_list = object_group_network_string.split('\n')
 	for object_group in all_object_group_network_list:
 		if '=' in object_group:
+			"""
+				The below section will all object-groups. Object-groups are allowed to have a combination of IPv4 addresses as well as reference to other object-groups.
+			"""
 			element = all_object_group_network_list.index('{}'.format(object_group))
 			element = element + 1
 			list_group = ''
@@ -244,11 +247,40 @@ def create_object_group_network(path_networks,set_address,set_address_group):
 				set_address_group.append('{} {} {}'.format(str_set_address_group,list_group,str_end_bracket))
 			else:
 				set_address_group.append('{} {}'.format(str_set_address_group_single,address_group[0]))
+		else:
+			"""
+				The below section handles non object-groups. Non object-groups must be a valid IPv4 address. Strings will be ignored.
+			"""
+			if object_group == '':
+				continue
+			elif object_group == 'any':
+				continue
+			elif '/' in object_group:
+				address_group = []
+				str_set_address_host = 'set address H-{} ip-netmask {}'.format(object_group,object_group)
+				str_set_address_network = 'set address N-{} ip-netmask {}'.format(object_group,object_group)
+				ipv4 = check_ipv4_address('{}'.format(object_group))
+				if ipv4:
+					ip_address = object_group.split('/')[0]
+					netmask = object_group.split('/')[1]
+					"""
+						The below code will check if it's a host or a network and create the neccessary address for it beginning with H for host or N for network.
+					"""
+					if netmask == '32':
+						set_address.append(str_set_address_host)
+						address_group.append(object_group)
+					else:
+						set_address.append(str_set_address_network)
+						address_group.append(object_group)
+				else:
+					print('+ IP address \'{}\' is invalid. Please correct the address in the NETWORKS.net file.'.format(object_group))
+					exit()
+			else:
+				continue
 				
 	return None
 
 def create_object_group_service(path_services,set_service,set_service_group):
-#	path = '~/superloop_code/policy/SERVICES.net'.replace('~','{}'.format(get_home_directory()))
 	with open('{}'.format(path_services), 'r') as file:
 		object_group_service_string = file.read()
 		all_object_group_service_list = object_group_service_string.split('\n')
@@ -257,17 +289,25 @@ def create_object_group_service(path_services,set_service,set_service_group):
 			element = all_object_group_service_list.index('{}'.format(object_group))
 			element = element + 1
 			list_group = ''
-			str_set_service_group = 'set service-group {}static ['.format(object_group).replace('=','')
-			str_set_service_group_single = 'set service-group {}static'.format(object_group).replace('=','')
+			str_set_service_group = 'set service-group {}members ['.format(object_group).replace('=','')
+			str_set_service_group_single = 'set service-group {}members'.format(object_group).replace('=','')
 			str_end_bracket = ']'
 			address_group = []
 			while all_object_group_service_list[element] != '':
-				protocol = all_object_group_service_list[element].split('_')[0].lower()
-				port = all_object_group_service_list[element].split('_')[1]
-				str_set_service = 'set service {} protocol {} port {}'.format(all_object_group_service_list[element],protocol,port)
-				set_service.append(str_set_service)	
-				address_group.append(all_object_group_service_list[element])
-				element = element + 1
+				if '_' in all_object_group_service_list[element]:
+					protocol = all_object_group_service_list[element].split('_')[0].lower()
+					port = all_object_group_service_list[element].split('_')[1]
+					str_set_service = 'set service {} protocol {} port {}'.format(all_object_group_service_list[element],protocol,port)
+					set_service.append(str_set_service)	
+					address_group.append(all_object_group_service_list[element])
+					element = element + 1
+				else:
+					if '{} ='.format(all_object_group_service_list[element]) in all_object_group_service_list:
+						address_group.append(all_object_group_service_list[element])
+						element = element + 1
+					else:
+						print('+ object-group \'{}\' was not found in SERVICES.net file. Please create or correct the name.'.format(all_object_group_service_list[element]))
+						exit()
 			if len(address_group) > 1:
 				for group in address_group:
 					index_position = address_group.index(group)
@@ -278,6 +318,19 @@ def create_object_group_service(path_services,set_service,set_service_group):
 				set_service_group.append('{} {} {}'.format(str_set_service_group,list_group,str_end_bracket))
 			else:
 				set_service_group.append('{} {}'.format(str_set_service_group_single,address_group[0]))
+		else:
+			if object_group == '':
+				continue
+			elif object_group == 'any':
+				continue
+			elif '_' in object_group:
+				address_group = []
+				protocol = object_group.split('_')[0].lower()
+				port = object_group.split('_')[1]
+				str_set_service = 'set service {} protocol {} port {}'.format(object_group,protocol,port)
+				set_service.append('{}'.format(str_set_service))
+			else:
+				continue
 			
 	return None
 
