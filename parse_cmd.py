@@ -148,10 +148,14 @@ def parse_firewall_acl(node_policy,policy):
 				rulebase_security.append('set rulebase security rules \"{}\" service {}'.format(term,service))
 			else:
 				rulebase_security.append('set rulebase security rules \"{}\" service {}'.format(term,service[0]))
-			rulebase_security.append('set rulebase security rules \"{}\" source-hip {}'.format(term,source_hip))
-			rulebase_security.append('set rulebase security rules \"{}\" destination-hip {}'.format(term,destination_hip))
-			rulebase_security.append('set rulebase security rules \"{}\" tag {}'.format(term,tag))
-			rulebase_security.append('set rulebase security rules \"{}\" action {}'.format(term,action))
+			if acl.get('source_hip',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" source-hip {}'.format(term,source_hip))
+			if acl.get('destination_hip',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" destination-hip {}'.format(term,destination_hip))
+			if acl.get('tag',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" tag {}'.format(term,tag))
+			if acl.get('action',None) != None:
+				rulebase_security.append('set rulebase security rules \"{}\" action {}'.format(term,action))
 			if acl.get('description',None) != None:
 				rulebase_security.append('set rulebase security rules \"{}\" description {}'.format(term,description))
 			if acl.get('log_start',None) != None:
@@ -172,23 +176,18 @@ def parse_firewall_acl(node_policy,policy):
 		Removing any duplicates set_address from list.
 	"""
 	set_service_group = list(dict.fromkeys(set_service_group))
-	for service_group in set_service_group:
-#		print(service_group)
-		commands.append(service_group)
 	set_service = list(dict.fromkeys(set_service))
-	for service in set_service:
-#		print(service)
-		commands.append(service)
 	set_address_group = list(dict.fromkeys(set_address_group))
-	for address_group in set_address_group:
-#		print(address_group)
-		commands.append(address_group)
 	set_address = list(dict.fromkeys(set_address))
+	for service_group in set_service_group:
+		commands.append(service_group)
+	for service in set_service:
+		commands.append(service)
+	for address_group in set_address_group:
+		commands.append(address_group)
 	for address in set_address:
-#		print(address)
 		commands.append(address)
 	for config_line in rulebase_security:
-#		print(config_line.replace('\'',' ').replace(',','').replace('   ',' '))
 		commands.append(config_line.replace('\'',' ').replace(',','').replace('   ',' '))
 
 	return commands 
@@ -423,3 +422,51 @@ def check_acl_group_exist(path_networks,path_services,path_applications,path_sou
 
 	return True
 
+def set_rulebase_security(to_zone,from_zone,source_address,destination_address,source_user,category,application,service,source_hip,destination_hip,tag,action,description,log_start,log_end,log_setting,rule_type,group_tag,disabled,profile_setting):
+	if exist and node_policy['hardware_vendor'] == 'cisco' or node_policy['hardware_vendor'] == 'juniper' or node_policy['hardware_vendor'] == 'palo_alto':
+		if len(to_zone) > 1:
+			rulebase_security.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone))
+		else:
+			rulebase_security.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone[0]))
+		if len(from_zone) > 1:
+			rulebase_security.append('set rulebase security rules \"{}\" from {}'.format(term,from_zone))
+		else:
+			rulebase_security.append('set rulebase security rules \"{}\" from {}'.format(term,from_zone[0]))
+		if len(source_address) > 1:
+			rulebase_security.append('set rulebase security rules \"{}\" source {}'.format(term,source_address))
+		else:
+			rulebase_security.append('set rulebase security rules \"{}\" source {}'.format(term,source_address[0]))
+		if len(destination_address) > 1:
+			rulebase_security.append('set rulebase security rules \"{}\" destination {}'.format(term,destination_address))
+		else:
+			rulebase_security.append('set rulebase security rules \"{}\" destination {}'.format(term,destination_address[0]))
+		rulebase_security.append('set rulebase security rules \"{}\" source-user {}'.format(term,source_user))
+		rulebase_security.append('set rulebase security rules \"{}\" category {}'.format(term,category))
+		if len(application) > 1:
+			rulebase_security.append('set rulebase security rules \"{}\" application {}'.format(term,application))
+		else:
+			rulebase_security.append('set rulebase security rules \"{}\" application {}'.format(term,application[0]))
+		if len(application) > 1:
+			rulebase_security.append('set rulebase security rules \"{}\" service {}'.format(term,service))
+		else:
+			rulebase_security.append('set rulebase security rules \"{}\" service {}'.format(term,service[0]))
+		rulebase_security.append('set rulebase security rules \"{}\" source-hip {}'.format(term,source_hip))
+		rulebase_security.append('set rulebase security rules \"{}\" destination-hip {}'.format(term,destination_hip))
+		rulebase_security.append('set rulebase security rules \"{}\" tag {}'.format(term,tag))
+		rulebase_security.append('set rulebase security rules \"{}\" action {}'.format(term,action))
+		if acl.get('description',None) != None:
+			rulebase_security.append('set rulebase security rules \"{}\" description {}'.format(term,description))
+		if acl.get('log_start',None) != None:
+			rulebase_security.append('set rulebase security rules \"{}\" log-start {}'.format(term,log_start))
+		if acl.get('log_end',None) != None:
+			rulebase_security.append('set rulebase security rules \"{}\" log-end {}'.format(term,log_end))
+		if acl.get('log_setting',None) != None:
+			rulebase_security.append('set rulebase security rules \"{}\" log-setting {}'.format(term,log_setting))
+		if acl.get('rule_type',None) != None:
+			rulebase_security.append('set rulebase security rules \"{}\" rule type {}'.format(term,rule_type))
+		if acl.get('group_tag',None) != None:
+			rulebase_security.append('set rulebase security rules \"{}\" group-tag {}'.format(term,group_tag))
+		if acl.get('disabled',None) != None:
+			rulebase_security.append('set rulebase security rules \"{}\" disabled {}'.format(term,disabled))
+		if acl.get('profile_setting',None) != None:
+			rulebase_security.append('set rulebase security rules \"{}\" profile-setting group {}'.format(term,profile_setting))
