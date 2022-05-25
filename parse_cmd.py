@@ -1,4 +1,3 @@
-
 import ipaddress
 import re
 from processdb import process_json
@@ -43,14 +42,14 @@ def parse_negation_commands(push_configs):
 		
 	return commands
 
-def parse_firewall_acl(node_policy,policy):
+def parse_firewall_acl(node_object,policy):
 	"""
 		This function will generate firewall acls based on the hardware_vendor and os.
 	"""
-	acl_list = process_json(node_policy['hardware_vendor'],node_policy['opersys'],node_policy['type'],policy)
+	acl_list = process_json(node_object['hardware_vendor'],node_object['opersys'],node_object['type'],policy)
 	commands = [] 
 	rulebase_security = []
-	directory = get_policy_directory(node_policy['hardware_vendor'],node_policy['opersys'],node_policy['type'])
+	directory = get_policy_directory(node_object['hardware_vendor'],node_object['opersys'],node_object['type'])
 	NETWORK_PATH_FILTER_RE = r"\'.+NETWORKS.net\'"
 	SERVICES_PATH_FILTER_RE = r"\'.+SERVICES.net\'"
 	APPLICATIONS_PATH_FILTER_RE = r"\'.+APPLICATIONS.net\'"
@@ -121,7 +120,7 @@ def parse_firewall_acl(node_policy,policy):
 		profile_setting = acl.get('profile_setting',None)
 		description = acl.get('description',None)
 		exist = check_acl_group_exist(path_networks,path_services,path_applications,path_source_device,path_source_user,path_zones,term,to_zone,from_zone,source_address,destination_address,source_user,category,application,service,source_hip,destination_hip)
-		if exist and node_policy['hardware_vendor'] == 'cisco' or node_policy['hardware_vendor'] == 'juniper' or node_policy['hardware_vendor'] == 'palo_alto':
+		if exist and node_object['hardware_vendor'] == 'cisco' or node_object['hardware_vendor'] == 'juniper' or node_object['hardware_vendor'] == 'palo_alto':
 			if len(to_zone) > 1:
 				rulebase_security.append('set rulebase security rules \"{}\" to {}'.format(term,to_zone))
 			else:
@@ -166,7 +165,7 @@ def parse_firewall_acl(node_policy,policy):
 			if acl.get('action',None) != None:
 				rulebase_security.append('set rulebase security rules \"{}\" action {}'.format(term,action))
 			if acl.get('description',None) != None:
-				rulebase_security.append('set rulebase security rules \"{}\" description \"{}\"'.format(term,description))
+				rulebase_security.append('set rulebase security rules \"{}\" description {}'.format(term,description))
 			if acl.get('log_start',None) != None:
 				rulebase_security.append('set rulebase security rules \"{}\" log-start {}'.format(term,log_start))
 			if acl.get('log_end',None) != None:

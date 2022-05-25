@@ -35,7 +35,7 @@ def acl_render(policy_list,node_object,node_policy,policy_list_copy,auditcreeper
 				print('{}{}'.format(get_hardware_vendor_policy_directory,policy))
 			print('')
 			for policy in policy_list:
-				commands = parse_firewall_acl(node_policy[index],policy)
+				commands = parse_firewall_acl(node_object[index],policy)
 				policy_list = get_updated_list(policy_list_copy)
 			for configs in commands:
 				print(configs)

@@ -39,7 +39,6 @@ def process_json(hardware_vendor,opersys,device_type,policy_file):
 	if hardware_vendor == 'cisco' and  opersys == 'asa' and device_type == 'firewall':
 		with open("{}/superloop_code/policy/cisco/ios/firewall/{}".format(get_home_directory(),policy_file), 'r') as json_file:
 			data = commentjson.load(json_file)
-
 	elif hardware_vendor == 'juniper' and opersys == 'junos' and device_type == 'vfirewall':
 		with open("{}/superloop_code/policy/juniper/junos/firewall/{}".format(get_home_directory(),policy_file), 'r') as json_file:
 			data = commentjson.load(json_file)
