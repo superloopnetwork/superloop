@@ -48,11 +48,6 @@ def acl_config(args):
 		:param with_remediation: Current function to remediate or not remediate.  
 		:type ext: bool 
 	"""
-#	if(args.policy is None):
-#		auditcreeper = True
-#	else:
-#	policy = args.policy + ext
-#	policy_list.append(policy)
 	node_object = process_nodes()
 	node_policy = process_policies()
 	match_node = search_node(argument_node,node_object)

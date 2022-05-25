@@ -1,7 +1,6 @@
 import ipaddress
 import re
 from processdb import process_json
-from get_property import get_home_directory
 from get_property import get_policy_directory
 
 

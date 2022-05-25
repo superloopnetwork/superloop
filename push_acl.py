@@ -14,8 +14,9 @@ from parse_cmd import parse_firewall_acl
 from get_property import get_updated_list
 
 def push_acl(args):
+	argument_confirm = args.confirm
 	argument_node = args.node
-	auditcreeper = False
+	auditcreeper = True
 	commands = initialize.configuration
 	ext = '.json'
 	output = False 
@@ -43,11 +44,6 @@ def push_acl(args):
 		:param safe_push_list: A list of enable/disabled strings. This corresponds to templates that are safe to push (enable) vs. templates that are not safe to push (disabled).
 		:type ext: list
 	"""
-	if(args.policy is None):
-		auditcreeper = True
-	else:
-		policy = args.policy + ext
-		policy_list.append(policy)
 	node_object = process_nodes()
 	node_policy = process_policies()
 	match_node = search_node(argument_node,node_object)
@@ -80,7 +76,7 @@ def push_acl(args):
 		print('+ No matching policy(ies) found in database.')
 	else:
 		node_create(match_node,node_object)
-		policies(policy_list,node_policy,policy_list_copy,auditcreeper)
+		acl_render(policy_list,node_policy,policy_list_copy,auditcreeper)
 		###UN-COMMENT THE BELOW PRINT STATEMENT FOR DEBUGING PURPOSES
 #		print("ELEMENT_POLICY: {}".format(initialize.element_policy))
 

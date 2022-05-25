@@ -36,6 +36,7 @@ def main():
 	acl_render_cmd.set_defaults(func=acl_config)
 	acl_render_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
 
+
 	audit_cmd = subparsers.add_parser('audit')
 	audit_subparser = audit_cmd.add_subparsers(dest='parser_audit')
 	audit_diff_cmd = audit_subparser.add_parser('diff')
@@ -52,6 +53,10 @@ def main():
 
 	push_cmd = subparsers.add_parser('push')
 	push_subparsers = push_cmd.add_subparsers(dest='parser_push')
+	push_acl_cmd = push_subparsers.add_parser('acl')
+	push_acl_cmd.set_defaults(func=push_acl)
+	push_acl_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
+	push_acl_cmd.add_argument('-c','--confirm', dest='confirm', help='Skip confirmation [default is True].')
 	push_render_cmd = push_subparsers.add_parser('render')
 	push_render_cmd.set_defaults(func=render_config)
 	push_render_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
