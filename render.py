@@ -83,24 +83,35 @@ def process_json_template(policy_list,node_object,node_policy,policy_list_copy,o
 		""" 
 			The below iteration takes care of the configs for each policy file per firewall node(s).
 		"""
-		if auditcreeper:
-			for policy in all_policies:
-				print('{}{}'.format(get_hardware_vendor_policy_directory,policy))
-			print('')
-			for policy in policy_list:
-				commands = parse_firewall_acl(node_object[index],policy)
-				policy_list = get_updated_list(policy_list_copy)
-			for configs in commands:
-				os.makedirs('{}/rendered-configs/'.format(get_home_directory()),exist_ok=True)
-				with open('{}/rendered-configs/{}.{}'.format(get_home_directory(),node_object[index]['name'],policy_list[0].replace('json','')) + 'conf', 'w') as file:
-					print(configs)
-			initialize.configuration.append(commands)
-		else:
-			for policy in policy_list:
-				print('{}{}'.format(get_hardware_vendor_policy_directory,policy))
-				commands = parse_firewall_acl(node_object[index],policy)
-			for configs in commands:
-				print(configs)
+#		if auditcreeper:
+#			for policy in all_policies:
+#				print('{}{}'.format(get_hardware_vendor_policy_directory,policy))
+#			print('')
+#			for policy in policy_list:
+#				commands = parse_firewall_acl(node_object[index],policy)
+#				policy_list = get_updated_list(policy_list_copy)
+#			os.makedirs('{}/rendered-configs/'.format(get_home_directory()),exist_ok=True)
+#			with open('{}/rendered-configs/{}.{}'.format(get_home_directory(),node_object[index]['name'],policy_list[0].replace('json','')) + 'conf', 'w') as file:
+#				for config in commands:
+#					if output:
+#						print(config)
+#					file.write(config) 
+#					file.write('\n') 
+#				file.close 
+#			initialize.configuration.append(commands)
+#		else:
+		for policy in policy_list:
+			print('{}{}'.format(get_hardware_vendor_policy_directory,policy))
+			commands = parse_firewall_acl(node_object[index],policy)
+		os.makedirs('{}/rendered-configs/'.format(get_home_directory()),exist_ok=True)
+		with open('{}/rendered-configs/{}.{}'.format(get_home_directory(),node_object[index]['name'],policy_list[0].replace('json','')) + 'conf', 'w') as file:
+			for config in commands:
+				if output:
+					print(config)
+				file.write(config) 
+				file.write('\n') 
+			file.close 
+		initialize.configuration.append(commands)
 
 	return commands
 

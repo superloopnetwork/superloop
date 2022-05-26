@@ -101,9 +101,9 @@ def push_render(args):
 		elif 'NO MATCH' in match_template:
 			print('+ No matching template(s) found in database.')
 			exit()
-	"""
-			Uncomment the secrets below if you are using hashicorp vault. You will need to setup the credentials.
-	"""
+		"""
+				Uncomment the secrets below if you are using hashicorp vault. You will need to setup the credentials.
+		"""
 #		secrets = get_secrets()
 #		render(template_list,node_object,auditcreeper,output,with_remediation,secrets)
 		render(template_list,node_object,auditcreeper,output,with_remediation)

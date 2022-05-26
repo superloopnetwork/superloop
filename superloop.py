@@ -6,7 +6,6 @@ import sys
 import argparse
 import initialize
 import os
-from render_acl import render_acl
 from auditdiff import auditdiff
 from pull_cfgs import pull_cfgs
 from push_cfgs import push_cfgs
