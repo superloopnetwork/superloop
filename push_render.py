@@ -54,6 +54,18 @@ def push_render(args):
 
 		:param with_remediation: Current function to remediate or not remediate.  
 		:type ext: bool 
+
+		:param node_object: All node(s) in the database with all attributes.
+		:type node_object: list
+
+		:param node_template: All templates based on hardware_vendor and device type.
+		:type node_template: list
+
+		:param match_node: Nodes that matches the arguements passed in by user.
+		:type match_node: list
+
+		:param match_template: Return a list of 'match' and/or 'no match'.
+		:type match_template: list 
 	"""
 	node_object = process_nodes()
 	match_node = search_node(argument_node,node_object)
@@ -89,24 +101,11 @@ def push_render(args):
 		elif 'NO MATCH' in match_template:
 			print('+ No matching template(s) found in database.')
 			exit()
-#		secrets = get_secrets()
-#		render(template_list,node_object,auditcreeper,output,with_remediation,secrets)
-		render(template_list,node_object,auditcreeper,output,with_remediation)
-	"""
-		:param node_object: All node(s) in the database with all attributes.
-		:type node_object: list
-
-		:param node_template: All templates based on hardware_vendor and device type.
-		:type node_template: list
-
-		:param match_node: Nodes that matches the arguements passed in by user.
-		:type match_node: list
-
-		:param match_template: Return a list of 'match' and/or 'no match'.
-		:type match_template: list 
-	"""
 	"""
 			Uncomment the secrets below if you are using hashicorp vault. You will need to setup the credentials.
 	"""
+#		secrets = get_secrets()
+#		render(template_list,node_object,auditcreeper,output,with_remediation,secrets)
+		render(template_list,node_object,auditcreeper,output,with_remediation)
 
 	return None
