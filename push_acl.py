@@ -1,17 +1,17 @@
 """
 	This module controls the pushing of the policies for firewalls.
 """
-from acl_render import acl_render
 import initialize
+from confirm import confirm
+from get_property import get_updated_list
 from lib.objects.basenode import BaseNode
+from node_create import node_create
 from processdb import process_nodes
 from processdb import process_policies
+from render import process_json_template 
 from search import search_node
 from search import search_policy
-from node_create import node_create
-from confirm import confirm
 from parse_cmd import parse_firewall_acl
-from get_property import get_updated_list
 
 def push_acl(args):
 	argument_confirm = args.confirm

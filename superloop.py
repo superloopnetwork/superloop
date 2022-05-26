@@ -6,13 +6,13 @@ import sys
 import argparse
 import initialize
 import os
-from acl_config import acl_config
+from render_acl import render_acl
 from auditdiff import auditdiff
 from pull_cfgs import pull_cfgs
 from push_cfgs import push_cfgs
 from push_local import push_local
 from push_acl import push_acl
-from render_config import render_config
+from push_render import push_render 
 from exec_cmd import exec_cmd 
 from ssh_connect import ssh_connect
 from modifydb import append
@@ -29,12 +29,11 @@ def main():
 	parser = argparse.ArgumentParser()
 	subparsers = parser.add_subparsers()
 
-
-	acl_cmd = subparsers.add_parser('acl')
-	acl_subparsers = acl_cmd.add_subparsers(dest='parser_acl')
-	acl_render_cmd = acl_subparsers.add_parser('render')
-	acl_render_cmd.set_defaults(func=acl_config)
-	acl_render_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
+#	acl_cmd = subparsers.add_parser('acl')
+#	acl_subparsers = acl_cmd.add_subparsers(dest='parser_acl')
+#	acl_render_cmd = acl_subparsers.add_parser('render')
+#	acl_render_cmd.set_defaults(func=render_acl)
+#	acl_render_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
 
 
 	audit_cmd = subparsers.add_parser('audit')
@@ -58,9 +57,10 @@ def main():
 	push_acl_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
 	push_acl_cmd.add_argument('-c','--confirm', dest='confirm', help='Skip confirmation [default is True].')
 	push_render_cmd = push_subparsers.add_parser('render')
-	push_render_cmd.set_defaults(func=render_config)
+	push_render_cmd.set_defaults(func=push_render)
 	push_render_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
 	push_render_cmd.add_argument('-f','--file', dest='file', help='Specify template file to audit against [exclude *.jinja2 extension].')
+	push_render_cmd.add_argument('-p','--policy', dest='policy', help='Specify policy file to audit against [exclude *.json extension].')
 	push_cfgs_cmd = push_subparsers.add_parser('cfgs')
 	push_cfgs_cmd.set_defaults(func=push_cfgs)
 	push_cfgs_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
@@ -70,10 +70,6 @@ def main():
 	push_local_cmd.set_defaults(func=push_local)
 	push_local_cmd.add_argument('filename', help='Specify local filename to be pushed.')
 	push_local_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
-	push_acl_cmd = push_subparsers.add_parser('acl')
-	push_acl_cmd.set_defaults(func=push_acl)
-	push_acl_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
-	push_acl_cmd.add_argument('-p','--policy', dest='policy', help='Specify the policy file to match against [exclude *.json extension].')
 	
 	ssh_cmd = subparsers.add_parser('ssh')
 	ssh_cmd.set_defaults(func=ssh_connect)

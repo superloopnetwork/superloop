@@ -109,7 +109,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 		"""
 		if len(template_list) != 1:
 			template_list = get_updated_list(template_list_copy)
-		if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'f5':
+		if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'f5' or node_object[index]['hardware_vendor'] == 'palo_alto':
 			redirect.append('get_config')
 			command.append([''])
 			"""
@@ -154,7 +154,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 			print("Only in the device: -")
 			print("Only in the generated config: +")
 			print ("{}".format(node_object[index]['name']))
-		if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'f5':
+		if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'f5' or node_object[index]['hardware_vendor'] == 'palo_alto':
 			generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,output,with_remediation)
 		elif node_object[index]['hardware_vendor'] == 'juniper':
 			template_list = get_sorted_juniper_template_list(template_list)

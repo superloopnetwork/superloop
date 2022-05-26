@@ -36,7 +36,7 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 			"""
 				The below parse_commands() function will only get executed if
 				it needs to store commands in the global variable initialize.configuration
-				for push. push_cfgs(output = True) vs render_config(output = False) functions.
+				for push. push_cfgs(output = True) vs push_render(output = False) functions.
 			"""
 			if output!=True:
 				parse_commands(node_object[index],init_config,set_notation=False)
@@ -53,23 +53,16 @@ def process_jinja2_template(node_object,index,template,with_remediation):
 	baseline = env.get_template(template)
 	os.makedirs('{}/rendered-configs/'.format(get_home_directory()),exist_ok=True)
 	with open('{}/rendered-configs/{}.{}'.format(get_home_directory(),node_object[index]['name'],template.replace('jinja2','')) + 'conf', 'w') as file:
-		config = baseline.render(node = node_object[index],with_remediation = with_remediation)
+		config = baseline.render(
+							node = node_object[index],
+							with_remediation = with_remediation
+						)
 		file.write(config) 
 		file.close 
 
 	return config
 
-def remediate(input):
-	"""
-		Custom filter to process boolean.
-	"""
-	if with_remediate == True:
-		return input
-	else:
-		return ''
-
-def acl_render(policy_list,node_object,node_policy,policy_list_copy,auditcreeper):
-
+def process_json_template(policy_list,node_object,node_policy,policy_list_copy,output,auditcreeper):
 	commands = [] 
 	redirect = []
 	policy_list_copy = policy_list
@@ -98,13 +91,24 @@ def acl_render(policy_list,node_object,node_policy,policy_list_copy,auditcreeper
 				commands = parse_firewall_acl(node_object[index],policy)
 				policy_list = get_updated_list(policy_list_copy)
 			for configs in commands:
-				print(configs)
+				os.makedirs('{}/rendered-configs/'.format(get_home_directory()),exist_ok=True)
+				with open('{}/rendered-configs/{}.{}'.format(get_home_directory(),node_object[index]['name'],policy_list[0].replace('json','')) + 'conf', 'w') as file:
+					print(configs)
 			initialize.configuration.append(commands)
 		else:
 			for policy in policy_list:
 				print('{}{}'.format(get_hardware_vendor_policy_directory,policy))
-				commands = parse_firewall_acl(node_policy[index],policy)
+				commands = parse_firewall_acl(node_object[index],policy)
 			for configs in commands:
 				print(configs)
 
 	return commands
+
+def remediate(input):
+	"""
+		Custom filter to process boolean.
+	"""
+	if with_remediate == True:
+		return input
+	else:
+		return ''

@@ -19,9 +19,9 @@ from . import pull_cfgs
 from . import push_cfgs
 from . import push_config
 from . import push_local
+from . import push_render
 from . import remediate
 from . import render
-from . import render_config
 from . import search
 from . import snmp
 from . import snmp_helper
