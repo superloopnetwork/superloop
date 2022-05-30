@@ -41,6 +41,7 @@ def main():
 	audit_diff_cmd.set_defaults(func=auditdiff)
 	audit_diff_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.' )
 	audit_diff_cmd.add_argument('-f','--file', dest='file', help='Specify template file to audit against [exclude *.jinja2 extension].')
+	audit_diff_cmd.add_argument('-p','--policy', dest='policy', help='Specify policy file to audit against [exclude *.json extension].')
 
 	pull_cmd = subparsers.add_parser('pull')
 	pull_subparsers = pull_cmd.add_subparsers(dest='parser_pull')

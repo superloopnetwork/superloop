@@ -5,6 +5,7 @@ import re
 import initialize
 import os
 from ciscoconfparse import CiscoConfParse
+from get_property import get_policy_directory
 from get_property import get_template_directory
 from get_property import get_syntax
 from get_property import get_sorted_juniper_template_list 
@@ -12,9 +13,9 @@ from parse_cmd import parse_negation_commands
 
 home_directory = os.environ.get('HOME')
 
-def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,output,with_remediation):
+def generic_audit_diff(args,node_object,index,template,input_list,AUDIT_FILTER_RE,output,with_remediation):
 
-	for template in template_list:
+	for template in input_list:
 		
 		filtered_backup_config = []
 		rendered_config = []
@@ -51,13 +52,19 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				continue	
 			else:
 				backup_config.append(strip_config)	
-		directory = get_template_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
-		with open("{}".format(directory) + template, "r") as file:
-			parse_audit = file.readline()
+		if args.policy is not None:
+			directory = get_policy_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
+			with open("{}".format(directory) + template, "r") as file:
+				parse_audit = file.readline()
+		else:
+			directory = get_template_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
+			with open("{}".format(directory) + template, "r") as file:
+				parse_audit = file.readline()
 		"""
 			This will take each element from the audit_filter list and search for the matched lines in backup_config.
 		"""
 		audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
+		print(audit_filter)
 #		parse_backup_configs = CiscoConfParse("{}/backup-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", syntax=get_syntax(node_object,index))
 		parse_backup_configs = CiscoConfParse(backup_config, syntax=get_syntax(node_object,index))
 		"""
@@ -124,7 +131,12 @@ def generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,
 				for line in push_configs:
 					if '+' in line:
 						line = line.replace('+','\+')
+					elif '[' in line or ']' in line:
+						line = line.replace('[','\[')
+						line = line.replace(']','\]')
 					search = parse_backup_configs.find_objects(r"^{}".format(line),exactmatch=True)
+					line = line.replace('\[','[')
+					line = line.replace('\]',']')
 					line = line.replace('\+','+')
 					if re.search(r'^no',line) or re.search(r'\sno',line):
 						line = re.sub("no","",line)

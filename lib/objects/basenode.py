@@ -96,7 +96,7 @@ class BaseNode(object):
 		elif self.hardware_vendor == 'f5':
 			output = self.net_connect.send_config_set(commands,enter_config_mode=False,exit_config_mode=False)
 			save = self.net_connect.send_command('save sys config')
-		elif self.hardware_vendor == 'palo alto':
+		elif self.hardware_vendor == 'palo_alto':
 			output = self.net_connect.send_config_set(commands,enter_config_mode=True)
 		self.net_connect.disconnect()
 
@@ -123,7 +123,7 @@ class BaseNode(object):
 			self.scp_connect.scp_get_file('/var/local/ucs/config.ucs', '{}/backup-configs/{}'.format(self.get_home_directory(),self.name))
 			self.scp_connect.close()
 			self.net_connect.disconnect()
-		elif self.hardware_vendor == 'palo alto':
+		elif self.hardware_vendor == 'palo_alto':
 			command = ['show']
 		if self.hardware_vendor != 'juniper' or self.hardware_vendor != 'f5':
 			self.connect()
@@ -153,7 +153,7 @@ class BaseNode(object):
 			command = 'list one-line'
 		elif self.hardware_vendor == 'citrix':
 			command = 'show ns runningConfig'
-		elif self.hardware_vendor == 'palo alto':
+		elif self.hardware_vendor == 'palo_alto':
 			command = ['show']
 		self.connect()
 		self.write_to_file(command,scp_flag,method)
@@ -182,7 +182,7 @@ class BaseNode(object):
 				extention = '.conf'
 			self.check_and_mkdir(scp_flag,method)
 			with open('{}/backup-configs/{}/{}{}'.format(self.get_home_directory(),self.get_subdir(scp_flag),self.name,extention), "w") as file:
-				if self.hardware_vendor != 'palo alto':
+				if self.hardware_vendor != 'palo_alto':
 					output = self.net_connect.send_command(command)
 				else:
 					set_cli = self.net_connect.send_command('set cli config-output-format set')

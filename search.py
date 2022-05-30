@@ -109,6 +109,7 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 								node_temp['templates'] = node_templates.copy()
 							else:
 								print('+ No associating template {}'.format(template_list[element]) + ' for node {}'.format(node))
+								exit()
 								search_result.append("NO MATCH")
 								node_temp['templates'] = node_templates.copy()
 					else:
@@ -139,64 +140,68 @@ def search_policy(policy_list,safe_push_list,match_node,node_policy,node_object,
 					This section will pull out all the policies belonging to the specific
 					hardware vendor, operating system and type from the policy database.
 				"""
-				for node_pol in node_policy:
-					if node == node_pol['name']:
-	#					policy_index = node_policy.index(node_pol)
-	#					initialize.element_policy.append(policy_index)
-						if auditcreeper:
-							policy_node_list = []
-							for policy_dir_name in node_pol['policy']:
-								policy_name = list(policy_dir_name)[0].split('/')[-1]
-								policy_node_list.append(policy_name)
-								safe_push = list(policy_dir_name.values())[0]
-								safe_push_list.append(safe_push)
-							if 'disabled' in safe_push_list and push_acl:
-								run_time = 1
-								first_run = True
-								disabled_policies = disabled_safe_push_element(safe_push_list,policy_node_list,node_obj)
-								for index in disabled_policies:
-									if first_run:
-										policy_node_list.pop(index)
-										first_run = False
-									else:
-										policy_node_list.pop(index - run_time)
-										run_time = run_time + 1
-							"""
-								If all policies are disabled.
-							"""
-							if len(policy_node_list) == 0:
-								exit()
-							policy_list.append(policy_node_list)
-							del safe_push_list[:]
-						else:
-							directory = get_policy_directory(node_obj['hardware_vendor'],node_obj['opersys'],node_obj['type'])
-							file = directory + policy_list[element]
-							policy_index = 0
-							policy_node_list = []
-							node_policy = node_pol['policy'].copy()
-							for policy_path in node_pol['policy']:
-								policy_name = list(policy_path)[0].split('/')[-1]
-								policy_node_list.append(policy_name)
-								node_pol['policy'][policy_index] = list(policy_path)[0].replace('~','{}'.format(get_home_directory()))
-								safe_push = list(policy_path.values())[0]
-								safe_push_list.append(safe_push)
-								policy_index = policy_index + 1
-							try:
-								policy_index = policy_node_list.index(policy_list[element])
-								if safe_push_list[policy_index] != 'enabled':
-									print('Policy {} has been disabled for {}.'.format(policy_node_list[policy_index],node_obj['name']))
+				if node_object[index]['type'] != 'firewall' or node_object[index]['type'] != 'vfirewall':
+					pass
+				else:
+					for node_pol in node_policy:
+						print(node,node_pol['name'])
+						if node == node_pol['name']:
+		#					policy_index = node_policy.index(node_pol)
+		#					initialize.element_policy.append(policy_index)
+							if auditcreeper:
+								policy_node_list = []
+								for policy_dir_name in node_pol['policy']:
+									policy_name = list(policy_dir_name)[0].split('/')[-1]
+									policy_node_list.append(policy_name)
+									safe_push = list(policy_dir_name.values())[0]
+									safe_push_list.append(safe_push)
+								if 'disabled' in safe_push_list and push_acl:
+									run_time = 1
+									first_run = True
+									disabled_policies = disabled_safe_push_element(safe_push_list,policy_node_list,node_obj)
+									for index in disabled_policies:
+										if first_run:
+											policy_node_list.pop(index)
+											first_run = False
+										else:
+											policy_node_list.pop(index - run_time)
+											run_time = run_time + 1
+								"""
+									If all policies are disabled.
+								"""
+								if len(policy_node_list) == 0:
 									exit()
-							except Exception as error:
-								pass
-							if file in node_pol['policy']:
-								search_result.append("MATCH")	
-								node_pol['policy'] = node_policy.copy()
+								policy_list.append(policy_node_list)
+								del safe_push_list[:]
 							else:
-								print('+ No associating policy {}'.format(policy_list[element]) + ' for node {}'.format(node))
-								search_result.append("NO MATCH")
-								node_pol['policy'] = node_policy.copy()
-					else:
-						continue	
+								directory = get_policy_directory(node_obj['hardware_vendor'],node_obj['opersys'],node_obj['type'])
+								file = directory + policy_list[element]
+								policy_index = 0
+								policy_node_list = []
+								node_policy = node_pol['policy'].copy()
+								for policy_path in node_pol['policy']:
+									policy_name = list(policy_path)[0].split('/')[-1]
+									policy_node_list.append(policy_name)
+									node_pol['policy'][policy_index] = list(policy_path)[0].replace('~','{}'.format(get_home_directory()))
+									safe_push = list(policy_path.values())[0]
+									safe_push_list.append(safe_push)
+									policy_index = policy_index + 1
+								try:
+									policy_index = policy_node_list.index(policy_list[element])
+									if safe_push_list[policy_index] != 'enabled':
+										print('Policy {} has been disabled for {}.'.format(policy_node_list[policy_index],node_obj['name']))
+										exit()
+								except Exception as error:
+									pass
+								if file in node_pol['policy']:
+									search_result.append("MATCH")
+									node_pol['policy'] = node_policy.copy()
+								else:
+									print('+ No associating policy {}'.format(policy_list[element]) + ' for node {}'.format(node))
+									search_result.append("NO MATCH")
+	#								node_pol['policy'] = node_policy.copy()
+						else:
+							continue
 			else:
 				continue	
 	return search_result 

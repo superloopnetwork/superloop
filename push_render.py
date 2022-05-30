@@ -69,10 +69,7 @@ def push_render(args):
 	"""
 	node_object = process_nodes()
 	match_node = search_node(argument_node,node_object)
-	if argument_file is None and argument_policy is None:
-		template_list = []
-		auditcreeper = True
-	elif argument_policy is not None:
+	if argument_policy is not None:
 		policy = argument_policy + ext['json']
 		policy_list = []
 		policy_list.append(policy)
@@ -88,24 +85,25 @@ def push_render(args):
 		elif 'NO MATCH' in match_policy:
 			print('+ No matching policy(ies) found in database.')
 			exit()
-		process_json_template(policy_list,node_object,node_policy,policy_list_copy,output,auditcreeper)		
+		process_json_template(policy_list,node_object,policy_list_copy,output,auditcreeper)
+		exit()
+	if argument_file is None and argument_policy is None:
+		template_list = []
+		auditcreeper = True
 	else:
-		template = argument_file + ext['json']
+		template = argument_file + ext['jinja']
 		template_list = []
 		template_list.append(template)
-		node_template = process_templates()
-		match_template = search_template(template_list,safe_push_list,match_node,node_template,node_object,auditcreeper,push_cfgs)
-		if len(match_node) == 0:
-			print('+ No matching node(s) found in database.')
-			exit()
-		elif 'NO MATCH' in match_template:
-			print('+ No matching template(s) found in database.')
-			exit()
-		"""
-				Uncomment the secrets below if you are using hashicorp vault. You will need to setup the credentials.
-		"""
-#		secrets = get_secrets()
-#		render(template_list,node_object,auditcreeper,output,with_remediation,secrets)
-		render(template_list,node_object,auditcreeper,output,with_remediation)
+	node_template = process_templates()
+	match_template = search_template(template_list,safe_push_list,match_node,node_template,node_object,auditcreeper,push_cfgs)
+	if len(match_node) == 0:
+		print('+ No matching node(s) found in database.')
+		exit()
+	"""
+			Uncomment the secrets below if you are using hashicorp vault. You will need to setup the credentials.
+	"""
+#	secrets = get_secrets()
+#	render(template_list,node_object,auditcreeper,output,with_remediation,secrets)
+	render(template_list,node_object,auditcreeper,output,with_remediation)
 
 	return None

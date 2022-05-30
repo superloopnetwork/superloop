@@ -4,6 +4,7 @@ This module allows auditing to occur for different hardware vendors.
 from jinja2 import Environment, FileSystemLoader
 from ciscoconfparse import CiscoConfParse
 from render import process_jinja2_template 
+from render import process_json_template 
 from multithread import multithread_engine
 from lib.mediators.generic import generic_audit_diff
 from lib.mediators.juniper import juniper_mediator
@@ -18,14 +19,16 @@ import re
 import initialize
 import os
 
-def mediator(template_list,node_object,auditcreeper,output,with_remediation):
+def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 	redirect = [] 
 	command = [] 
 	template_counter = 0
 	node_index = 0 
 	AUDIT_FILTER_RE = r'\[.*\]'
-	template_list_original = template_list[:]
-	template_list_copy = template_list
+	template_list_original = input_list[:]
+	template_list_copy = input_list
+	policy_list_original = input_list[:]
+	policy_list_copy = input_list
 	authentication = True
 
 	"""
@@ -57,25 +60,30 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 	are returned back to superloop. Cisco hardware_vendors will require backup-configs (get_config) where the diffs are processed locally.
 	"""
 	if auditcreeper:
-		template_list = template_list_copy[0]
+		input_list = template_list_copy[0]
 	for index in initialize.element:
 		rendered_config = []
 		if node_object[index]['hardware_vendor'] == 'juniper':
 			"""
                 Juniper's diff output are always in a certain stanza order. 
-                The template_list ordered processed may very well not be in the 
+                The input_list ordered processed may very well not be in the 
                 same order as Juniper's. In order to keep it consistent, we must 
                 call the function get_sorted_juniper_template() and it will 
                 return a sorted Juniper's stanza list.
 			"""
-			template_list = get_sorted_juniper_template_list(template_list)
+			input_list = get_sorted_juniper_template_list(input_list)
 			rendered_config.append('load replace terminal')
-		for template in template_list:
+		for template in input_list:
 			"""
 				Uncomment the secrets below if you are using hashicorp vault. You will need to setup the credentials.
 			"""
 #			secrets = get_secrets()
-			process_jinja2_template(node_object,index,template,with_remediation)
+			if args.policy is not None:
+				output = False
+				process_json_template(input_list,node_object,policy_list_copy,output,auditcreeper)
+				output = True 
+			else:
+				process_jinja2_template(node_object,index,template,with_remediation)
 			"""
 				Compiling the rendered configs from template and preparing
 				for pushing to node.
@@ -94,7 +102,7 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 					This below statement will check to see if it's the last 
 					template for the node. It will then append 3 commands to the list.
 				"""
-				if template_counter == len(template_list):
+				if template_counter == len(input_list):
 					rendered_config.append('\x04')
 					rendered_config.append('show | compare')
 					rendered_config.append('rollback 0')
@@ -107,8 +115,8 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 			against multiple templates. If only one template is being 
 			audited, do no pop off element.
 		"""
-		if len(template_list) != 1:
-			template_list = get_updated_list(template_list_copy)
+		if len(input_list) != 1:
+			input_list = get_updated_list(template_list_copy)
 		if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'f5' or node_object[index]['hardware_vendor'] == 'palo_alto':
 			redirect.append('get_config')
 			command.append([''])
@@ -126,12 +134,12 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 		Uncomment the below print statement for debugging purposes
 	"""
 	#print('REDIRECT: {}'.format(redirect))
-	#print('TEMPLATE_LIST: {}'.format(template_list))
+	#print('TEMPLATE_LIST: {}'.format(input_list))
 	#print('COMMAND: {}'.format(command))
 	multithread_engine(initialize.ntw_device,redirect,command,authentication)
-	template_list = template_list_original
+	input_list = template_list_original
 	if(auditcreeper):
-		template_list = template_list_original[0]
+		input_list = template_list_original[0]
 	for index in initialize.element:
 		edit_list = []
 		node_configs = []
@@ -155,9 +163,9 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 			print("Only in the generated config: +")
 			print ("{}".format(node_object[index]['name']))
 		if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'f5' or node_object[index]['hardware_vendor'] == 'palo_alto':
-			generic_audit_diff(node_object,index,template,template_list,AUDIT_FILTER_RE,output,with_remediation)
+			generic_audit_diff(args,node_object,index,template,input_list,AUDIT_FILTER_RE,output,with_remediation)
 		elif node_object[index]['hardware_vendor'] == 'juniper':
-			template_list = get_sorted_juniper_template_list(template_list)
+			input_list = get_sorted_juniper_template_list(input_list)
 			directory = get_template_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
 			with open('{}/diff-configs/{}'.format(get_home_directory(),node_object[index]['name']) + '.conf','r') as file:
 				init_config = file.readlines()
@@ -174,13 +182,13 @@ def mediator(template_list,node_object,auditcreeper,output,with_remediation):
 				print('+ Please check error(s) in template(s)')
 				break
 			else:
-				juniper_mediator(node_object,template_list,diff_config,edit_list,index)
-				juniper_audit_diff(directory,template_list,diff_config,edit_list)
+				juniper_mediator(node_object,input_list,diff_config,edit_list,index)
+				juniper_audit_diff(directory,input_list,diff_config,edit_list)
 		if auditcreeper:
 			initialize.configuration.append(node_configs)
 			if ntw_device_pop == True:
 				initialize.ntw_device.pop(node_index)
 				initialize.configuration.pop(node_index)
-			template_list = get_updated_list(template_list_original)
+			input_list = get_updated_list(template_list_original)
 
 	return None

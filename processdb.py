@@ -29,7 +29,7 @@ def process_models():
 	return models_object
 
 def process_policies():
-	with open("{}/superloop_code/database/policy_push.yaml".format(get_home_directory()), 'r') as yaml_file:
+	with open("{}/superloop_code/database/policies.yaml".format(get_home_directory()), 'r') as yaml_file:
 		policy_object = yaml.load(yaml_file, yaml.UnsafeLoader)
 
 	return policy_object 
@@ -37,10 +37,17 @@ def process_policies():
 def process_json(hardware_vendor,opersys,device_type,policy_file):
 	data = []
 	if hardware_vendor == 'cisco' and  opersys == 'asa' and device_type == 'firewall':
-		with open("{}{}".format(get_policy_directory(hardware_vendor,opersys,device_type),policy_file), 'r') as json_file:
-			data = commentjson.load(json_file)
+		try:
+			with open("{}{}".format(get_policy_directory(hardware_vendor,opersys,device_type),policy_file), 'r') as json_file:
+				data = commentjson.load(json_file)
+		except FileNotFoundError as error:
+			print('+ Cannot locate file.')
+			exit()
 	elif hardware_vendor == 'juniper' and opersys == 'junos' and device_type == 'vfirewall':
-		with open("{}{}".format(get_policy_directory(hardware_vendor,opersys,device_type),policy_file), 'r') as json_file:
-			data = commentjson.load(json_file)
-
+		try:
+			with open("{}{}".format(get_policy_directory(hardware_vendor,opersys,device_type),policy_file), 'r') as json_file:
+				data = commentjson.load(json_file)
+		except FileNotFoundError as error:
+			print('+ Cannot locate file.')
+			exit()
 	return data
