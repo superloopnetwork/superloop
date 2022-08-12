@@ -85,7 +85,7 @@ def parse_firewall_acl(node_object,policy):
 	path_source_device = eval(re.findall(SOURCE_DEVICE_PATH_FILTER_RE, parse_include)[0])
 	path_source_user = eval(re.findall(SOURCE_USER_PATH_FILTER_RE, parse_include)[0])
 	path_zones = eval(re.findall(ZONES_PATH_FILTER_RE, parse_include)[0])
-#	print(path_networks)
+	print(path_networks)
 	"""
 		Uncomment the below print statement for debugging purposes
 	"""

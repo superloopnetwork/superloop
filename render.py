@@ -13,6 +13,7 @@ from get_property import get_updated_list
 from parse_cmd import parse_commands
 from parse_cmd import parse_firewall_acl
 
+with_remediate = None
 def render(template_list,node_object,auditcreeper,output,with_remediation):
 	"""
 		Uncomment the below function and replace with the above define function to include secrets if hashicorp is used.
@@ -49,13 +50,21 @@ def render(template_list,node_object,auditcreeper,output,with_remediation):
 def process_jinja2_template(node_object,index,template,with_remediation):
 	hardware_vendor_template_directory = get_template_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
 	standards_directory = get_standards_directory(node_object[index]['name'],node_object[index]['hardware_vendor'],node_object[index]['type'])
-	env = Environment(loader=FileSystemLoader([hardware_vendor_template_directory,standards_directory]),lstrip_blocks = True,trim_blocks=True)
+	env = Environment(
+						loader=FileSystemLoader([hardware_vendor_template_directory,standards_directory]),
+						lstrip_blocks = True,
+						trim_blocks=True
+				)
+	env.filters['remediate'] = remediate
 	baseline = env.get_template(template)
 	os.makedirs('{}/rendered-configs/'.format(get_home_directory()),exist_ok=True)
 	with open('{}/rendered-configs/{}.{}'.format(get_home_directory(),node_object[index]['name'],template.replace('jinja2','')) + 'conf', 'w') as file:
 		config = baseline.render(
 							node = node_object[index],
 							with_remediation = with_remediation
+							#set = 'set ' ### for ZPE
+							#add = 'add ' ### for LTM
+							#delete = 'delete ' for LTM
 						)
 		file.write(config) 
 		file.close 
