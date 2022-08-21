@@ -15,6 +15,7 @@ from node_create import node_create
 from confirm import confirm
 
 def push_cfgs(args):
+	args.policy = None
 	argument_confirm = args.confirm
 	argument_node = args.node
 	auditcreeper = False
@@ -98,7 +99,7 @@ def push_cfgs(args):
 					get_diff = True
 					break
 			if get_diff:
-				mediator(template_list,node_object,auditcreeper,output,with_remediation)	
+				mediator(args,template_list,node_object,auditcreeper,output,with_remediation)	
 			else:
 				render(template_list,node_object,auditcreeper,output,with_remediation)
 			for index in initialize.element:

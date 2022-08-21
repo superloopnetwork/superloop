@@ -64,7 +64,6 @@ def generic_audit_diff(args,node_object,index,template,input_list,AUDIT_FILTER_R
 			This will take each element from the audit_filter list and search for the matched lines in backup_config.
 		"""
 		audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
-		print(audit_filter)
 #		parse_backup_configs = CiscoConfParse("{}/backup-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", syntax=get_syntax(node_object,index))
 		parse_backup_configs = CiscoConfParse(backup_config, syntax=get_syntax(node_object,index))
 		"""
