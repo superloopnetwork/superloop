@@ -110,10 +110,10 @@ def auditdiff(args):
 	else:
 		node_create(match_node,node_object)
 		mediator(args,template_list,node_object,auditcreeper,output,with_remediation)
-#		if len(initialize.configuration) == 0:
-#			pass	
-#		else:
-#			if remediation:
-#				confirm(redirect,commands)
+		if len(initialize.configuration) == 0:
+			pass	
+		else:
+			if remediation:
+				confirm(redirect,commands)
 
 	return None	

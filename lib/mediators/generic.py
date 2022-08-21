@@ -13,7 +13,7 @@ from parse_cmd import parse_negation_commands
 
 home_directory = os.environ.get('HOME')
 
-def generic_audit_diff(args,node_object,node_configs,index,template,input_list,AUDIT_FILTER_RE,output,auditcreeper,with_remediation):
+def generic_audit_diff(args,node_object,index,template,input_list,AUDIT_FILTER_RE,output,with_remediation):
 
 	for template in input_list:
 		
@@ -64,6 +64,7 @@ def generic_audit_diff(args,node_object,node_configs,index,template,input_list,A
 			This will take each element from the audit_filter list and search for the matched lines in backup_config.
 		"""
 		audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
+		print(audit_filter)
 #		parse_backup_configs = CiscoConfParse("{}/backup-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", syntax=get_syntax(node_object,index))
 		parse_backup_configs = CiscoConfParse(backup_config, syntax=get_syntax(node_object,index))
 		"""
@@ -114,7 +115,7 @@ def generic_audit_diff(args,node_object,node_configs,index,template,input_list,A
 				print("{}{} (none)".format(directory,template))
 				print('')
 			else:
-#				initialize.configuration.append([])
+				initialize.configuration.append([])
 				print('There are no diffs to be pushed for template {} on {}'.format(template,node_object[index]['name']))
 				if len(initialize.element) == 0:
 					break	
@@ -156,16 +157,16 @@ def generic_audit_diff(args,node_object,node_configs,index,template,input_list,A
 #				print('+ config standardization: {}%'.format(matched_percentage))
 			else:
 				if node_object[index]['hardware_vendor'] == 'cisco':
-					for config in push_configs:
-						node_configs.append(config)
+					for line in push_configs:
+						commands.append(line)
+					initialize.configuration.append(commands)
 				elif node_object[index]['hardware_vendor'] == 'citrix':
 					commands = parse_negation_commands(push_configs)
 					initialize.configuration.append(commands)
 					"""
 						For debug purpose, you may enable the below print statement.
 					"""
-			if auditcreeper == False:
-				initialize.configuration.append(node_configs)
+					print(initialize.configuration)
 
 	return None
 

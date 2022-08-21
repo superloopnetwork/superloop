@@ -163,7 +163,7 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 			print("Only in the generated config: +")
 			print ("{}".format(node_object[index]['name']))
 		if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'f5' or node_object[index]['hardware_vendor'] == 'palo_alto':
-			generic_audit_diff(args,node_object,node_configs,index,template,input_list,AUDIT_FILTER_RE,output,auditcreeper,with_remediation)
+			generic_audit_diff(args,node_object,index,template,input_list,AUDIT_FILTER_RE,output,with_remediation)
 		elif node_object[index]['hardware_vendor'] == 'juniper':
 			input_list = get_sorted_juniper_template_list(input_list)
 			directory = get_template_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
@@ -186,10 +186,9 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 				juniper_audit_diff(directory,input_list,diff_config,edit_list)
 		if auditcreeper:
 			initialize.configuration.append(node_configs)
-#			if ntw_device_pop == True:
-#				initialize.ntw_device.pop(node_index)
-#				initialize.configuration.pop(node_index)
+			if ntw_device_pop == True:
+				initialize.ntw_device.pop(node_index)
+				initialize.configuration.pop(node_index)
 			input_list = get_updated_list(template_list_original)
-		print('')
 
 	return None
