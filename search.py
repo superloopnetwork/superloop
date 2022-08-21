@@ -99,8 +99,6 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 								template_index = template_index + 1
 							try:
 								template_index = template_node_list.index(template_list[element])
-								print(safe_push_list)
-								print(template_index)
 								if safe_push_list[template_index] != 'enabled' and push_cfgs:
 									print('Template {} has been disabled for {}.'.format(template_node_list[template_index],node_obj['name']))
 									exit()
