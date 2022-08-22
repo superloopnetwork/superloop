@@ -13,14 +13,13 @@ from parse_cmd import parse_negation_commands
 
 home_directory = os.environ.get('HOME')
 
-def generic_audit_diff(args,node_object,index,template,input_list,AUDIT_FILTER_RE,output,with_remediation):
+def generic_audit_diff(args,node_configs,node_object,index,template,input_list,AUDIT_FILTER_RE,output,with_remediation):
 
 	for template in input_list:
-		
+
 		filtered_backup_config = []
 		rendered_config = []
 		backup_config = []
-		commands = []
 		"""
 		:param filtered_backup_config: Audit filters that matches the lines in backup_config. Entries include depths/deep configs.
 		:type filtered_backup_config: list
@@ -109,7 +108,7 @@ def generic_audit_diff(args,node_object,index,template,input_list,AUDIT_FILTER_R
 			If there are no diffs and only and audit diff is executed, (none) will be printed to show users the result. However, if there are no diffs but a push cfgs
 			is executed, not configs would be pushed as an empty list is appended.
 		"""
-		if len(push_configs) == 0:
+		if len(push_configs) == 0 and output:
 			if output:
 				print("{}{} (none)".format(directory,template))
 				print('')
@@ -117,6 +116,7 @@ def generic_audit_diff(args,node_object,index,template,input_list,AUDIT_FILTER_R
 				initialize.configuration.append([])
 				print('There are no diffs to be pushed for template {} on {}'.format(template,node_object[index]['name']))
 				if len(initialize.element) == 0:
+					node_configs.append('')
 					break	
 		else:
 			"""
@@ -155,18 +155,14 @@ def generic_audit_diff(args,node_object,index,template,input_list,AUDIT_FILTER_R
 #				print('')
 #				print('+ config standardization: {}%'.format(matched_percentage))
 			else:
-				if node_object[index]['hardware_vendor'] == 'cisco':
+				if node_object[index]['hardware_vendor'] == 'cisco' and len(push_configs) != 0:
 					for line in push_configs:
-						commands.append(line)
-					initialize.configuration.append(commands)
+						node_configs.append(line)
 				elif node_object[index]['hardware_vendor'] == 'citrix':
-					commands = parse_negation_commands(push_configs)
-					initialize.configuration.append(commands)
+					node_configs = parse_negation_commands(push_configs)
 					"""
 						For debug purpose, you may enable the below print statement.
 					"""
-					print(initialize.configuration)
-
 	return None
 
 def parse_audit_filter(node_object,index,parse_backup_configs,audit_filter):
