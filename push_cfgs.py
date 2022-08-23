@@ -94,14 +94,14 @@ def push_cfgs(args):
 		print('')
 	else:
 		node_create(match_node,node_object)
-		for index in initialize.element:
-			if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'citrix':
-				get_diff = True
-				break
-		if get_diff:
-			mediator(args,template_list,node_object,auditcreeper,output,with_remediation)	
-		else:
-			render(template_list,node_object,auditcreeper,output,with_remediation)
+#		for index in initialize.element:
+#			if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'citrix':
+#				get_diff = True
+#				break
+#		if get_diff:
+		mediator(args,template_list,node_object,auditcreeper,output,with_remediation)	
+#		else:
+#			render(template_list,node_object,auditcreeper,output,with_remediation)
 		for index in initialize.element:
 			redirect.append('push_cfgs')
 		if not any(initialize.configuration):
