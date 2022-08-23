@@ -74,7 +74,7 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 			input_list = get_sorted_juniper_template_list(input_list)
 			rendered_config.append('load replace terminal')
 		for template in input_list:
-			print(node_object[index]['name'],template)
+			print('[>] {} ; {}'.format(node_object[index]['name'],template))
 			"""
 				Uncomment the secrets below if you are using hashicorp vault. You will need to setup the credentials.
 			"""
@@ -105,8 +105,9 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 				"""
 				if template_counter == len(input_list):
 					rendered_config.append('\x04')
-					rendered_config.append('show | compare')
-					rendered_config.append('rollback 0')
+					if output:
+						rendered_config.append('show | compare')
+						rendered_config.append('rollback 0')
 				"""
 					Uncomment the below print statement for debugging purposes
 				"""
@@ -117,8 +118,8 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 			audited, do no pop off element.
 		"""
 #		if len(input_list) != 1:
-		print('template_list_copy > {}'.format(template_list_copy))
-		print('input_list > {}'.format(input_list))
+#		print('template_list_copy > {}'.format(template_list_copy))
+#		print('input_list > {}'.format(input_list))
 		input_list = get_updated_list(template_list_copy)
 		if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'f5' or node_object[index]['hardware_vendor'] == 'palo_alto':
 			redirect.append('get_config')
@@ -167,7 +168,7 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 			print ("{}".format(node_object[index]['name']))
 		if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'f5' or node_object[index]['hardware_vendor'] == 'palo_alto':
 			generic_audit_diff(args,node_configs,node_object,index,template,input_list,AUDIT_FILTER_RE,output,with_remediation)
-			print('node_configs > {}'.format(node_configs))
+#			print('node_configs > {}'.format(node_configs))
 			initialize.configuration.append(node_configs)
 		elif node_object[index]['hardware_vendor'] == 'juniper':
 			input_list = get_sorted_juniper_template_list(input_list)
@@ -190,7 +191,7 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 				juniper_mediator(node_object,input_list,diff_config,edit_list,index)
 				juniper_audit_diff(directory,input_list,diff_config,edit_list)
 			initialize.configuration.append(rendered_config)
-		print('initialize.configuration > {}'.format(initialize.configuration))
+#		print('initialize.configuration > {}'.format(initialize.configuration))
 		if auditcreeper:
 			if node_object[index]['hardware_vendor'] == 'cisco' and len(node_configs) == 0:
 				initialize.ntw_device.pop(len(initialize.configuration) - 1)

@@ -100,7 +100,7 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 							try:
 								template_index = template_node_list.index(template_list[element])
 								if safe_push_list[template_index] != 'enabled' and push_cfgs:
-									print('Template {} has been disabled for {}.'.format(template_node_list[template_index],node_obj['name']))
+									print('[x] Template {} has been disabled for {}.'.format(template_node_list[template_index],node_obj['name']))
 									exit()
 							except Exception as error:
 								pass
@@ -190,7 +190,7 @@ def search_policy(policy_list,safe_push_list,match_node,node_policy,node_object,
 								try:
 									policy_index = policy_node_list.index(policy_list[element])
 									if safe_push_list[policy_index] != 'enabled':
-										print('Policy {} has been disabled for {}.'.format(policy_node_list[policy_index],node_obj['name']))
+										print('[x] Policy {} has been disabled for {}.'.format(policy_node_list[policy_index],node_obj['name']))
 										exit()
 								except Exception as error:
 									pass
@@ -232,7 +232,7 @@ def disabled_safe_push_element(safe_push_list,template_node_list,node_obj):
 	disabled_templates = []
 	for element in safe_push_list:
 		if element == 'disabled':
-			print('Template {} has been disabled for {}.'.format(template_node_list[index],node_obj['name']))
+			print('[x] Template {} has been disabled for {}.'.format(template_node_list[index],node_obj['name']))
 			disabled_templates.append(index)
 		index = index + 1
 

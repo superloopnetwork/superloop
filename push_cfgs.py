@@ -106,7 +106,7 @@ def push_cfgs(args):
 			redirect.append('push_cfgs')
 		if not any(initialize.configuration):
 			print('There are no diffs to be pushed.')
-		print('configurations > {}'.format(initialize.configuration))
+#		print('configurations > {}'.format(initialize.configuration))
 		for index in range(len(initialize.element)):
 			if len(initialize.configuration) != 0:
 				push_cfgs = True

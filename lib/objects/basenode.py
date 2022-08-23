@@ -90,7 +90,8 @@ class BaseNode(object):
 			save = self.net_connect.send_command('copy running-config startup-config')
 		elif self.hardware_vendor == 'juniper':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
-			self.net_connect.commit(and_quit=True)
+			save = self.net_connect.commit(and_quit=True)
+			print(output)
 		elif self.hardware_vendor == 'vyatta':
 			output = self.net_connect.send_config_set(commands, exit_config_mode=False)
 			self.net_connect.commit()
