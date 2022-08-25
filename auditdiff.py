@@ -102,10 +102,12 @@ def auditdiff(args):
 	node_template = process_templates()
 	match_template = search_template(template_list,safe_push_list,match_node,node_template,node_object,auditcreeper,push_cfgs)
 	if len(match_node) == 0:
-		print('+ No matching nodes found in database.')
+		print('[x] No matching nodes found in database.')
+		print('')
 		exit()
-	elif 'NO MATCH' in match_template:
-		print('+ No matching templates found in database.')
+	elif 'NO MATCH' in match_template or len(match_template) == 0:
+		print('[x] No matching templates found in database.')
+		print('')
 		exit()
 	else:
 		node_create(match_node,node_object)

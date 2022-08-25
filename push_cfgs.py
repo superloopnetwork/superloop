@@ -87,11 +87,13 @@ def push_cfgs(args):
 		:type match_template: list 
 	"""
 	if len(match_node) == 0:
-		print('+ No matching node(s) found in database.')
+		print('[x] No matching node(s) found in database.')
 		print('')
-	elif 'NO MATCH' in match_template:
-		print('+ No matching template(s) found in database.')
+		exit()
+	elif 'NO MATCH' in match_template or len(match_template) == 0:
+		print('[x] No matching template(s) found in database.')
 		print('')
+		exit()
 	else:
 		node_create(match_node,node_object)
 #		for index in initialize.element:
@@ -105,7 +107,9 @@ def push_cfgs(args):
 		for index in initialize.element:
 			redirect.append('push_cfgs')
 		if not any(initialize.configuration):
-			print('There are no diffs to be pushed.')
+			print('[>] There are no diffs to be pushed. All configuration matches template(s).')
+			print('')
+			exit()
 #		print('configurations > {}'.format(initialize.configuration))
 		for index in range(len(initialize.element)):
 			if len(initialize.configuration) != 0:
