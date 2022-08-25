@@ -80,7 +80,11 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 							"""
 								If all templates are disabled, exit.
 							"""
-							if len(template_node_list) == 0:
+							if len(safe_push_list) and 'enabled' in safe_push_list and push_cfgs:
+								search_result.append("MATCH")	
+							if len(template_node_list) > 0 and not push_cfgs:
+								search_result.append("MATCH")	
+							if len(template_node_list) == 0 and push_cfgs:
 								exit()
 							template_list.append(template_node_list)
 							del safe_push_list[:]
@@ -100,7 +104,7 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 							try:
 								template_index = template_node_list.index(template_list[element])
 								if safe_push_list[template_index] != 'enabled' and push_cfgs:
-									print('[x] Template {} has been disabled for {}.'.format(template_node_list[template_index],node_obj['name']))
+									print('[x] {} ; {}'.format(node_obj['name']),template_node_list[template_index])
 									exit()
 							except Exception as error:
 								pass
@@ -108,7 +112,7 @@ def search_template(template_list,safe_push_list,match_node,node_template,node_o
 								search_result.append("MATCH")	
 								node_temp['templates'] = node_templates.copy()
 							else:
-								print('+ No associating template {}'.format(template_list[element]) + ' for node {}'.format(node))
+								print('[x] No associating template {}'.format(template_list[element]) + ' for node {}'.format(node))
 								exit()
 								search_result.append("NO MATCH")
 								node_temp['templates'] = node_templates.copy()
@@ -190,7 +194,7 @@ def search_policy(policy_list,safe_push_list,match_node,node_policy,node_object,
 								try:
 									policy_index = policy_node_list.index(policy_list[element])
 									if safe_push_list[policy_index] != 'enabled':
-										print('[x] Policy {} has been disabled for {}.'.format(policy_node_list[policy_index],node_obj['name']))
+										print('[x] {} ; {}'.format(node_obj['name']),policy_node_list[policy_index])
 										exit()
 								except Exception as error:
 									pass
@@ -198,7 +202,7 @@ def search_policy(policy_list,safe_push_list,match_node,node_policy,node_object,
 									search_result.append("MATCH")
 									node_pol['policy'] = node_policy.copy()
 								else:
-									print('+ No associating policy {}'.format(policy_list[element]) + ' for node {}'.format(node))
+									print('[x] No associating policy {}'.format(policy_list[element]) + ' for node {}'.format(node))
 									search_result.append("NO MATCH")
 	#								node_pol['policy'] = node_policy.copy()
 						else:
@@ -232,7 +236,7 @@ def disabled_safe_push_element(safe_push_list,template_node_list,node_obj):
 	disabled_templates = []
 	for element in safe_push_list:
 		if element == 'disabled':
-			print('[x] Template {} has been disabled for {}.'.format(template_node_list[index],node_obj['name']))
+			print('[x] {} ; {}'.format(node_obj['name'],template_node_list[index]))
 			disabled_templates.append(index)
 		index = index + 1
 

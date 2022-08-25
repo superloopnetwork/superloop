@@ -96,8 +96,12 @@ def push_render(args):
 		template_list.append(template)
 	node_template = process_templates()
 	match_template = search_template(template_list,safe_push_list,match_node,node_template,node_object,auditcreeper,push_cfgs)
+	print(match_template)
 	if len(match_node) == 0:
-		print('+ No matching node(s) found in database.')
+		print('[x] No matching node(s) found in database.')
+		exit()
+	elif 'NO MATCH' in match_template or len(match_template) == 0:
+		print('[x] No matching templates found in database.')
 		exit()
 	"""
 			Uncomment the secrets below if you are using hashicorp vault. You will need to setup the credentials.
