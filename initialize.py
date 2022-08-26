@@ -2,23 +2,13 @@
 	This module define the global variables.
 """
 def variables():
-	### NTW_DEVICE IS A LIST OF THE MATCHED NODES
 	global ntw_device
-
-	### ELEMENT IS A LIST OF THE INDEXES OF ALL THE MATCHED NODES
 	global element
-
-	### ELEMENT_POLICY IS A LIST OF THE INDEXES OF ALL THE MATCHED POLICIES
 	global element_policy
-
-	### CONFIGURATION IS A LIST OF THE CONFIGS TO BE PUSHED TO DEVICE
 	global configuration
-
-	### RENDERED_CONFIG IS A LIST OF THE CONFIGS RENDERED FROM THE TEMPLATE
 	global rendered_config
-
-	### BACKUP_CONFIG IS A LIST OF CONFIGS CAPTURED FROM THE DEVICE AT THE TIME OF AUDIT DIFF
 	global backup_config
+	global debug_element
 
 	ntw_device = []
 	templates = []
@@ -27,29 +17,30 @@ def variables():
 	configuration = []
 	rendered_config = []
 	backup_config = []
+	debug_element = []
 
 	"""
+		:param password: Only a single time use, per session of push_cfgs.py for Cisco like devices so users do not require to authenticate twice.
+		:type password: str
+
 		:param ntw_device: All matched nodes.
 		:type ntw_device: list
-		
-		:param element: All indexes of matched nodes.
-		:type element: int
-		
-		:param element_policy: All 
+
+		:param templates: All matched templates.
+		:type templates: list
+
+		:param element_policy: All elements of matched policies.
 		:type element_policy: int
 
-		:param commands: Referenced to global variable commands which keeps track of all commands per node.
-		:type commands: list
-		
-		:param ext: File extention
-		:type ext: str 
-		
-		:param output: Flag to output to stdout.  
-		:type ext: bool 
-		
-		:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
-		:type alt_key_file: list
-		
-		:param with_remediation: Current function to remediate or not remediate.  
-		:type ext: bool 
+		:param configuration: Referenced to global variable configuration which keeps track of all commands per node.
+		:type configuration: list
+
+		:param rendered_config: Redered configurations from templates.
+		:type rendered_config: list
+
+		:param backup_config: Backup configuration from taken from devices.
+		:type backup_config: list
+
+		:param debug_element: Element number of device for when there are no diffs, then device gets popped off.
+		:type debug_element: list
 	"""

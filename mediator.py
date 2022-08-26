@@ -20,33 +20,37 @@ import initialize
 import os
 
 def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
-	redirect = [] 
+	AUDIT_FILTER_RE = r'\[.*\]'
+	authentication = True
 	command = [] 
+	initialize.debug_element = initialize.element[:]
 	template_counter = 0
 	node_index = 0 
-	AUDIT_FILTER_RE = r'\[.*\]'
-	template_list_original = input_list[:]
-	template_list_copy = input_list
 	policy_list_original = input_list[:]
 	policy_list_copy = input_list
-	authentication = True
+	redirect = []
+	template_list_original = input_list[:]
+	template_list_copy = input_list
 
 	"""
-	:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
-	:type alt_key_file: list
-	
+	:param AUDIT_FILTER_RE: Regular expression to filter out the audit filter in every template.
+	:type AUDIT_FILTER_RE: str
+
 	:param command: A list within a list where each element represents per node of commands to execute.
 	:type command: list
+
+	:param initialize.debug_element: Duplicate of initialize.element as elments need to be popped off when there are no diffs to help display what will be changing in configs.
+	:type initialize.debug_element: list
 	
 	:param template_counter: Used to keep track of the number of templates it cycles through for Juniper.
 	:type template_counter: int
 	
-	:param node_index: Keeps track of the index in initialize.ntw_device. If remediation is not required (configs matches template), then the node is popped of       initialize.ntw_device and nothing is changed on that device.
+	:param node_index: Keeps track of the index in initialize.ntw_device. If remediation is not required (configs matches template), then the node is popped off initialize.ntw_device and nothing is changed on that device.
 	:type node_index: int
 	
-	:param AUDIT_FILTER_RE: Regular expression to filter out the audit filter in every template.
-	:type AUDIT_FILTER_RE: str
-	
+	:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
+	:type redirect: list
+
 	:param template_list_original: Take a duplicate copy of template_list
 	:type template_list_original: list
 	
@@ -195,7 +199,6 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 		if auditcreeper:
 			if node_object[index]['hardware_vendor'] == 'cisco' and len(node_configs) == 0:
 				initialize.ntw_device.pop(len(initialize.configuration) - 1)
-				initialize.element.pop(len(initialize.configuration) - 1)
 				initialize.configuration.pop(len(initialize.configuration) - 1)
 			input_list = get_updated_list(template_list_original)
 
