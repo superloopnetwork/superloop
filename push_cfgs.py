@@ -47,7 +47,7 @@ def push_cfgs(args):
 		:type ext: bool
 		
 		:param redirect: A list of which method superloop will access. This variable is sent to the multithread_engine. Each element is a redirect per node.
-		:type alt_key_file: list
+		:type redirect: list
 		
 		:param safe_push_list: A list of enable/disabled strings. This corresponds to templates that are safe to push (enable) vs. templates that are not safe to push (disabled).
 		:type ext: list
@@ -106,12 +106,12 @@ def push_cfgs(args):
 			print('[>] There are no diffs to be pushed. All configuration matches template(s).')
 			print('')
 			exit()
-		for index in initialize.element:
+		for index in initialize.debug_element:
 			debug[node_object[index]['name']] = [initialize.configuration[config_counter]]
 			config_counter = config_counter + 1
 		debug_json = json.dumps(debug, indent=4)
 		print('[DEBUG]\n{}'.format(debug_json))
-#		for index in initialize.element:
+#		for index in initialize.debug_element:
 #			print('[DEBUG] {{{} : {}}}'.format(node_object[index]['name'],initialize.configuration[config_counter]))
 #			config_counter = config_counter + 1
 		for index in range(len(initialize.element)):
