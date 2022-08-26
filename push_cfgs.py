@@ -2,6 +2,7 @@
 	This module controls the push of the templates.
 """
 import initialize
+import json
 import os
 from lib.objects.basenode import BaseNode
 from processdb import process_nodes
@@ -20,6 +21,8 @@ def push_cfgs(args):
 	argument_node = args.node
 	auditcreeper = False
 	commands = initialize.configuration
+	config_counter = 0
+	debug = {}
 	ext = '.jinja2'
 	output = False 
 	redirect = []
@@ -96,21 +99,21 @@ def push_cfgs(args):
 		exit()
 	else:
 		node_create(match_node,node_object)
-#		for index in initialize.element:
-#			if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'citrix':
-#				get_diff = True
-#				break
-#		if get_diff:
 		mediator(args,template_list,node_object,auditcreeper,output,with_remediation)	
-#		else:
-#			render(template_list,node_object,auditcreeper,output,with_remediation)
 		for index in initialize.element:
 			redirect.append('push_cfgs')
 		if not any(initialize.configuration):
 			print('[>] There are no diffs to be pushed. All configuration matches template(s).')
 			print('')
 			exit()
-#		print('configurations > {}'.format(initialize.configuration))
+		for index in initialize.element:
+			debug[node_object[index]['name']] = [initialize.configuration[config_counter]]
+			config_counter = config_counter + 1
+		debug_json = json.dumps(debug, indent=4)
+		print('[DEBUG]\n{}'.format(debug_json))
+#		for index in initialize.element:
+#			print('[DEBUG] {{{} : {}}}'.format(node_object[index]['name'],initialize.configuration[config_counter]))
+#			config_counter = config_counter + 1
 		for index in range(len(initialize.element)):
 			if len(initialize.configuration) != 0:
 				push_cfgs = True

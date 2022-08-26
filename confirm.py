@@ -8,7 +8,11 @@ from multithread import multithread_engine
 def confirm(redirect,commands,authentication):
 	index = 0
 	if(redirect[index] == 'push_cfgs'):
-		check = str(input("Push configs? [y/N]: ")).strip()
+		try:
+			check = str(input("Push configs? [y/N]: ")).strip()
+		except KeyboardInterrupt as error:
+			print('[>] Terminating...')
+			exit()
 	else:
 		check = str(input("Pull configs? [y/N]: ")).strip()
 	try:
