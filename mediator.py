@@ -149,7 +149,11 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 	if(auditcreeper):
 		input_list = template_list_original[0]
 	for index in initialize.element:
+		initialize.compliance_percentage = 0
+		diff_config = []
 		edit_list = []
+		length_backup_config = 0
+		length_rendered_config = 0
 		node_configs = []
 		diff_config = []
 		ntw_device_pop = True 
@@ -198,6 +202,9 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 #		print('initialize.configuration > {}'.format(initialize.configuration))
 		if auditcreeper:
 			if node_object[index]['hardware_vendor'] == 'cisco' and len(node_configs) == 0:
+				if output:
+					print('[>] {} code compliance: {}%'.format(node_object[index]['name'],initialize.compliance_percentage))
+					print('')
 				initialize.ntw_device.pop(len(initialize.configuration) - 1)
 				initialize.configuration.pop(len(initialize.configuration) - 1)
 			input_list = get_updated_list(template_list_original)

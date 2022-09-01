@@ -195,3 +195,16 @@ def get_secrets():
 	secrets = secret_data['data']['data']
 
 	return secrets
+
+"""
+	get_no_negate() function stores a list of strings that do not require a negation when it comes to the Cisco. However, the command by default begins with a 'no'.
+	For example. 'no logging rate-limit', 'no service-pad'. The keywords must be stored in this list so superloop checks against it to know which commands to not
+	negate.
+""" 
+def get_no_negate():
+	no_negate = [
+		'logging',
+		'service',
+	]
+
+	return no_negate

@@ -33,7 +33,7 @@ def multithread_engine(ntw_object,redirect,commands,authentication):
 	for some_thread in threading.enumerate():
 		if some_thread != main_thread:
 			some_thread.join()
-	print('[>] complete [{}]\n'.format(datetime.datetime.now() - start_time))
+	print('[>] Complete [{}]\n'.format(datetime.datetime.now() - start_time))
 
 	return None
 
