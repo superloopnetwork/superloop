@@ -5,6 +5,7 @@ import re
 import initialize
 import os
 from ciscoconfparse import CiscoConfParse
+from get_property import get_no_negate
 from get_property import get_policy_directory
 from get_property import get_template_directory
 from get_property import get_syntax
@@ -14,9 +15,11 @@ from parse_cmd import parse_negation_commands
 home_directory = os.environ.get('HOME')
 
 def generic_audit_diff(args,node_configs,node_object,index,template,input_list,AUDIT_FILTER_RE,output,with_remediation):
-
+	length_rendered_config = 0
+	length_backup_config = 0
+	delta_diff_counter = 0
+	delta_length_rendered_config = 0
 	for template in input_list:
-
 		filtered_backup_config = []
 		rendered_config = []
 		backup_config = []
@@ -42,6 +45,7 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 				continue	
 			else:
 				rendered_config.append(strip_config)	
+		length_rendered_config = len(rendered_config)
 		with open("{}/backup-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", "r") as file:
 			init_config = file.readlines()
 		for config_line in init_config:
@@ -51,6 +55,7 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 				continue	
 			else:
 				backup_config.append(strip_config)	
+		length_backup_config = len(backup_config)
 		if args.policy is not None:
 			directory = get_policy_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
 			with open("{}".format(directory) + template, "r") as file:
@@ -110,8 +115,10 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 		"""
 		if len(push_configs) == 0 and output:
 			if output:
-				print("{}{} (none)".format(directory,template))
+				print('{}{} (none)'.format(directory,template))
 				print('')
+				template_percentage = round(length_rendered_config / length_backup_config * 100,2)
+				initialize.compliance_percentage = round(initialize.compliance_percentage + template_percentage,2)
 			else:
 				initialize.configuration.append([])
 				print('There are no diffs to be pushed for template {} on {}'.format(template,node_object[index]['name']))
@@ -134,26 +141,25 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 						line = line.replace('[','\[')
 						line = line.replace(']','\]')
 					search = parse_backup_configs.find_objects(r"^{}".format(line),exactmatch=True)
-					line = line.replace('\[','[')
-					line = line.replace('\]',']')
-					line = line.replace('\+','+')
-					if re.search(r'^no',line) or re.search(r'\sno',line):
-						line = re.sub("no","",line)
-						print("-{}".format(line))
-						total_push_config_lines = total_push_config_lines - 1
+					line = line.replace('\[','[').replace('\]',']').replace('\+','+')
+					if (re.search(r'^no',line) or re.search(r'^\sno',line)) and (line.split()[1] in get_no_negate()):
+						print('+ {}'.format(line))
+						delta_diff_counter = delta_diff_counter + 1
+					elif re.search(r'^no',line) or re.search(r'^\sno',line): 
+						line = re.sub("^no",'',line)
+						print('-{}'.format(line))
+						delta_diff_counter = delta_diff_counter + 1
 					elif len(search) == 0:
-						print("+ {}".format(line))
-						total_push_config_lines = total_push_config_lines - 1
+						print('+ {}'.format(line))
+						delta_diff_counter = delta_diff_counter + 1
 					elif len(search) > 1:
-						print("+ {}".format(line))
-						total_push_config_lines = total_push_config_lines - 1
+						print('+ {}'.format(line))
+						delta_diff_counter = delta_diff_counter + 1
 					else:
-						print("  {}".format(line))
-						total_push_config_lines = total_push_config_lines - 1
-#				matched_lines = total_filtered_backup_config_lines - total_push_config_lines
-#				matched_percentage = round(matched_lines/total_filtered_backup_config_lines*100,2)
-#				print('')
-#				print('+ config standardization: {}%'.format(matched_percentage))
+						print('  {}'.format(line))
+				delta_length_rendered_config = length_rendered_config - delta_diff_counter
+				template_percentage = round(delta_length_rendered_config / length_backup_config * 100,2)
+				initialize.compliance_percentage = round(initialize.compliance_percentage + template_percentage,2)
 			else:
 				if node_object[index]['hardware_vendor'] == 'cisco' and len(push_configs) != 0:
 					for line in push_configs:

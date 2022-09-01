@@ -1,5 +1,4 @@
-######################### BASE NODE ###########################
-from netmiko import ConnectHandler, SCPConn
+from netmiko import ConnectHandler, SCPConn, NetmikoAuthenticationException
 import re
 import os
 
@@ -33,7 +32,11 @@ class BaseNode(object):
 		self.username = os.environ.get('USERNAME')
 
 	def connect(self):
-		self.net_connect = ConnectHandler(self.mgmt_ip4,self.name,self.username,self.password,self.password,device_type=self.get_device_type())
+		try:
+			self.net_connect = ConnectHandler(self.mgmt_ip4,self.name,self.username,self.password,self.password,device_type=self.get_device_type())
+		except NetmikoAuthenticationException as error:
+			print('[x] Authentication failure.')
+			os._exit(1)
 			
 	def scpconnect(self):
 		self.connect()
