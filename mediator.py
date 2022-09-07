@@ -200,6 +200,14 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 				juniper_audit_diff(directory,input_list,diff_config,edit_list)
 			initialize.configuration.append(rendered_config)
 #		print('initialize.configuration > {}'.format(initialize.configuration))
+		"""
+			If compliance percentage is less than 0% (negative) meaning no configs are to standard, percentage equals 0%.
+		"""
+		if initialize.compliance_percentage < 0:
+			initialize.compliance_percentage = 0
+		"""
+			If remediation is not required (no diffs), then the node and the configuration are popped off from the list.
+		"""
 		if auditcreeper:
 			if node_object[index]['hardware_vendor'] == 'cisco' and len(node_configs) == 0:
 				if output:
