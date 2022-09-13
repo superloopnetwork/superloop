@@ -94,526 +94,373 @@ Before we begin, I've constructed this application for easy database management 
 
   1. nodes.yaml
   2. templates.yaml
+  
+## Credentials
 
-nodes.yaml acts as the inventory for all network devices. When a device is added, every attribute of the node will be discovered automatically so there is no need to populate it manually. In order to discover the device, the SNMP community string must been set:
-```
-root@devvm:~# export SNMP_COMMUNITY_STRING="snmp_k3y"
-root@devvm:~# superloop host add core.sw.superloop.ktch   
-+ SNMP discovery successful.
-+ New node appended to database.
-```
-
-```
-root@devvm:~/database# cat nodes.yaml 
----
-- created_at: '2021-01-18 21:01:19'
-  created_by: root
-  domain_name: 'null'
-  hardware_vendor: cisco
-  lifecycle_status: 'null'
-  location_name: 'null'
-  mgmt_con_ip4: 'null'
-  mgmt_ip4: 10.10.10.10
-  mgmt_oob_ip4: 'null'
-  mgmt_snmp_community4: 'null'
-  name: core-fw-superloop-toron
-  oncall_team: network
-  opersys: asa
-  platform_name: ASA5510
-  role_name: datacenter-firewall
-  serial_num: XXXXXXXXXX
-  software_image: 'null'
-  software_version: 'null'
-  status: online
-  type: firewall
-  updated_at: '2021-02-01 11:27:07'
-  updated_by: root
-- created_at: '2021-01-31 17:48:44'
-  created_by: root
-  domain_name: 'null'
-  hardware_vendor: cisco
-  lifecycle_status: 'null'
-  location_name: 'null'
-  mgmt_con_ip4: 'null'
-  mgmt_ip4: 20.20.20.20
-  mgmt_oob_ip4: 'null'
-  mgmt_snmp_community4: 'null'
-  name: core.sw.superloop.sfran
-  oncall_team: network
-  opersys: ios
-  platform_name: WS-C3750G-24TS-1U
-  role_name: datacenter-switch
-  serial_num: XXXXXXXXXX
-  software_image: 'null'
-  software_version: 'null'
-  status: online
-  type: switch
-  updated_at: '2021-02-01 11:19:24'
-  updated_by: root
-- created_at: '2021-01-22 20:42:28'
-  created_by: root
-  domain_name: 'null'
-  hardware_vendor: juniper
-  lifecycle_status: 'null'
-  location_name: 'null'
-  mgmt_con_ip4: 'null'
-  mgmt_ip4: 30.30.30.30
-  mgmt_oob_ip4: 'null'
-  mgmt_snmp_community4: 'null'
-  name: core.vsrx.superloop.sjose 
-  oncall_team: network
-  opersys: junos
-  platform_name: firefly-perimeter
-  role_name: datacenter-vfirewall
-  serial_num: XXXXXXXXXX
-  software_image: 'null'
-  software_version: 'null'
-  status: online
-  type: vfirewall
-  updated_at: '2021-02-01 15:44:23'
-  updated_by: root
-```  
 Credentials used to connect to nodes are via the OS environment varilable, $USER. It will prompt you for your password
 ```
 export USERNAME=username
 ```
-templates.yaml is a database file that consist of all the jinja2 templates. You will need to include the full path. Here is a sample of how it should look like below. Do not change the format as the application reads it in a specific method. Only change the properties.
+
+## Hierarchy
+
+You'll noticed the superloo_code/ and superloop/ source code are completely segregated by different repositories. superloop_code/ repo can be found here and should be cloned to the home directory of the user as that is where superloop references to. Hourly backups should be stored in the superloop_code/backup-configs directory via CI/CD. superloop_code/database are where the inventory of the devices, templates (reference) files are stored. superloop_code/templates are where all the templates are stored. The hierarchy is structured based on vendor, OS and device type when it comes to templates. That's because different vendors and OS have different syntaxes. ex. Cisco IOS have different syntaxes than Cisco NXOS.
 ```
-root@devvm:~/database# cat templates.yaml 
----
-- platform_name: cisco
-  type: firewall
-  opersys: ios
-  templates:
-  - ~/templates/cisco/ios/firewall/snmp.jinja2
-  - ~/templates/cisco/ios/firewall/base.jinja2
-- platform_name: cisco
-  type: router 
-  opersys: ios
-  templates:
-  - ~/templates/cisco/ios/router/base.jinja2
-- platform_name: cisco
-  type: switch 
-  opersys: ios
-  templates:
-  - ~/templates/cisco/ios/switch/access.jinja2
-  - ~/templates/cisco/ios/switch/services.jinja2
-  - ~/templates/cisco/ios/switch/snmp.jinja2
-  - ~/templates/cisco/ios/switch/hostname.jinja2
-  - ~/templates/cisco/ios/switch/dhcp.jinja2
-```
-I've structured the hierarchy based on vendor, os and the type. You should do the same in order to keep your templates orderly. Whatever hierarchy you choose, you will need to update/modify in the directory.py file to reflect (default path /templates/). Below is an example of how it can be organized.
-```
-root@devvm:~# tree ~/templates/
-/root/templates/
-|-- cisco
-|   |-- ios
-|   |   |-- router
-|   |   |   |-- logging.jinja2
-|   |   |   |-- service.jinja2
-|   |   |   `-- snmp.jinja2
-|   |   `-- switch
-|   |       |-- base.jinja2
-|   |       |-- logging.jinja2
-|   |       |-- service.jinja2
-|   |       `-- snmp.jinja2
-|   `-- nxos
-|       |-- router
-|       |   |-- logging.jinja2
-|       |   |-- service.jinja2
-|       |   `-- snmp.jinja2
-|       `-- switch
-|           |-- base.jinja2
-|           |-- logging.jinja2
-|           |-- service.jinja2
-|           `-- snmp.jinja2
-|-- juniper
-|   `-- junos
-|       |-- router
-|       |   |-- interfaces.jinja2
-|       |   |-- policy-options.jinja2
-|       |   |-- protocols.jinja2
-|       |   |-- routing-options.jinja2
-|       |   |-- security.jinja2
-|       |   |-- snmp.jinja2
-|       |   `-- system.jinja2
-|       `-- vfirewall
-|           |-- interfaces.jinja2
-|           |-- policy-options.jinja2
-|           |-- routing-instances.jinja2
-|           |-- routing-options.jinja2
-|           |-- security.jinja2
-|           `-- system.jinja2
+root@devvm:~# tree superloop_code/
+superloop_code/
+├── database
+│   ├── nodes.yaml
+│   ├── policies.yaml
+│   ├── templates.yaml
+│   └── templates.yaml.bak
+├── policy
+│   ├── APPLICATIONS.net
+│   ├── cisco
+│   │   └── ios
+│   │       └── firewall
+│   │           └── base_policy.json
+│   ├── juniper
+│   │   └── junos
+│   │       └── vfirewall
+│   │           └── policy.json
+│   ├── NETWORKS.net
+│   ├── SERVICES.net
+│   ├── SOURCE_DEVICE.net
+│   ├── SOURCE_USER.net
+│   ├── :w
+│   └── ZONES.net
+└── templates
+    ├── hardware_vendors
+    │   ├── cisco
+    │   │   ├── asa
+    │   │   │   └── firewall
+    │   │   │       ├── base.jinja2
+    │   │   │       ├── logging.jinja2
+    │   │   │       ├── object-groups.jinja2
+    │   │   │       └── snmp.jinja2
+    │   │   ├── ios
+    │   │   │   ├── router
+    │   │   │   │   └── base.jinja2
+    │   │   │   └── switch
+    │   │   │       ├── aaa.jinja2
+    │   │   │       ├── base.jinja2
+    │   │   │       ├── base.jinja2.bak
+    │   │   │       ├── crypto.jinja2
+    │   │   │       ├── cs_vserver.jinja2
+    │   │   │       ├── dhcp.jinja2
+    │   │   │       ├── interfaces.jinja2
+    │   │   │       ├── logging.jinja2
+    │   │   │       ├── service.jinja2
+    │   │   │       └── snmp.jinja2
+    │   │   └── nxos
+    │   ├── f5
+    │   │   └── bigip
+    │   └── juniper
+    │       └── junos
+    │           └── vfirewall
+    │               ├── interfaces.jinja2
+    │               ├── protocols.jinja2
+    │               ├── routing-instances.jinja2
+    │               ├── routing-options.jinja2
+    │               └── system.jinja2
+    └── standards
+        └── common.jinja2
 
 ```
 Let's look at a simple Cisco platform_name jinja2 template as an example.
+
 ```
-root@devvm:~/superloop# cat ~/templates/cisco/ios/switch/base.jinja2 
-{# audit_filter = ['name.*'] #}
-{% if with_remediation %}
-no name
-{% endif %}
-name {{ nodes.name }}
+{# audit_filter = ['snmp-server (?!user).*'] #}
+{%- import 'global.jinja2' as global -%}
+{%- import 'datacenter.jinja2' as dc -%}
+{%- import 'environment.jinja2' as env -%}
+{# %- import node.name ~ '.jinja2' as device -% #}
+snmp-server community {{ secrets['community_1'] }} group network-operator
+snmp-server community {{ secrets['community_2'] }} group network-operator
+snmp-server community {{ secrets['community_3'] }} group network-operator
+snmp-server location {{ dc.snmp.location }}
 ```
-Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates of Cisco and F5 platform_name. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'name'. If you have additional lines that you want superloop to look at, simply append strings seperated by a comma like so... 
+Notice there is a section called 'audit_filter' at the top of file. This audit filter should be included in all templates of Cisco and Citrix Netscaler. It accepts a regular expression. This tells superloop which lines to look for and compare against when rendering the configs. In other words, superloop will look for only lines that begin with 'snmp-server' and anything else trailing but exclude 'user' as the second piece of string. If you have additional lines that you want superloop to look at, simply append strings seperated by a comma like so...
 ```
-['name.*','service.*','username.*']
+['snmp-server (?!user).*','hello','world']
 ```
+There are a few import statements that you may need to include depending on the variables you need to use. The files are organized based on the logic and reference to their geographic location.
+
+global.jinja2 maps to ~/superloop_code/templates/standards/global.jinja2 # all global variables will stored in this file.
+
+datacenter.jinja2 maps to ~/superloop_code/templates/datacenter/<site_name>/datacenter.jinja2 # all variables pertaining to datacenter/region specific will be stored in this file.
+
+environment.jinja2 maps to ~/superloop_code/templates/datacenter/<site_name>/prod/environment.jinja2 # all variables pertaining to the different region and environment will be stored in this file.
+
+NEVER include any secrets (static) within any templates as they will be exposed in clear text and visible in version control. Instead we want to mask our secrets by storing them in hashicorp and calling them in this fashion:
+```
+{{ secrets['community_1'] }}
+```
+Mappings can be found here: Networking > prod > secrets in vault. Every time when a template is being rendered for output, superloop will authenticate with vault. If successful, it then queries the requested secret. The secret is returned to superloop and is then pushed to jinja for output. With this method, no secrets are exposed in any files.
 
 You may also have a template that consist of one or several levels deep like so...
 ```
-root@devvm:~/superloop# cat ~/templates/cisco/ios/switch/dhcp.jinja2
-{# audit_filter = ['ip dhcp.*'] #}
-
+{# audit_filter = ['ip dhcp .*'] #}
 ip dhcp excluded-address 10.50.80.1
 ip dhcp ping packets 5
 !
 ip dhcp pool DATA
- network 10.10.20.0 255.255.255.0
- default-router 10.10.20.1 
- dns-server 8.8.8.8 
-``` 
-Look at 'ip dhcp pool DATA'. The next line of config has an indentation. The parent is considered 'ip dhcp pool DATA' and the child are anything below that section. superloop is inteligent enough to parse the remaining 3 lines of configs without having to include it into the audit_filter.
-
-Let's take a look at some Juniper templates.
+network 10.10.20.0 255.255.255.0
+default-router 10.10.20.1
+dns-server 8.8.8.8
 ```
-root@devvm:~# cat ~/templates/juniper/junos/router/interfaces.jinja2   
-{% import 'common.jinja2' as variable%}
-replace: interfaces {
-{%- for port in variable.INTERFACES %} 
-    {{ port }} { 
-        unit 0 { 
-            family inet { 
-                        {% if port == 'ge-0/0/1' %}
-                filter {
-                        input edge_inbound_softlayer;
-                        output edge_outbound_softlayer;
-                    }
-                    sampling {
-                        input;
-                    }
-            {%- endif -%} 
-            {% if 'er1' in nodes.name %} 
-                address {{ variable.INTERFACES[port]['er1_ip'] }}; 
-            {% elif 'er2' in nodes.name %} 
-                address {{ variable.INTERFACES[port]['er2_ip'] }}; 
-            {% endif %} 
-            } 
-        } 
-    }{% endfor %} 
-} 
-```
-```
-root@devvm:~# cat ~/templates/juniper/junos/router/routing-options.jinja2  
-{% import 'common.jinja2' as variable%}
-replace: routing-options {
-    static {
-    {% for route in variable.ROUTING_OPTIONS %}
-      {% if variable.ROUTING_OPTIONS[route]['next_hop'] == 'discard' %}
-        route {{ variable.ROUTING_OPTIONS[route]['destination'] }} {{ variable.ROUTING_OPTIONS[route]['next_hop'] }};
-      {% elif variable.ROUTING_OPTIONS[route]['destination'] == variable.DEFAULT_ROUTE %}
-        route {{ variable.ROUTING_OPTIONS[route]['destination'] }} {
-            next-hop {{ variable.ROUTING_OPTIONS[route]['next_hop'] }};
-            preference {{ variable.ROUTING_OPTIONS[route]['preference'] }};
-      {% else %}
-        route {{ variable.ROUTING_OPTIONS[route]['destination'] }} next-hop {{ variable.ROUTING_OPTIONS[route]['next_hop'] }};
-     {% endif %}
-    {% endfor %}
-        }
-    }
-{%- if 'er1' in nodes.name %}  
-    router-id {{ variable.SUPERLOOP_BGP_PEER1 }};
-{% elif 'er2' in nodes.name %}
-    router-id {{ variable.SUPERLOOP_BGP_PEER2 }};
-{% endif %}
-    autonomous-system {{ variable.AUTONOMOUS_SYSTEM }};
-}
-```
-In these examples, you can see I imported a 'common.jinja2' file with the namespace as 'variable'. common.jinja2 is treated as a master variable file for a paricular region/data center. With this method, management is made simple and clean. Should you ever need to make a change on an existing value, you will only need to touch the common.jina2 file and the rest is taken care of.
-```
-{% set PRIVATE_NETWORK = '10.0.0.0' %}
-{% set PRIVATE_PREFIX = '10.136' %}
-{% set PUBLIC_PREFIX = '200.10.10' %}
-{% set PUBLIC_MASK = '23' %}
-{% set DEFAULT_ROUTE = '0.0.0.0/0' %}
-{% set SUPERLOOP_BGP_PEER_PREFIX = '182.94.24' %}
-{% set SUPERLOOP_BGP_PEER1 = '172.50.60.4' %}
-{% set SUPERLOOP_BGP_PEER1 = '182.94.24.58' %}
-{% set SUPERLOOP_BGP_PEER2 = '182.94.24.59' %}
-{% set SUPERLOOP_NETWORK_1 = '172.50.60.0' %}
-{% set SUPERLOOP_NETWORK_1_MASK = '28' %}
-{% set SUPERLOOP_NETWORK_1_NEXTHOP = '172.50.60.1' %}
-{% set AUTONOMOUS_SYSTEM = '65565' %}
- 
-{% set INTERFACES = {
-  'ge-0/0/0': { 
-        'er1_ip': PUBLIC_PREFIX ~ '.17/28',
-        'er2_ip': PUBLIC_PREFIX ~ '.18/28'
-  },
-  'ge-0/0/1': { 
-        'er1_ip': SUPERLOOP_BGP_PEER_PREFIX ~ '.4/' ~ SUPERLOOP_NETWORK_1_MASK,
-        'er2_ip': SUPERLOOP_BGP_PEER_PREFIX ~ '.2/' ~ SUPERLOOP_NETWORK_1_MASK
-  },
-  'ge-0/0/2': { 
-        'er1_ip': PUBLIC_PREFIX ~ '.33/30',
-        'er2_ip': PUBLIC_PREFIX ~ '.34/30'
-  },
-  'fxp0': { 
-        'er1_ip': PRIVATE_PREFIX ~ '.33/30',
-        'er2_ip': PRIVATE_PREFIX ~ '.34/30'
-  }
-}
-%}
-
-{% set ROUTING_OPTIONS= {
-  'static_route_1': { 
-        'destination': PUBLIC_PREFIX ~ '.0/' ~ PUBLIC_MASK,
-        'next_hop': 'discard'
-  },
-  'static_route_2': { 
-        'destination': SUPERLOOP_BGP_PEER1 ~ '/32',
-        'next_hop': SUPERLOOP_NETWORK_1_NEXTHOP
-  },
-  'static_route_3': { 
-        'destination': SUPERLOOP_BGP_PEER2 ~ '/32',
-        'next_hop': SUPERLOOP_NETWORK_1_NEXTHOP
-  },
-  'static_route_4': { 
-        'destination': PRIVATE_NETWORK ~ '/8',
-        'next_hop': PRIVATE_PREFIX ~ '.0.1'
-  },
-  'static_route_5': { 
-        'destination': DEFAULT_ROUTE,
-        'next_hop': SUPERLOOP_NETWORK_1_NEXTHOP,
-                'preference': '175'
-  }
-}
-%}
-```
+Look at 'ip dhcp pool DATA'. The next line of config has an indentation. The parent is considered 'ip dhcp pool DATA' and the child are anything below that section. superloop is intelligent enough to parse the remaining 3 lines of configs without having to include it into the audit_filter.
 
 Now that I have explained the basic operations, onto the fun stuff!
 
+## superloop host add
+When you add a device, every attribute of the node will be discovered automatically so there is no need to populate it manually.
+```
+root@devvm:~# superloop host add 10.202.1.7
++ SNMP discovery successful.
++ New node appended to database.
+```
+
+## superloop host remove
+To remove a node, simply execute a 'superloop host remove <IPv4/hostname>':
+```
+wailit.loi@pc-netauto-001:~$ superloop host remove 10.202.1.7
+- Node successfully removed from database.
+```
+
+## superloop node list
+To verify the device attributes:
+
+```
+root@devvm:~# superloop node list pt-switch-001
+[
+    {
+        "created_at": "2022-09-12 14:02:10"
+        "created_by": "wailit.loi"
+        "data": {
+            "managed_configs": {
+                   "logging.jinja2"
+                   "ntp.jinja2"
+                   "snmp.jinja2"
+             }
+         }
+        "domain_name": "null"
+        "environment": "prod"
+        "hardware_vendor": "cisco"
+        "lifecycle_status": "null"
+        "location_name": "toronto"
+        "mgmt_con_ip4": "null"
+        "mgmt_ip4": "10.202.1.7"
+        "mgmt_oob_ip4": "null"
+        "mgmt_snmp_community4": "null"
+        "name": "pt-switch-001.shortcovers.local"
+        "opersys": "ios"
+        "platform_name": "WS-C3750X-48"
+        "role_name": "datacenter-switch"
+        "serial_num": "FDO1629R0JL"
+        "software_image": "null"
+        "software_version": "null"
+        "status": "online"
+        "type": "switch"
+        "updated_at": "null"
+        "updated_by": "null"
+    }
+]
+```
+
+## superloop host update
+
+Notice the 'name' or hostname of the device has the domain appended because the 'ip domain-name domain.name' is configured. If the domain name is not required, superloop has the ability to modify the database attribute from cli:
+```
+root@devvm:~#  superloop host update core1.leaf.demo.domain.name --help
+usage: superloop host update [-h] [-a ATTRIBUTE] [-am AMEND] node
+positional arguments:
+  node
+optional arguments:
+  -h, --help            show this help message and exit
+  -a ATTRIBUTE, --attribute ATTRIBUTE
+                        Specify the attribute that requires updating
+  -am AMEND, --amend AMEND
+                        The value that is being amended
+ 
+root@devvm:~# superloop host update core1.leaf.demo.domain.name -a name -am core1.leaf.demo
+Please confirm you would like to change the value from core1.leaf.demo.domain.name : name : core1.leaf.demo.domain.name to core1.leaf.demo.domain.name : name : core1.leaf.demo. [y/N]: y
++ Amendment to database was successful.
+```
+We can take a look at the 'node list' feature to verify the 'name' attribute has changed:
+```
+root@devvm:~# superloop node list core1.leaf.demo
+[
+    {
+        "created_at": "2022-09-12 14:02:10"
+        "created_by": "wailit.loi"
+        "data": {
+            "managed_configs": {
+                   "logging.jinja2"
+                   "ntp.jinja2"
+                   "snmp.jinja2"
+             }
+         }
+        "domain_name": "null"
+        "environment": "prod"
+        "hardware_vendor": "cisco"
+        "lifecycle_status": "null"
+        "location_name": "telecity"
+        "mgmt_con_ip4": "null"
+        "mgmt_ip4": "10.202.1.7"
+        "mgmt_oob_ip4": "null"
+        "mgmt_snmp_community4": "null"
+        "name": "core1.leaf.demo"
+        "opersys": "ios"
+        "platform_name": "WS-C3750X-48"
+        "role_name": "datacenter-switch"
+        "serial_num": "FDO1629R0JL"
+        "software_image": "null"
+        "software_version": "null"
+        "status": "online"
+        "type": "switch"
+        "updated_at": "2022-09-12 14:13:36"
+        "updated_by": "wailit.loi"
+    }
+]
+```
+When it comes to templating, we are able to call these attributes directly and make logical decisions based on the value. We'll discuss more later on in this article...
+
+## superloop push render
+The 'push render' function, simply renders a template created in jinja2. Ensure the template is provisioned in the ~/superloop_code/database/templates.yaml file so superloop understands which template(s) is/are loaded. If we want to render a template, we simply execute 'superloop push render --node <regex> --file <name_of_template>'. --node accepts a regular expression to match (multiple) node(s) and it can be as granular as you wish. Ex. matching an entire datacenter and/or device type. If there is no '–file' flag supplied, ALL templates for the device specific type will be rendered.
+```
+root@devvm:~# superloop push render --node core.*sw.*demo --file logging
+core1.sw.yyz.demo
+/root/superloop_code/templates/hardware_vendors/cisco/nxos/switch/logging.jinja2
+logging message interface type ethernet description
+logging logfile messages 6 size 32768
+logging server 10.100.10.53
+logging server 10.100.2.40
+logging timestamp milliseconds
+logging monitor 3
+no logging rate-limit
+ 
+core2.sw.yyz.demo
+/root/superloop_code/templates/hardware_vendors/cisco/nxos/switch/logging.jinja2
+logging message interface type ethernet description
+logging logfile messages 6 size 32768
+logging server 10.100.10.53
+logging server 10.100.2.40
+logging timestamp milliseconds
+logging monitor 3
+no logging rate-limit
+```
+
 ## superloop audit diff
-
-First and foremost, we would like to introduce to you the 'audit diff' function. This function was designed to compare against the jinja2 templates with your running-configurations/candidate-configurations to see if they are according to standards. You could imagine if you had hundreds, if not thousands of devices to maintain, standardization would be a nightmare without some form of auditing/automation tool. To paint you an example, say one day, an employee decides to make an unauthorized manual configuration change on a switch. No one knows about it or what they did. 'superloop' is able to dive into all devices and see if there were any discrepancies against the template as that is considered the trusted source. 'superloop' is then able to determine what was exactly modified or changed. Whatever was configured would essentially be negated automatically. This works the other way around as well. If configuration(s) on a device(s) does not have the standard rendered configs from the template (configs removed), superloop will determine they are missing and you may proceed to remediate by pushing the rendered configs. 'audit diff' will audit against ONE or ALL templates belonging to the matched device(s) from the query. If you want to audit against ONE template, simply include the option '--file <template_name>' (exclude extension .jinja2). If you want to audit against ALL templates belonging to the matched device(s) query, do not include the '--file' option.
-
-![superloop audit_diff demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_audit_diff_demo.gif)
-
-'-' indicating a config(s) should be removed
-'+' indicating a config(s) should be added
-* (none) indicating NO discrepancies.
-
-## superloop auditcreeper
-
-By leveraging the power of the auditdiff engine, I'm able to extend it's functionality by creating a creeper. The 'auditcreeper' would essentially audit ALL devices in the nodes.yaml file against ALL templates specified in templates.yaml file at a set interval. For example, I may set the 'auditcreeper' to check every 4 hours to ensure standardization. You may modify the timining in second in the auditcreeper.py file. Look for:
-
-```threading.Timer(14400, auditcreeper).start()```
-
-* 14400 seconds = 4 hours
-
-For the sake of this example, I've narrowed down to 5 second to speed things up so you'll have an idea of how it works.
-
-![superloop auditcreeper demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_auditcreeper_demo.gif)
-
-In this demo, only one device gets remediated. A config was removed from the device. superloop detected the discrepancies and proceeded to remediate. Upon remediation, the second time 'audicreeper' runs, you can see that all templates are then matched (shown by '(none)', as in NO discrepancies):
+This function was designed to compare against the jinja2 templates with your running-configurations/candidate-configurations to see if they are according to standards. You could imagine if you had hundreds, if not thousands of devices to maintain, standardization would be a nightmare without some form of auditing/automation tool. To paint you an example, say one day, an employee decides to make an unauthorized manual configuration change on a switch. No one knows about it or what they did. 'superloop' is able to dive into all devices and see if there were any discrepancies against the template as that is considered the trusted source. 'superloop' is then able to determine what was exactly modified or changed. Whatever was configured would essentially be negated automatically. This works the other way around as well. If configuration(s) on a device(s) does not have the standard rendered configs from the template (configs removed), superloop will determine they are missing and you may proceed to remediate by pushing the rendered configs. 'audit diff' will audit against ONE or ALL templates belonging to the matched device(s) from the query. If you want to audit against ONE template, simply include the option '--file <template_name>' (exclude extension .jinja2). If you want to audit against ALL templates belonging to the matched device(s) query, do not include the '--file' option.
 
 ```
-+ ip dhcp excluded-address 10.50.30.3
+root@devvm:~# superloop audit diff -n pc.*test -f snmp                                   
+Password:
+[>] complete [0:00:10.911552]
+ 
+Only in the device: -
+Only in the generated config: +
+pc-n9ktest-001
+/root/superloop_code/templates/hardware_vendors/cisco/nxos/switch/snmp.jinja2
+- snmp-server community helloworld group network-operator
++ snmp-server location coresite
 ```
-'-' indicating a config(s) was removed
-'+' indicating a config(s) was added
-  
-If there are no discrepancies for a specific template, you should see something like this:
-
-```
-/templates/cisco/ios/switch/service.jinja2 (none)
-/templates/cisco/ios/switch/name.jinja2 (none)
-/templates/cisco/ios/switch/dhcp.jinja2 (none)
-/templates/cisco/ios/switch/snmp.jinja2 (none)
-```
-* (none) indicating NO discrepancies.
-
-If there are multiple devices that require remediation, superloop handles remediation concurrently - meaning, superloop connects to all devices in parallel via multithreading.
 
 ## superloop push cfgs
+The 'push cfgs' function simply pushes the template(s) to the specified node(s). For Cisco, Citrix, F5 and Palo Alto devices, a debug output will be shown with a list of commands (if any) of what will be sent first before user commits to push. From the below example, you can see which templates are enabled for pushing, represented by [>] vs. which templates are disabled, represented by [x]. The state of the template can be controlled in the ~/superloop_code/database/templates.yaml file. As a safety, we disable any templates that we are not confident in pushing. If enabled, superloop will auto remediate those template(s). Please use with caution as it can cause severe impact. Two phases happens when pushing templates of Cisco, Citrix, F5 and Palo Alto devices. First, superloop performs an audit diff. It will check to see what configs are missing or removed. Second, it will encapsulate the necessary configs and prepare it for pushing. If the device has no diffs, then no configs will be pushed to the device. The output of session when pushing will be displayed so users can see what happens behind the scenes.
 
-The next set of features I developed was 'push cfgs'. 'push cfgs' is simplying pushing a template to a device(s). You may use regular expression in your query to match multiple nodes. This has proven to be very powerful and useful in an organized environment. 
-
-In the below demo, I have made a change to the 'system.jinja2' template for a Juniper device. I've added the DNS entry of '4.4.4.4;' Using 'superloop push cfgs' to push the template, I then veryify the changes using 'superloop host exec' (to be discussed further in this documentation) to view the changes.
-
-![superloop push_cfgs demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_push_cfgs_demo.gif)
-
-Verifying changes have been pushed:
-
-![superloop host_exec_after_push_cfgs demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_host_exec_after_push_cfgs_demo.gif)
-
-You can see the '4.4.4.4;' entry now exist.
+```
+root@devvm:~# superloop push cfgs --node p.*nxs
+[x] core1.sw.yyz.demo ; base.jinja2
+[x] core1.sw.yyz.demo-iad4 ; base.jinja2
+[x] core2.sw.yyz.demo ; base.jinja2
+[x] core2.sw.yyz.demo-iad4 ; base.jinja2
+[x] core1.leaf.yyz.demo ; base.jinja2
+[x] core2.leaf.yyz.demo ; base.jinja2
+[x] core3.leaf.yyz.demo ; base.jinja2
+[>] core1.sw.yyz.demo ; logging.jinja2
+[>] core1.sw.yyz.demo ; ntp.jinja2
+[>] core1.sw.yyz.demo ; snmp.jinja2
+[>] core1.sw.yyz.demo-iad4 ; logging.jinja2
+[>] core1.sw.yyz.demo-iad4 ; ntp.jinja2
+[>] core1.sw.yyz.demo-iad4 ; snmp.jinja2
+[>] core2.sw.yyz.demo ; logging.jinja2
+[>] core2.sw.yyz.demo ; ntp.jinja2
+[>] core2.sw.yyz.demo ; snmp.jinja2
+[>] core2.sw.yyz.demo-iad4 ; logging.jinja2
+[>] core2.sw.yyz.demo-iad4 ; ntp.jinja2
+[>] core2.sw.yyz.demo-iad4 ; snmp.jinja2
+[>] core1.leaf.yyz.demo ; logging.jinja2
+[>] core1.leaf.yyz.demo ; ntp.jinja2
+[>] core1.leaf.yyz.demo ; snmp.jinja2
+[>] core2.leaf.yyz.demo ; logging.jinja2
+[>] core2.leaf.yyz.demo ; ntp.jinja2
+[>] core2.leaf.yyz.demo ; snmp.jinja2
+[>] core3.leaf.yyz.demo ; logging.jinja2
+[>] core3.leaf.yyz.demo ; ntp.jinja2
+[>] core3.leaf.yyz.demo ; snmp.jinja2
++ complete [0:00:11.403772]
+ 
+[DEBUG]
+{
+    "core2.leaf.yyz.demo": [
+        [
+            "ntp logging"
+        ]
+    ],
+    "core3.leaf.yyz.demo": [
+        [
+            "ntp logging"
+        ]
+    ]
+}
+config term
+Enter configuration commands, one per line. End with CNTL/Z.
+ 
+core2.leaf.yyz.demo(config)# ntp logging
+ 
+core2.leaf.yyz.demo(config)# end
+ 
+core2.leaf.yyz.demo#
+config term
+Enter configuration commands, one per line. End with CNTL/Z.
+ 
+core3.leaf.yyz.demo(config)# ntp logging
+ 
+core3.leaf.yyz.demo(config)# end
+ 
+core3.leaf.yyz.demo#
++ complete [0:00:14.664805]
+```
 
 ## superloop push local
 
-The 'push local' command allows you to push configs that are stored in a text file to one more multiple nodes. I found this feature to be very useful when performing migrations. For example, if we wanted to drain/undrain traffic from one node, we could pre-configure the set of commands in the text file. At the time of migration, we can push the configs to the selected nodes. This method would eliminate any human error in the process.
-
-![superloop push_local demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_push_local_demo.gif)
-
-## superloop pull cfgs
-
-The 'pull cfgs' feature allows you to pull configs from one or multiple nodes. It's a function used to backup your configs manually when the command is invoked. To use it, simply type 'superloop pull cfgs -n core.*'. This will backup all node configurations that matches the regex. For F5 platform_names, this will download the *.ucs file from the appliance.
-
-## superloop host exec
-
-The 'host exec' (formerly known as 'onscreen') features allow you to execute a command on the device(s) without requiring you to log in. In the example below, the screen on the right is using 'push' and the screen on the left is using 'host exec' to check the changes after.
-
-Here is an example of how you would use it:
-```
-root@devvm:~/superloop# superloop host exec "show ip int brief" -n core.*sw                
-core.sw.superloop.sfran: Interface              IP-Address      OK? Method Status                Protocol
-core.sw.superloop.sfran: Vlan1                  unassigned      YES NVRAM  administratively down down    
-core.sw.superloop.sfran: Vlan120                 10.120.20.1      YES NVRAM  up                    up      
-core.sw.superloop.sfran: Vlan130                 10.130.30.1      YES NVRAM  up                    up      
-core.sw.superloop.sfran: Vlan140                 10.140.40.1      YES NVRAM  up                    up      
-core.sw.superloop.sfran: Vlan150                 10.150.50.1      YES NVRAM  up                    up      
-```
-In this demo, I'm doing a 'show version' for all the devices I have in my database (3 - a mix of Cisco and Juniper platform_name) and it's displaying all the information in 9.6 seconds. You can imagine how powerful this feature would be if you have hundreds, if not thousands of devices that you need to pull information from without the need of logging in, one by one and capturing the output.
-
-![superloop host_exec_demo](https://github.com/superloopnetwork/superloop/blob/master/gifs/superloop_host_exec_demo.gif)
+The 'push local' command allows you to push configs that are stored in a text file (home directory). This feature is useful when performing migrations. For example, if we wanted to drain/undrain traffic from one node, we could pre-configure the set of commands in the text file. At the time of migration, we can push the configs to the selected nodes. This method would eliminate any human error in the process.
 
 ## superloop ssh
-
-Users are now able to take advantage of the 'ssh' menu screen. This feature allows users to quickly search up a device via name (doesn't have to be a complete or exactly matched string) and establish a SSH session. It's a very powerful tool in the sense that it support regular expression to filter out certain desired hosts from a lare scale network.
-
-Here is an example of how you would use it:
+SSH feature allows us to quickly search up node(s) via regular expression and establish a SSH session with the device. This is useful when you have thousands of nodes in the network and memorizing IP addresses is simply not an option.
 ```
-root@devvm:~/superloop# superloop ssh core.*
-ID      name                    address         platform_name
-1       core-fw-superloop-toron 10.10.10.10     cisco
-2       core.sw.superloop.sfran 20.20.20.20     cisco
-3       core.rt.superloop.sjose 30.30.30.30     cisco
-Enter ID to SSH to: 
+root@devvm:~# superloop ssh p.*lb.*act
+id                        name                           address                   platform
+1                         core1.lb.yyz.demo.active       10.10.10.1               citrix                  
+2                         core1.lb.sfo.demo.active       10.10.10.2               citrix                  
+3                         core1.lb.sin.demo.active       10.10.10.3               citrix
 ```
+## superloop host exec
+The 'host exec' features allow you to execute a command on the device(s) without requiring you to log in manually one by one. This feature is extremely useful at times when you want to check status across multi devices.
 ```
-root@devvm:~/superloop# python superloop ssh core.*(fw|rt)
-ID      name                    address         platform_name
-1       core-fw-superloop-toron 10.10.10.10     cisco
-2       core.rt.superloop.sjose 30.30.30.30     cisco
-Enter ID to SSH to: 
-```
-```
-root@devvm:~/superloop# superloop ssh .*sfran
-ID      name                    address         platform_name
-1       core.sw.superloop.sfran 20.20.20.20     cisco
-Password: 
-```
-* Notice after 'ssh' it expects a positional argument(name).
-
-If the search result returns one host, superloop automatically establishes a SSH session.
-
-## superloop host add/remove
-
-When I first built this application, the expectation was to manually populate the nodes.yaml file in order for superloop to execute. That is no longer a requirement. Introducing 'host add'. This function will allow you add hosts to the database file via cli (one line) without the need to manually update the nodes.yaml file. It works like this; when 'superloop host add <management ip address>' command is invoked, superloop will connect to the device via snmp. It will pull the neccessary information such as it's name and platform_name to populate it into nodes.yaml.
-
-Let's now look at 'host remove' feature. Just like 'add', 'remove' allows you to remove a node from the database without having to manually edit the nodes.yaml file. Here is how you use it:
-```
-root@devvm:~/superloop# cat nodes.yaml
----
-- name: core-fw-superloop-toron
-  ip: 10.10.10.10
-  platform_name: cisco
-  opersys: ios
-  type: firewall
-- name: core.sw.superloop.sfran
-  ip: 20.20.20.20  
-  platform_name: cisco
-  opersys: ios
-  type: switch 
-- name: core.rt.superloop.sjose 
-  ip: 30.30.30.30 
-  platform_name: cisco
-  opersys: ios
-  type: router
-  ```
-Say we wanted to blow out the node 'core.sw.superloop.sfran'. Simply use the following command 'superloop host remove core.sw.superloop.sfran' or 'superloop host remove 20.20.20.20'. It supports both name and IP address.
-```
-root@devvm:~/superloop# superloop host remove core.sw.superloop.sfran
-[-] NODE SUCCESSFULLY REMOVED FROM DATABASE
-```
-```
-root@devvm:~/superloop# cat nodes.yaml
----
-- name: core-fw-superloop-toron
-  ip: 10.10.10.10
-  opersys: ios
-  platform_name: cisco
-  type: firewall
-- name: core.rt.superloop.sjose
-  ip: 30.30.30.30
-  opersys: ios
-  platform_name: cisco
-  type: router
-```
-* Noticed how the node 'core.sw.superloop.sfran' has been removed from the database.
-
-## superloop node list
-
-We can now leverage the power of 'superloop host add' by having snmp poll more attributes on the node(s) such as the software version, location, serial number etc. Once we have these details in our database file, we are then able list them in cli. This will give us all the details about a particular node. To use this, simply type 'superloop node list <name>'. Regular expressions is supported for this feature so if you have multiple hosts you would like to view, you can match it via regex.
-```  
-root@devvm:~/superloop# superloop node list core.*
-[
-    {
-        "name": "core-fw-superloop-toron"
-        "os": "ios"
-        "platform_name": "cisco"
-        "type": "firewall"
-        "data": {
-            "managed_configs": {
-                   base.jinja2
-                   snmp.jinja2
-             }
-         }
-    },
-    {
-        "name": "core.sw.superloop.sfran"
-        "os": "ios"
-        "platform_name": "cisco"
-        "type": "switch"
-        "data": {
-            "managed_configs": {
-                   base.jinja2
-                   service.jinja2
-                   dhcp.jinja2
-                   snmp.jinja2
-             }
-         }
-    },
-    {
-        "name": "core.rt.superloop.sjose"
-        "os": "ios"
-        "platform_name": "cisco"
-        "type": "router"
-        "data": {
-            "managed_configs": {
-                   base.jinja2
-             }
-         }
-    }
-]
-```
-Or a particular node...
-```
-root@devvm:~/superloop# superloop node list .*sfran  
-[
-    {
-        "name": "core.sw.superloop.sfran"
-        "os": "ios"
-        "platform_name": "cisco"
-        "type": "switch"
-        "data": {
-            "managed_configs": {
-                   base.jinja2
-                   service.jinja2
-                   dhcp.jinja2
-                   snmp.jinja2
-             }
-         }
-    }
-]
+root@devvm:~# superloop host exec "show ip interface brief" --node core.*sw.*yyz.*demo       
+Password:
+core1.sw.yyz.demo: IP Interface Status for VRF "default"(1)
+core1.sw.yyz.demo: Interface            IP Address      Interface Status
+core1.sw.yyz.demo: Vlan201              10.201.1.22     protocol-up/link-up/admin-up      
+core1.sw.yyz.demo:
+ 
+core2.sw.yyz.demo: IP Interface Status for VRF "default"(1)
+core2.sw.yyz.demo: Interface            IP Address      Interface Status
+core2.sw.yyz.demo: Vlan201              10.201.1.23     protocol-up/link-up/admin-up      
+core2.sw.yyz.demo:
+ 
+[>] Complete [0:00:08.375958]
 ```
