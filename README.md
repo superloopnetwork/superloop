@@ -253,7 +253,7 @@ root@devvm:~# superloop node list pt-switch-001
         "mgmt_ip4": "10.202.1.7"
         "mgmt_oob_ip4": "null"
         "mgmt_snmp_community4": "null"
-        "name": "pt-switch-001.shortcovers.local"
+        "name": "core1.leaf.yyz.demo.domain.name"
         "opersys": "ios"
         "platform_name": "WS-C3750X-48"
         "role_name": "datacenter-switch"
@@ -272,7 +272,7 @@ root@devvm:~# superloop node list pt-switch-001
 
 Notice the 'name' or hostname of the device has the domain appended because the 'ip domain-name domain.name' is configured. If the domain name is not required, superloop has the ability to modify the database attribute from cli:
 ```
-root@devvm:~#  superloop host update core1.leaf.demo.domain.name --help
+root@devvm:~#  superloop host update core1.leaf.yyz.domain.name --help
 usage: superloop host update [-h] [-a ATTRIBUTE] [-am AMEND] node
 positional arguments:
   node
@@ -283,13 +283,13 @@ optional arguments:
   -am AMEND, --amend AMEND
                         The value that is being amended
  
-root@devvm:~# superloop host update core1.leaf.demo.domain.name -a name -am core1.leaf.demo
-Please confirm you would like to change the value from core1.leaf.demo.domain.name : name : core1.leaf.demo.domain.name to core1.leaf.demo.domain.name : name : core1.leaf.demo. [y/N]: y
+root@devvm:~# superloop host update core1.leaf.demo.domain.name -a name -am core1.leaf.yyz.demo
+Please confirm you would like to change the value from core1.leaf.yyz.demo.domain.name : name : core1.leaf.yyz.demo.domain.name to core1.leaf.yyz.demo.domain.name : name : core1.leaf.yyz.demo. [y/N]: y
 + Amendment to database was successful.
 ```
 We can take a look at the 'node list' feature to verify the 'name' attribute has changed:
 ```
-root@devvm:~# superloop node list core1.leaf.demo
+root@devvm:~# superloop node list core1.leaf.yyz.demo
 [
     {
         "created_at": "2022-09-12 14:02:10"
@@ -310,7 +310,7 @@ root@devvm:~# superloop node list core1.leaf.demo
         "mgmt_ip4": "10.202.1.7"
         "mgmt_oob_ip4": "null"
         "mgmt_snmp_community4": "null"
-        "name": "core1.leaf.demo"
+        "name": "core1.leaf.yyz.demo"
         "opersys": "ios"
         "platform_name": "WS-C3750X-48"
         "role_name": "datacenter-switch"
@@ -329,7 +329,7 @@ When it comes to templating, we are able to call these attributes directly and m
 ## superloop push render
 The 'push render' function, simply renders a template created in jinja2. Ensure the template is provisioned in the ~/superloop_code/database/templates.yaml file so superloop understands which template(s) is/are loaded. If we want to render a template, we simply execute 'superloop push render --node <regex> --file <name_of_template>'. --node accepts a regular expression to match (multiple) node(s) and it can be as granular as you wish. Ex. matching an entire datacenter and/or device type. If there is no '–file' flag supplied, ALL templates for the device specific type will be rendered.
 ```
-root@devvm:~# superloop push render --node core.*sw.*demo --file logging
+root@devvm:~# superloop push render --node core.*sw.*.yyz.*demo --file logging
 core1.sw.yyz.demo
 /root/superloop_code/templates/hardware_vendors/cisco/nxos/switch/logging.jinja2
 logging message interface type ethernet description
@@ -373,24 +373,24 @@ The 'push cfgs' function simply pushes the template(s) to the specified node(s).
 ```
 root@devvm:~# superloop push cfgs --node p.*nxs
 [x] core1.sw.yyz.demo ; base.jinja2
-[x] core1.sw.yyz.demo-iad4 ; base.jinja2
+[x] core1.sw.yyz.demo ; base.jinja2
 [x] core2.sw.yyz.demo ; base.jinja2
-[x] core2.sw.yyz.demo-iad4 ; base.jinja2
+[x] core2.sw.yyz.demo ; base.jinja2
 [x] core1.leaf.yyz.demo ; base.jinja2
 [x] core2.leaf.yyz.demo ; base.jinja2
 [x] core3.leaf.yyz.demo ; base.jinja2
 [>] core1.sw.yyz.demo ; logging.jinja2
 [>] core1.sw.yyz.demo ; ntp.jinja2
 [>] core1.sw.yyz.demo ; snmp.jinja2
-[>] core1.sw.yyz.demo-iad4 ; logging.jinja2
-[>] core1.sw.yyz.demo-iad4 ; ntp.jinja2
-[>] core1.sw.yyz.demo-iad4 ; snmp.jinja2
+[>] core1.sw.yyz.demo ; logging.jinja2
+[>] core1.sw.yyz.demo ; ntp.jinja2
+[>] core1.sw.yyz.demo ; snmp.jinja2
 [>] core2.sw.yyz.demo ; logging.jinja2
 [>] core2.sw.yyz.demo ; ntp.jinja2
 [>] core2.sw.yyz.demo ; snmp.jinja2
-[>] core2.sw.yyz.demo-iad4 ; logging.jinja2
-[>] core2.sw.yyz.demo-iad4 ; ntp.jinja2
-[>] core2.sw.yyz.demo-iad4 ; snmp.jinja2
+[>] core2.sw.yyz.demo ; logging.jinja2
+[>] core2.sw.yyz.demo ; ntp.jinja2
+[>] core2.sw.yyz.demo ; snmp.jinja2
 [>] core1.leaf.yyz.demo ; logging.jinja2
 [>] core1.leaf.yyz.demo ; ntp.jinja2
 [>] core1.leaf.yyz.demo ; snmp.jinja2
