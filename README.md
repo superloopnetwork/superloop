@@ -94,7 +94,49 @@ Before we begin, I've constructed this application for easy database management 
 
   1. nodes.yaml
   2. templates.yaml
-  
+
+The nodes.yaml holds all inventory of devices in the network. The templates.yaml file are mappings of templates so superloop knows which template is provisioned. The state of each template is appended at the end of the mapping to either 'disabled' or 'enabled' pushing of template. This acts as a safety feature. Zero to low confidence templates should never be pushed in a production environment as it may cause impact. However, all templates can be audited or rendered as there is no impact involved; this does not require the state of the template(s) to be flipped to 'enabled'
+```
+root@devvm:~# cat superloop_code/database/templates.yaml
+---
+- hardware_vendor: cisco 
+  type: firewall
+  opersys: asa 
+  templates:
+  - ~/superloop_code/templates/hardware_vendors/cisco/asa/firewall/base.jinja2: disabled
+  - ~/superloop_code/templates/hardware_vendors/cisco/asa/firewall/object-groups.jinja2: disabled
+  - ~/superloop_code/templates/hardware_vendors/cisco/asa/firewall/logging.jinja2: enabled
+- hardware_vendor: cisco
+  type: router 
+  opersys: ios
+  templates:
+  - ~/superloop_code/templates/hardware_vendors/cisco/ios/router/base.jinja2: enabled
+- hardware_vendor: cisco
+  type: switch 
+  opersys: ios 
+  templates:
+  - ~/superloop_code/templates/hardware_vendors/cisco/ios/switch/base.jinja2: disabled
+  - ~/superloop_code/templates/hardware_vendors/cisco/ios/switch/logging.jinja2: enabled
+  - ~/superloop_code/templates/hardware_vendors/cisco/ios/switch/service.jinja2: disabled
+  - ~/superloop_code/templates/hardware_vendors/cisco/ios/switch/dhcp.jinja2: enabled
+  - ~/superloop_code/templates/hardware_vendors/cisco/ios/switch/snmp.jinja2: enabled
+  - ~/superloop_code/templates/hardware_vendors/cisco/ios/switch/interfaces.jinja2: disabled
+- hardware_vendor: juniper
+  type: vfirewall
+  opersys: junos
+  templates:
+  - ~/superloop_code/templates/hardware_vendors/juniper/junos/vfirewall/routing-instances.jinja2: disabled
+  - ~/superloop_code/templates/hardware_vendors/juniper/junos/vfirewall/routing-options.jinja2: disabled
+  - ~/superloop_code/templates/hardware_vendors/juniper/junos/vfirewall/system.jinja2: enabled
+  - ~/superloop_code/templates/hardware_vendors/juniper/junos/vfirewall/interfaces.jinja2: disabled
+  - ~/superloop_code/templates/hardware_vendors/juniper/junos/vfirewall/protocols.jinja2: disabled
+- hardware_vendor: synology 
+  type: nas
+  opersys: busybox
+  templates:
+  - ~/superloop_code/templates/hardware_vendors/synology/busybox/base.jinja2: enabled
+  ```
+
 ## Credentials
 
 Credentials used to connect to nodes are via the OS environment varilable, $USER. It will prompt you for your password
