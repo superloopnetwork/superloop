@@ -11,6 +11,7 @@ from pull_cfgs import pull_cfgs
 from push_cfgs import push_cfgs
 from push_local import push_local
 from push_acl import push_acl
+from push_regex import push_regex
 from push_render import push_render 
 from exec_cmd import exec_cmd 
 from ssh_connect import ssh_connect
@@ -56,6 +57,9 @@ def main():
 	push_acl_cmd.set_defaults(func=push_acl)
 	push_acl_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
 	push_acl_cmd.add_argument('-c','--confirm', dest='confirm', help='Skip confirmation [default is True].')
+	push_regex_cmd = push_subparsers.add_parser('regex')
+	push_regex_cmd.set_defaults(func=push_regex)
+	push_regex_cmd.add_argument('regex', help='Specify regular expression to test/match against nodes.')
 	push_render_cmd = push_subparsers.add_parser('render')
 	push_render_cmd.set_defaults(func=push_render)
 	push_render_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
