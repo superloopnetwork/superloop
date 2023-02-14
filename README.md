@@ -90,6 +90,10 @@ Search for the function 'send_config_set' and change 'cmd_verify=True' to 'cmd_v
         enter_config_mode=True,
     ):
 ```
+We also need to disable `enqueue` in ciscoconfparse package (dependancy of loguru package) as this stalls/hangs/locks threading in superloop.
+```
+vi /usr/local/lib/python3.7/dist-packages/cisconfparse
+```
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of two YAML files that require management (default path is ~/database/):
 
   1. nodes.yaml
