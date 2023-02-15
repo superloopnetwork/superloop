@@ -5,6 +5,7 @@ import re
 import initialize
 import os
 from ciscoconfparse import CiscoConfParse
+from ciscoconfparse import HDiff 
 from get_property import get_no_negate
 from get_property import get_policy_directory
 from get_property import get_template_directory
@@ -85,7 +86,8 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 		parse = CiscoConfParse(filtered_backup_config)
 		push_configs = parse.sync_diff(
 				rendered_config,
-				"",
+				'',
+				'.+',
 				ignore_order=True, 
 				remove_lines=True, 
 				debug=False
@@ -134,29 +136,7 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 			"""
 			if output:
 				print("{}{}".format(directory,template))
-				for line in push_configs:
-					if '+' in line:
-						line = line.replace('+','\+')
-					elif '[' in line or ']' in line:
-						line = line.replace('[','\[')
-						line = line.replace(']','\]')
-					search = parse_backup_configs.find_objects(r"^{}".format(line),exactmatch=True)
-					line = line.replace('\[','[').replace('\]',']').replace('\+','+')
-					if (re.search(r'^no',line) or re.search(r'^\sno',line)) and (line.split()[1] in get_no_negate()):
-						print('+ {}'.format(line))
-						delta_diff_counter = delta_diff_counter + 1
-					elif re.search(r'^no',line) or re.search(r'^\sno',line): 
-						line = re.sub("^no",'',line)
-						print('-{}'.format(line))
-						delta_diff_counter = delta_diff_counter + 1
-					elif len(search) == 0:
-						print('+ {}'.format(line))
-						delta_diff_counter = delta_diff_counter + 1
-					elif len(search) > 1:
-						print('+ {}'.format(line))
-						delta_diff_counter = delta_diff_counter + 1
-					else:
-						print('  {}'.format(line))
+				print('\n'.join(HDiff(filtered_backup_config,rendered_config).unified_diffs()[3:]))
 				delta_length_rendered_config = length_rendered_config - delta_diff_counter
 				template_percentage = round(delta_length_rendered_config / length_backup_config * 100,2)
 				initialize.compliance_percentage = round(initialize.compliance_percentage + template_percentage,2)
