@@ -94,7 +94,7 @@ We also need to disable `enqueue` in ciscoconfparse package (dependancy of logur
 ```
 vi /usr/local/lib/python3.7/dist-packages/ciscoconfparse/ccp_util.py
 ```
-Search for `allow_enqueue=True,` and change it to `allow_enqueue=False,'
+Search for `enqueue=True,` and change it to `enqueue=False,'
 
 Before we begin, I've constructed this application for easy database management by utilizing the power of YAML files. There are a combination of two YAML files that require management (default path is ~/database/):
 
