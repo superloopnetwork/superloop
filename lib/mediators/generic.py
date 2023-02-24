@@ -146,6 +146,7 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 						node_configs.append(line)
 				elif node_object[index]['hardware_vendor'] == 'citrix':
 					node_configs = parse_negation_commands(push_configs)
+					initialize.configuration.append(node_configs)
 					"""
 						For debug purpose, you may enable the below print statement.
 					"""
