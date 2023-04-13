@@ -56,7 +56,10 @@ def ssh_connect(args):
 			port = get_port(node_object,initialize.element,ssh_id)
 			try:
 				if(len(initialize.element) == 1):
-			 		subprocess.call('ssh {}@{} -p {}'.format(username,node_object[initialize.element[ssh_id]]['mgmt_ip4'],port), shell=True)
+					try:
+			 			subprocess.call('ssh {}@{} -p {}'.format(username,node_object[initialize.element[ssh_id]]['mgmt_ip4'],port), shell=True)
+					except KeyboardInterrupt as error:
+						print('Terminating...')
 				else:
 					try:
 						ssh_id = int(input('Enter ID to SSH to: '))
