@@ -95,7 +95,7 @@ def main():
 	host_update_cmd.add_argument('node')
 	host_update_cmd.add_argument('-a','--attribute', dest='attribute', help='Specify the attribute that requires updating')
 	host_update_cmd.add_argument('-am','--amend', dest='amend', help='The value that is being amended')
-	host_exec_cmd = host_subparsers.add_parser('exec')
+	host_exec_cmd = host_subparsers.add_parser('exec', help='Execute command from host')
 	host_exec_cmd.set_defaults(func=exec_cmd)
 	host_exec_cmd.add_argument('command', help='Specify command to execute on device')
 	host_exec_cmd.add_argument('-n','--node', dest='node', help='Specify node(s) to match against. Accepts regular expressions.')
