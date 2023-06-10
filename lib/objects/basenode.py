@@ -17,7 +17,7 @@ class BaseNode(object):
 		self.mgmt_oob_ip4 = mgmt_oob_ip4
 		self.mgmt_snmp_community4 = mgmt_snmp_community4
 		self.name = name
-		self.password = os.environ.get('PASSWORD')
+		self.password = os.environ.get('NETWORK_PASSWORD')
 		self.platform_name = platform_name
 		self.oncall_team = oncall_team
 		self.opersys = opersys
@@ -29,7 +29,7 @@ class BaseNode(object):
 		self.type = type
 		self.updated_at = updated_at
 		self.updated_by = updated_by
-		self.username = os.environ.get('USERNAME')
+		self.username = os.environ.get('NETWORK_USERNAME')
 
 	def connect(self):
 		try:
