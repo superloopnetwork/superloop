@@ -57,7 +57,7 @@ def ssh_connect(args):
 			try:
 				if(len(initialize.element) == 1):
 					try:
-			 			subprocess.call('ssh {}@{} -p {}'.format(username,node_object[initialize.element[ssh_id]]['mgmt_ip4'],port), shell=True)
+						subprocess.call('ssh admin@{} -p {}'.format(node_object[initialize.element[ssh_id]]['mgmt_ip4'],port), shell=True)
 					except KeyboardInterrupt as error:
 						print('Terminating...')
 				else:
@@ -71,7 +71,7 @@ def ssh_connect(args):
 						print('Terminating...')
 					else:
 						port = get_port(node_object,initialize.element,ssh_id)
-						subprocess.call('ssh {}@{} -p {}'.format(username,node_object[initialize.element[ssh_id]]['mgmt_ip4'],port), shell=True)
+						subprocess.call('ssh admin@{} -p {}'.format(node_object[initialize.element[ssh_id]]['mgmt_ip4'],port), shell=True)
 			except IndexError:
 				print('IndexError: incorrect connection id')
 	except ValueError as error:
