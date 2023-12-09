@@ -1,17 +1,20 @@
 """
 	This mediator is a generic audit diff for various hardware vendors including Cisco, Citrix and F5.
 """
+import diffios
 import re
 import initialize
+import itertools
 import os
 from ciscoconfparse import CiscoConfParse
-from ciscoconfparse import HDiff 
+from ciscoconfparse import HDiff
 from get_property import get_no_negate
 from get_property import get_policy_directory
 from get_property import get_template_directory
 from get_property import get_syntax
 from get_property import get_sorted_juniper_template_list 
-from parse_cmd import parse_negation_commands
+from parse_cmd import citrix_parse_negation_commands
+from parse_cmd import cisco_parse_negation_commands
 
 home_directory = os.environ.get('HOME')
 
@@ -69,7 +72,6 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 			This will take each element from the audit_filter list and search for the matched lines in backup_config.
 		"""
 		audit_filter = eval(re.findall(AUDIT_FILTER_RE, parse_audit)[0])
-#		parse_backup_configs = CiscoConfParse("{}/backup-configs/{}".format(home_directory,node_object[index]['name']) + ".conf", syntax=get_syntax(node_object,index))
 		parse_backup_configs = CiscoConfParse(backup_config, syntax=get_syntax(node_object,index))
 		"""
 			Matched entries are then appended to the filter_backup_config variable. parse_audit_filter() call will find all parent/child.
@@ -80,21 +82,13 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 				parse_backup_configs,
 				audit_filter
 		)
+		diff = diffios.Compare(filtered_backup_config,rendered_config)
+		push_configs = diff.missing() + diff.additional()
+		push_configs = list(itertools.chain.from_iterable(push_configs))
+		addition = list(itertools.chain.from_iterable(diff.additional()))
 		"""
-			sync_diff() will diff out the filtered_backup_config from the rendered_configs and store whatever commands that has deltas.
-		"""
-		parse = CiscoConfParse(filtered_backup_config)
-		push_configs = parse.sync_diff(
-				rendered_config,
-				'',
-				'.+',
-				ignore_order=True, 
-				remove_lines=True, 
-				debug=False
-		)
-		"""
-			Calculating the percentage of config lines from the template that matches the running-configuration of the device. This will 
-			provide an accurate reading config standardization. 
+			Calculating the percentage of config lines from the template that matches the running-configuration of the device.
+			This willprovide an accurate reading config standardization.
 		"""
 		total_template_lines = len(rendered_config)
 		total_filtered_backup_config_lines = len(filtered_backup_config)
@@ -104,7 +98,7 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 		:param total_template_lines: Total number of lines in the template.
 		:type total_template_lines: int
 
-		:param total_filtered_backup_config_lines: Total number of lines in the filtered backup config. 
+		:param total_filtered_backup_config_lines: Total number of lines in the filtered backup config.
 		:type total_filtered_backup_config_lines: int
 
 		:param total_backup_config_lines: Total number of lines in the backup config.
@@ -113,7 +107,7 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 
 		"""
 			If there are no diffs and only and audit diff is executed, (none) will be printed to show users the result. However, if there are no diffs but a push cfgs
-			is executed, not configs would be pushed as an empty list is appended.
+			is executed, no configs would be pushed as an empty list is appended.
 		"""
 		if len(push_configs) == 0 and output:
 			if output:
@@ -126,7 +120,7 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 				print('There are no diffs to be pushed for template {} on {}'.format(template,node_object[index]['name']))
 				if len(initialize.element) == 0:
 					node_configs.append('')
-					break	
+					break
 		else:
 			"""
 				If an audit diff is executed, the diff is outputed to user. If a push cfgs is executed against Cisco like platforms, the commands from the diff are executed
@@ -136,20 +130,23 @@ def generic_audit_diff(args,node_configs,node_object,index,template,input_list,A
 			"""
 			if output:
 				print("{}{}".format(directory,template))
-				print('\n'.join(HDiff(filtered_backup_config,rendered_config).unified_diffs()[3:]))
+				print('\n'.join(HDiff(filtered_backup_config,rendered_config,syntax="ios",ordered_diff=True).unified_diffs()[3:]))
 				delta_length_rendered_config = length_rendered_config - delta_diff_counter
 				template_percentage = round(delta_length_rendered_config / length_backup_config * 100,2)
 				initialize.compliance_percentage = round(initialize.compliance_percentage + template_percentage,2)
 			else:
 				if node_object[index]['hardware_vendor'] == 'cisco' and len(push_configs) != 0:
-					for line in push_configs:
-						node_configs.append(line)
+					negate_configs = cisco_parse_negation_commands(diff.missing())
+					for config in negate_configs:
+						node_configs.append(config)
+					for config in addition:
+						node_configs.append(config)
 				elif node_object[index]['hardware_vendor'] == 'citrix':
-					node_configs = parse_negation_commands(push_configs)
-					initialize.configuration.append(node_configs)
-					"""
-						For debug purpose, you may enable the below print statement.
-					"""
+					negate_configs = citrix_parse_negation_commands(diff.missing())
+					for config in negate_configs:
+						node_configs.append(config)
+					for config in addition:
+						node_configs.append(config)
 	return None
 
 def parse_audit_filter(node_object,index,parse_backup_configs,audit_filter):

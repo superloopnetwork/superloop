@@ -1,3 +1,4 @@
+diffios==0.0.9
 ciscoconfparse==1.7.15
 commentjson==0.8.3
 cryptography==36.0.2

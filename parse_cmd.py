@@ -24,17 +24,81 @@ def parse_commands(node_object,init_config,set_notation):
 
 	return commands
 
-def parse_negation_commands(push_configs):
+def cisco_parse_negation_commands(remediate_missing):
+	commands = []
+	if len(remediate_missing) == 0:
+		pass
+	else:
+		for negate in remediate_missing:
+			if len(negate) == 1:
+				remediate_missing_config = 'no ' + negate[0]
+				commands.append(remediate_missing_config)
+			else:
+				commands.append(negate[0])
+				for no_config in negate[1:]:
+					if no_config[0].isspace():
+						remediate_missing_config = 'no ' + no_config.lstrip()
+					else:
+						remediate_missing_config = 'no ' + no_config
+					commands.append(remediate_missing_config)
+	return commands
+
+def citrix_parse_negation_commands(remediate_missing):
+	remediate_missing = list(itertools.chain.from_iterable(remediate_missing))
 	command_split = []
 	commands = []
-	for line in push_configs:
+	for line in remediate_missing:
 		command_split = line.split()
 		"""
 			The below if statement will negate binding configurations associated with policy on the Citrix Netscaler.
 		"""
-		if command_split[0] == 'no' and command_split[1] == 'bind' and command_split[6] == '-index':
-			command_split[1] = 'unbind'
-			command = ' '.join(command_split[1:6])
+		if command_split[0] == 'bind' and command_split[1] == 'policy':
+			command_split[0] = 'unbind'
+			command = ' '.join(command_split[0:5])
+			commands.append(command)
+		elif command_split[0] == 'add' and command_split[1] == 'policy':
+			command_split[0] = 'rm'
+			command = ' '.join(command_split[0:4])
+			commands.append(command)
+		elif command_split[0] == 'add' and command_split[1] == 'server':
+			command_split[0] = 'rm'
+			command = ' '.join(command_split[0:3])
+			commands.append(command)
+		elif command_split[0] == 'add' and command_split[1] == 'service':
+			command_split[0] = 'rm'
+			command = ' '.join(command_split[0:3])
+			commands.append(command)
+		elif command_split[0] == 'bind' and command_split[1] == 'service':
+			command_split[0] = 'unbind'
+			command = ' '.join(command_split[0:3])
+			commands.append(command)
+		elif command_split[0] == 'add' and command_split[1] == 'serviceGroup':
+			command_split[0] = 'rm'
+			command = ' '.join(command_split[0:3])
+			commands.append(command)
+		elif command_split[0] == 'add' and command_split[1] == 'lb' and command_split[2] == 'vserver':
+			command_split[0] = 'rm'
+			command = ' '.join(command_split[0:4])
+			commands.append(command)
+		elif command_split[0] == 'bind' and command_split[1] == 'lb' and command_split[2] == 'vserver':
+			command_split[0] = 'unbind'
+			command = ' '.join(command_split[0:5])
+			commands.append(command)
+		elif command_split[0] == 'add' and command_split[1] == 'cs' and command_split[2] == 'vserver':
+			command_split[0] = 'rm'
+			command = ' '.join(command_split[0:4])
+			commands.append(command)
+		elif command_split[0] == 'bind' and command_split[1] == 'cs' and command_split[2] == 'vserver':
+			command_split[0] = 'unbind'
+			command = ' '.join(command_split[0:4])
+			commands.append(command)
+		elif command_split[0] == 'bind' and command_split[1] == 'ssl ' and command_split[2] == 'vserver':
+			command_split[0] = 'unbind'
+			command = ' '.join(command_split[0:4])
+			commands.append(command)
+		elif command_split[0] == 'set' and command_split[1] == 'ssl ' and command_split[2] == 'vserver':
+			command_split[0] = 'unset'
+			command = ' '.join(command_split[0:4])
 			commands.append(command)
 		else:
 			commands.append(line)
