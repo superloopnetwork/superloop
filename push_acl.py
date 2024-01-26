@@ -11,7 +11,6 @@ from processdb import process_policies
 from render import process_json_template 
 from search import search_node
 from search import search_policy
-from parse_cmd import parse_firewall_acl
 
 def push_acl(args):
 	argument_confirm = args.confirm

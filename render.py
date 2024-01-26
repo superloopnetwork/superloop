@@ -11,7 +11,6 @@ from get_property import get_template_directory
 from get_property import get_standards_directory
 from get_property import get_updated_list
 from parse_cmd import parse_commands
-from parse_cmd import parse_firewall_acl
 
 with_remediate = None
 def render(template_list,node_object,auditcreeper,output,with_remediation):
