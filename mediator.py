@@ -24,13 +24,13 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 	authentication = True
 	command = [] 
 	initialize.debug_element = initialize.element[:]
-	template_counter = 0
 	node_index = 0 
-	policy_list_original = input_list[:]
 	policy_list_copy = input_list
+	policy_list_original = input_list[:]
 	redirect = []
-	template_list_original = input_list[:]
+	template_counter = 0
 	template_list_copy = input_list
+	template_list_original = input_list[:]
 
 	"""
 	:param AUDIT_FILTER_RE: Regular expression to filter out the audit filter in every template.
@@ -115,7 +115,7 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 				"""
 					Uncomment the below print statement for debugging purposes
 				"""
-					#print("RENDERED CONFIG: {}".format(rendered_config))
+#					print("RENDERED CONFIG: {}".format(rendered_config))
 		"""
 			The below statement will only execute if user is auditing 
 			against multiple templates. If only one template is being 
@@ -181,18 +181,18 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 		elif node_object[index]['hardware_vendor'] == 'juniper':
 			input_list = get_sorted_juniper_template_list(input_list)
 			directory = get_template_directory(node_object[index]['hardware_vendor'],node_object[index]['opersys'],node_object[index]['type'])
-			with open('{}/diff-configs/{}'.format(get_home_directory(),node_object[index]['name']) + '.conf','r') as file:
+			with open('{}/superloop_code/diff-configs/{}'.format(get_home_directory(),node_object[index]['name']) + '.conf','r') as file:
 				init_config = file.readlines()
 			for config_line in init_config:
 				strip_config = config_line.strip('\n')
 				diff_config.append(strip_config)
 			for output in diff_config:
 				if 'errors' in output:
-					error = True
+					template_error= True
 					break
 				else:
-					error = False
-			if error:
+					template_error = False
+			if template_error:
 				print('+ Please check error(s) in template(s)')
 				break
 			else:

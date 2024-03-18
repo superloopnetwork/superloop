@@ -186,7 +186,7 @@ class BaseNode(object):
 			else:
 				extention = '.conf'
 			self.check_and_mkdir(scp_flag,method)
-			with open('{}/backup-configs/{}/{}{}'.format(self.get_home_directory(),self.get_subdir(scp_flag),self.name,extention), "w") as file:
+			with open('{}/superloop_code/backup-configs/{}/{}{}'.format(self.get_home_directory(),self.get_subdir(scp_flag),self.name,extention), "w") as file:
 				if self.hardware_vendor != 'palo_alto':
 					output = self.net_connect.send_command(command)
 				else:
@@ -204,15 +204,15 @@ class BaseNode(object):
 				file.close()
 		elif method == 'get_diff':
 			self.check_and_mkdir(scp_flag,method)
-			with open('{}/diff-configs/{}'.format(self.get_home_directory(),self.name) + ".conf", "w") as file:
+			with open('{}/superloop_code/diff-configs/{}'.format(self.get_home_directory(),self.name) + ".conf", "w") as file:
 				output = self.net_connect.send_config_set(command)
 				file.write(output)
 				file.close()
 
 	def check_and_mkdir(self,scp_flag,method):
 		if method == 'pull_cfgs':
-			os.makedirs('{}/backup-configs/{}/'.format(self.get_home_directory(),self.get_subdir(scp_flag)),exist_ok=True)
+			os.makedirs('{}/superloop_code/backup-configs/{}/'.format(self.get_home_directory(),self.get_subdir(scp_flag)),exist_ok=True)
 		elif method == 'get_config':
 			os.makedirs('{}/backup-configs/{}'.format(self.get_home_directory(),self.name),exist_ok=True)	
 		elif method == 'get_diff':
-			os.makedirs('{}/diff-configs/{}'.format(self.get_home_directory(),self.name),exist_ok=True)
+			os.makedirs('{}/superloop_code/diff-configs/{}'.format(self.get_home_directory(),self.name),exist_ok=True)
