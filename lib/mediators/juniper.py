@@ -83,7 +83,8 @@ def juniper_audit_diff(directory,template_list,diff_config,edit_list):
 #	print('DIFF_config: {}'.format(diff_config))
 
 
-	for template in template_list: 
+	for template in template_list:
+		pivot = 1
 #		if(len(search) >= 1):
 #			print("TEMPLATE: {}".format(template))
 #			print("LENGTH OF SEARCH: {}.".format(search))
@@ -110,13 +111,10 @@ def juniper_audit_diff(directory,template_list,diff_config,edit_list):
 			### SATISFY CONDITION WHEN THERE ARE NO DIFFS FOUND AND THE LINE BEING EVALUATED REACHES THE END OF THE DIFF_CONFIG. IT THEN KNOWS THERE 
 			### ARE NO MATCHES. 
 			else:
-				if diff_config.index(line) == len(diff_config):
+				if pivot == len(diff_config):
 					print("{}{} (none)".format(directory,template))
 				pass
-
-#			start = start + 1
-#			end = end + 1
-
+				
 def juniper_diff_output(diff_config,directory,template,edit_list,start,end):
 
 	diff_template = diff_config[edit_list[start]:edit_list[end]]  
