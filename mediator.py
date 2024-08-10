@@ -137,6 +137,7 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 		elif node_object[index]['hardware_vendor'] == 'juniper':
 			redirect.append('get_diff')
 			command.append(rendered_config)
+			initialize.configuration.append(rendered_config)
 			template_counter = 0
 	"""
 		Uncomment the below print statement for debugging purposes
@@ -198,7 +199,7 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 			else:
 				juniper_mediator(node_object,input_list,diff_config,edit_list,index)
 				juniper_audit_diff(directory,input_list,diff_config,edit_list)
-			initialize.configuration.append(rendered_config)
+#			initialize.configuration.append(rendered_config)
 #		print('initialize.configuration > {}'.format(initialize.configuration))
 		"""
 			If compliance percentage is less than 0% (negative) meaning no configs are to standard, percentage equals 0%.
