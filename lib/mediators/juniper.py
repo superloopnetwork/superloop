@@ -83,7 +83,8 @@ def juniper_audit_diff(directory,template_list,diff_config,edit_list):
 #	print('DIFF_config: {}'.format(diff_config))
 
 
-	for template in template_list: 
+	for template in template_list:
+		pivot = 1
 #		if(len(search) >= 1):
 #			print("TEMPLATE: {}".format(template))
 #			print("LENGTH OF SEARCH: {}.".format(search))
