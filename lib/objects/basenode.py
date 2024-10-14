@@ -2,8 +2,6 @@ from netmiko import ConnectHandler, SCPConn, NetmikoAuthenticationException
 import re
 import os
 import logging
-logging.basicConfig(filename='lib/log/logging.txt', level=logging.DEBUG)
-logger = logging.getLogger("netmiko")
 
 class BaseNode(object):
 
