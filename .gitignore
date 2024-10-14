@@ -3,4 +3,5 @@
 *.pyc
 *.conf
 *.bak
+*.txt
 __pycache__

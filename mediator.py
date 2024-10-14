@@ -31,6 +31,7 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 	template_counter = 0
 	template_list_copy = input_list
 	template_list_original = input_list[:]
+	get_config_required = False
 
 	"""
 	:param AUDIT_FILTER_RE: Regular expression to filter out the audit filter in every template.
@@ -109,9 +110,11 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 				"""
 				if template_counter == len(input_list):
 					rendered_config.append('\x04')
-					if output:
+					if not with_remediation:
 						rendered_config.append('show | compare')
 						rendered_config.append('rollback 0')
+					else:
+						pass
 				"""
 					Uncomment the below print statement for debugging purposes
 				"""
@@ -126,6 +129,7 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 #		print('input_list > {}'.format(input_list))
 		input_list = get_updated_list(template_list_copy)
 		if node_object[index]['hardware_vendor'] == 'cisco' or node_object[index]['hardware_vendor'] == 'f5' or node_object[index]['hardware_vendor'] == 'palo_alto':
+			get_config_required = True
 			redirect.append('get_config')
 			command.append([''])
 			"""
@@ -144,7 +148,8 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 	#print('REDIRECT: {}'.format(redirect))
 	#print('TEMPLATE_LIST: {}'.format(input_list))
 	#print('COMMAND: {}'.format(command))
-	multithread_engine(initialize.ntw_device,redirect,command,authentication)
+	if get_config_required:
+		multithread_engine(initialize.ntw_device,redirect,command,authentication)
 	input_list = template_list_original
 	if(auditcreeper):
 		input_list = template_list_original[0]
@@ -195,7 +200,7 @@ def mediator(args,input_list,node_object,auditcreeper,output,with_remediation):
 			if template_error:
 				print('+ Please check error(s) in template(s)')
 				break
-			else:
+			elif not with_remediation:
 				juniper_mediator(node_object,input_list,diff_config,edit_list,index)
 				juniper_audit_diff(directory,input_list,diff_config,edit_list)
 			initialize.configuration.append(rendered_config)

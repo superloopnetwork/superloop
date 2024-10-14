@@ -87,7 +87,9 @@ def juniper_audit_diff(directory,template_list,diff_config,edit_list):
 #		if(len(search) >= 1):
 #			print("TEMPLATE: {}".format(template))
 #			print("LENGTH OF SEARCH: {}.".format(search))
+		pivot = 1
 		for line in diff_config:
+#			print(pivot,len(diff_config))
 			### SATISFY CONDITION WHEN THERE IS A DIFF AND CONFIGURATION STANZA EXIST ON DEVICE AND IN TEMPLATE
 			if(re.search('\[edit\s{}'.format(template.split('.')[0]),line)):
 				juniper_diff_output(diff_config,directory,template,edit_list,start,end)
@@ -110,12 +112,10 @@ def juniper_audit_diff(directory,template_list,diff_config,edit_list):
 			### SATISFY CONDITION WHEN THERE ARE NO DIFFS FOUND AND THE LINE BEING EVALUATED REACHES THE END OF THE DIFF_CONFIG. IT THEN KNOWS THERE 
 			### ARE NO MATCHES. 
 			else:
-				if diff_config.index(line) == len(diff_config):
+				if pivot == len(diff_config):
 					print("{}{} (none)".format(directory,template))
 				pass
-
-#			start = start + 1
-#			end = end + 1
+			pivot = pivot + 1
 
 def juniper_diff_output(diff_config,directory,template,edit_list,start,end):
 
@@ -123,7 +123,7 @@ def juniper_diff_output(diff_config,directory,template,edit_list,start,end):
 	print("{}{}".format(directory,template))
 	for line in diff_template:
 		## THE BELOW IF STATEMENT IS TO CORRECT THE OUTPUT. AT RANDOM TIMES, THE DIFF-CONFIG MAY INCLUDE 'ROLLBACK 0' IN OUTPUT. IT WILL OMIT PRINTING THAT.
-		if line == '[edit]':
+		if line == '[edit]' or line == 'rollback 0':
 			pass
 		else:
 			print("{}".format(line))
