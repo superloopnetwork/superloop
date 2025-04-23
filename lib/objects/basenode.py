@@ -65,6 +65,7 @@ class BaseNode(object):
 				'tmsh' : 'f5_tmsh',
 				'firefly-perimeter' : 'juniper',
 				'junos' : 'juniper_junos',
+				'vqfx-10000' : 'juniper',
 				'vyattavyos' : 'vyatta_vyos',
 				'vyos' : 'vyos',
 				'NetScaler Virtual Appliance' : 'netscaler',
