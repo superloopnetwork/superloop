@@ -11,3 +11,4 @@ pip==26.0.1
 pyOpenSSL==22.0.0
 pysnmp==4.4.12
 PyYAML==6.0.3
+textfsm==1.1.2
