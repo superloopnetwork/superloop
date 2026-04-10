@@ -419,7 +419,7 @@ pc-n9ktest-001
 The 'push cfgs' function simply pushes the template(s) to the specified node(s). For Cisco, Citrix, F5 and Palo Alto devices, a debug output will be shown with a list of commands (if any) of what will be sent first before user commits to push. From the below example, you can see which templates are enabled for pushing, represented by [>] vs. which templates are disabled, represented by [x]. The state of the template can be controlled in the ~/superloop_code/database/templates.yaml file. As a safety, we disable any templates that we are not confident in pushing. If enabled, superloop will auto remediate those template(s). Please use with caution as it can cause severe impact. Two phases happens when pushing templates of Cisco, Citrix, F5 and Palo Alto devices. First, superloop performs an audit diff. It will check to see what configs are missing or removed. Second, it will encapsulate the necessary configs and prepare it for pushing. If the device has no diffs, then no configs will be pushed to the device. The output of session when pushing will be displayed so users can see what happens behind the scenes.
 
 ```
-root@devvm:~# superloop push cfgs --node p.*nxs
+root@devvm:~# superloop push cfgs --node "core(2|3)leaf.*yyz.*demo --file logging
 [x] core1.sw.yyz.demo ; base.jinja2
 [x] core1.sw.yyz.demo ; base.jinja2
 [x] core2.sw.yyz.demo ; base.jinja2
@@ -434,20 +434,20 @@ root@devvm:~# superloop push cfgs --node p.*nxs
 [>] core1.sw.yyz.demo ; ntp.jinja2
 [>] core1.sw.yyz.demo ; snmp.jinja2
 [>] core2.sw.yyz.demo ; logging.jinja2
-[>] core2.sw.yyz.demo ; ntp.jinja2
-[>] core2.sw.yyz.demo ; snmp.jinja2
+[x] core2.sw.yyz.demo ; ntp.jinja2
+[x] core2.sw.yyz.demo ; snmp.jinja2
 [>] core2.sw.yyz.demo ; logging.jinja2
-[>] core2.sw.yyz.demo ; ntp.jinja2
-[>] core2.sw.yyz.demo ; snmp.jinja2
-[>] core1.leaf.yyz.demo ; logging.jinja2
-[>] core1.leaf.yyz.demo ; ntp.jinja2
-[>] core1.leaf.yyz.demo ; snmp.jinja2
+[x] core2.sw.yyz.demo ; ntp.jinja2
+[x] core2.sw.yyz.demo ; snmp.jinja2
+[x] core1.leaf.yyz.demo ; logging.jinja2
+[x] core1.leaf.yyz.demo ; ntp.jinja2
+[x] core1.leaf.yyz.demo ; snmp.jinja2
 [>] core2.leaf.yyz.demo ; logging.jinja2
-[>] core2.leaf.yyz.demo ; ntp.jinja2
-[>] core2.leaf.yyz.demo ; snmp.jinja2
+[x] core2.leaf.yyz.demo ; ntp.jinja2
+[x] core2.leaf.yyz.demo ; snmp.jinja2
 [>] core3.leaf.yyz.demo ; logging.jinja2
-[>] core3.leaf.yyz.demo ; ntp.jinja2
-[>] core3.leaf.yyz.demo ; snmp.jinja2
+[x] core3.leaf.yyz.demo ; ntp.jinja2
+[x] core3.leaf.yyz.demo ; snmp.jinja2
 + complete [0:00:11.403772]
  
 [DEBUG]
